@@ -10,6 +10,7 @@ const Navbar = () => {
 
   return (
     <>
+    
       <div className='flex justify-around items-center m-1 p-1  text-gray-900  lg:m-2 lg:p-3 relative z-0'>
         <div className='text-4xl font-bold text-gray-900 '>
           Flone.
@@ -64,9 +65,9 @@ const Navbar = () => {
         </div>
       </div>
       {menuBtn && (
-        <div className="flex flex-col h-screen w-[300px] right-0 justify-start ml-auto bg-white fixed z-20 top-0 p-3">
+        <div className="flex flex-col h-screen w-[50vw] md:w-80 right-0 justify-start ml-auto bg-white fixed z-20 top-0 p-3">
           <div className=" flex gap-2  ">
-            <button className="text-white bg-black rounded-xl px-1"><X /></button>
+            <button onClick={() => setMenuBtn(!menuBtn)} className="text-white bg-black rounded-xl px-1"><X /></button>
             <div className="bg-gray-200 items-center p-2 rounded-xl">
               <input type="text" placeholder="Search..."/>
             <button><Search /></button></div>        
