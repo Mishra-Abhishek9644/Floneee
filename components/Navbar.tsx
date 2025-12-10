@@ -5,7 +5,7 @@ const Navbar = () => {
   return (
     <div className='flex justify-around items-center'>
             <div className=''>
-                <Link></Link>
+                {/* <Link></Link> */}
                 
             </div>
             <div>yo</div>
