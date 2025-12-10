@@ -1,30 +1,86 @@
-import React from 'react'
+"use client";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
-const Carousle = () => {
-    return (
-        <>
-            <div id="default-carousel" className="relative w-full" data-carousel="slide">
-                <div className="relative h-56 overflow-hidden rounded-base md:h-96">
-                    <div className="hidden duration-700 ease-in-out" data-carousel-item>
-                        <img src="/docs/images/carousel/carousel-1.svg" className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="..." />
-                    </div>
-                    
-                </div>
-                <button type="button" className="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
-                    <span className="inline-flex items-center justify-center w-10 h-10 rounded-base bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                        
-                        <span className="sr-only">Previous</span>
-                    </span>
-                </button>
-                <button type="button" className="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
-                    <span className="inline-flex items-center justify-center w-10 h-10 rounded-base bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                        <span className="sr-only">Next</span>
-                    </span>
-                </button>
-            </div>
-
-        </>
-    )
+interface Data {
+  id: number;
+  image: string;
 }
 
-export default Carousle
+const Carousle = () => {
+  const [data, setData] = useState<Data[]>([]);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    fetch("https://fakestoreapi.com/products")
+      .then((res) => res.json())
+      .then((result) => setData(result.slice(0, 5)));
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % 5);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const prevSlide = () => {
+    setIndex((prev) => (prev === 0 ? 4 : prev - 1));
+  };
+
+  const nextSlide = () => {
+    setIndex((prev) => (prev + 1) % 5);
+  };
+
+  return (
+    <div className="relative w-full h-[90vh] overflow-hidden">
+      {/* Slider Wrapper */}
+      <div
+        className="flex h-full transition-transform duration-700 ease-in-out"
+        style={{ transform: `translateX(-${index * 100}%)` }}
+      >
+        {data.map((item) => (
+          <div key={item.id} className="w-full flex-shrink-0 h-full">
+            <img
+              src={item.image}
+              className="w-full h-full object-contain"
+              alt="product"
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Left Button */}
+      <button
+        onClick={prevSlide}
+        className="absolute top-1/2 left-5 -translate-y-1/2 bg-black/40 text-white p-3 rounded-full hover:bg-black/60"
+      >
+        <ArrowLeft />
+      </button>
+
+      {/* Right Button */}
+      <button
+        onClick={nextSlide}
+        className="absolute top-1/2 right-5 -translate-y-1/2 bg-black/40 text-white p-3 rounded-full hover:bg-black/60"
+      >
+        <ArrowRight />
+      </button>
+
+      {/* Dots */}
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">
+        {data.map((_, i) => (
+          <div
+            key={i}
+            onClick={() => setIndex(i)}
+            className={`w-3 h-3 rounded-full cursor-pointer ${
+              index === i ? "bg-white" : "bg-white/40"
+            }`}
+          ></div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Carousle;
