@@ -6,6 +6,7 @@ export default function Home() {
   return (
     <>
     <Navbar />
+    <div className="min-h-screen bg-gray-500">yo</div>
     <Footer />
     </>
   );
