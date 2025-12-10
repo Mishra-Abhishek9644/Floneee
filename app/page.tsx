@@ -1,11 +1,12 @@
 import Image from "next/image";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function Home() {
   return (
     <>
     <Navbar />
+    <div className="min-h-screen bg-gray-500">yo</div>
     <Footer />
     </>
   );
