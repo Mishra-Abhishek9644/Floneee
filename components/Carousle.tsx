@@ -34,14 +34,16 @@ const Carousle = () => {
   };
 
   return (
-    <div className="relative w-full h-[90vh] overflow-hidden">
+    <div className="relative w-full h-[90vh] bg-[#f0e0ff] overflow-hidden">
       {/* Slider Wrapper */}
-      <div
-        className="flex h-full transition-transform duration-700 ease-in-out"
-        style={{ transform: `translateX(-${index * 100}%)` }}
-      >
+      <div className="flex flex-row h-full transition-transform duration-700 ease-in-out" style={{ transform: `translateX(-${index * 100}%)` }}>
+        <div className="w-[50%]">
+          <p>Smart Products</p>
+          <h2>Winter Offer 2024 Collection</h2>
+          <button className="p-2 border">SHOP NOW</button>
+        </div>  
         {data.map((item) => (
-          <div key={item.id} className="w-full flex-shrink-0 h-full">
+          <div key={item.id} className="w-[50%] flex-shrink-0 h-full">
             <img
               src={item.image}
               className="w-full h-full object-contain"
@@ -50,6 +52,7 @@ const Carousle = () => {
           </div>
         ))}
       </div>
+
 
       {/* Left Button */}
       <button
@@ -67,18 +70,6 @@ const Carousle = () => {
         <ArrowRight />
       </button>
 
-      {/* Dots */}
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">
-        {data.map((_, i) => (
-          <div
-            key={i}
-            onClick={() => setIndex(i)}
-            className={`w-3 h-3 rounded-full cursor-pointer ${
-              index === i ? "bg-white" : "bg-white/40"
-            }`}
-          ></div>
-        ))}
-      </div>
     </div>
   );
 };
