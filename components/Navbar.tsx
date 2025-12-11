@@ -1,17 +1,29 @@
 "use client";
 import { GitCompareArrows, Heart, Menu, Search, ShoppingBag, UserRoundPen, X } from "lucide-react"
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 
 const Navbar = () => {
   const [loginBtn, setLoginBtn] = useState(false)
   const [menuBtn, setMenuBtn] = useState(false)
 
+  useEffect(() => {
+  if (menuBtn) {
+    document.body.style.overflow = "hidden"; // disable scroll
+  } else {
+    document.body.style.overflow = "auto"; // enable scroll back
+  }
+
+  // cleanup (optional but best practice)
+  return () => {
+    document.body.style.overflow = "auto";
+  };
+}, [menuBtn]);
   return (
     <>
-    
-      <div className='flex justify-around items-center  p-3  text-gray-900  relative md:fixed bg-white top-0 left-0 right-0 z-10'>
+
+      <div className='flex justify-around items-center  p-3  text-gray-900   md:fixed bg-white top-0 left-0 right-0 z-10 ' >
         <div className='text-4xl font-bold text-gray-900 '>
           Flone.
         </div>
@@ -64,14 +76,26 @@ const Navbar = () => {
 
         </div>
       </div>
+      {/* BACKDROP – ONLY SHOWS WHEN MENU IS OPEN */}
       {menuBtn && (
-        <div className="flex flex-col h-screen w-[50vw] md:w-80 right-0 justify-start ml-auto bg-white fixed z-20 top-0 p-3">
+        <div
+          className="fixed inset-0 bg-black/20 z-30"
+          onClick={() => setMenuBtn(false)}
+        ></div>
+      )}
+      {menuBtn && (
+        <div className="flex flex-col  w-[80vw] md:w-80 right-0 justify-start  bg-white fixed z-40 top-0 p-3 flex-nowrap" onClick={(e) => e.stopPropagation()}>
           <div className=" flex gap-2  ">
-            <button onClick={() => setMenuBtn(!menuBtn)} className="text-white bg-black rounded-xl px-1"><X /></button>
-            <div className="bg-gray-200 items-center p-2 rounded-xl">
-              <input type="text" placeholder="Search..."/>
-            <button><Search /></button></div>        
-            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setMenuBtn(!menuBtn);
+              }}
+              className="text-black rounded-xl px-1"><X /></button>
+            <div className="bg-gray-200 items-center p-2 rounded-xl flex ">
+              <input type="text"className="grow min-w-0 outline-none bg-transparent" placeholder="Search..." />
+              <button className="p-1"><Search size={18} /></button></div>
+          </div>
           <div className='flex flex-col mt-5 gap-3'>
             <Link href='/home'>Home</Link>
             <Link href='/shop'>Shop</Link>
@@ -79,6 +103,8 @@ const Navbar = () => {
             <Link href='/shop'>Collection</Link>
             <Link href='/blog'>Blogs</Link>
             <Link href='/contact'>Contact Us</Link>
+            <Link href='/login'>Login</Link>
+            <Link href='/register'>Register</Link>
           </div>
           <div></div>
           <div></div>
