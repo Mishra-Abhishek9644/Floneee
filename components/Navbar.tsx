@@ -11,11 +11,11 @@ const Navbar = () => {
   return (
     <>
     
-      <div className='flex justify-around items-center m-1 p-1  text-gray-900  lg:m-2 lg:p-3 relative md:fixed bg-white top-0 left-0 right-0 z-10'>
+      <div className='flex justify-around items-center  p-3  text-gray-900  relative md:fixed bg-white top-0 left-0 right-0 z-10'>
         <div className='text-4xl font-bold text-gray-900 '>
           Flone.
         </div>
-        <div className='hidden md:flex md:flex-row md:gap-8 md:text-lg '>
+        <div className='hidden lg:flex lg:flex-row lg:gap-8 lg:text-lg '>
           <Link href='/home'>Home</Link>
           <Link href='/shop'>Shop</Link>
           <Link href='/home'>Pages</Link>
@@ -60,7 +60,7 @@ const Navbar = () => {
           <Link href='/compare'><GitCompareArrows /></Link>
           <Link href='/wishlist'><Heart /></Link>
           <Link href='/cart'><ShoppingBag /></Link>
-          <div className="md:hidden"><button onClick={() => (setMenuBtn(!menuBtn))}><Menu /></button></div>
+          <div className="lg:hidden"><button onClick={() => (setMenuBtn(!menuBtn))}><Menu /></button></div>
 
         </div>
       </div>

@@ -1,10 +1,12 @@
 "use client";
 import React, { useEffect, useState } from 'react'
 import Card from './Card';
+import { Product } from "../type/Product";
+
 
 const DailyDeals = () => {
 
-     const [data, setData] = useState([])
+     const [data, setData] = useState<Product[]>([])
    useEffect(() => {
     fetch('https://fakestoreapi.com/products')
   .then(response => response.json())
@@ -24,14 +26,10 @@ const DailyDeals = () => {
                     <button className='hover:text-black'>Best Sellers</button>
                     <button className='hover:text-black'>Sale Items</button>
                 </div>
-                <div className='grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4 justify-center items-center mx-auto md:px-40'>
-                    {data.map((item) => (
-            <Card
-              key={item.id}
-              image={item.image}
-              title={item.title}
-              price={item.price}
-            />
+                <div className='grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4 justify-center items-center mx-auto xl:px-40'>
+                    {data.slice(0,8).map((item) => (
+                <Card key={item.id} product={item} />
+
           ))}
                 </div>
             </div>
