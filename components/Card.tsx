@@ -20,10 +20,10 @@ const Card: React.FC<CardProps> = ({ product }) => {
       <p className="text-gray-600">${product.price}</p>
 
        {/* Hover overlay */}
-        <div className="absolute z-10 bottom-19 right-0 left-5 w-60  rounded-2xl flex items-center justify-around bg-purple-500 text-white h-10  opacity-0 invisible group-hover:opacity-100 group-hover:visible">
-            <button><Heart size={20} className="hover:scale-95 rounded-2xl hover:bg-black transition-colors ease-in hover:text-white h-full w-10 p-2" /></button>
-            <button className=" hover:bg-black transition-colors ease-in hover:scale-95 rounded-2xl hover:text-white h-full w-40">Select Option</button>
-            <button> <Eye size={20} className="hover:scale-95 rounded-2xl hover:bg-black transition-colors ease-in hover:text-white h-full w-10 p-2" /></button>
+        <div className="absolute z-10 bottom-19 right-0 left-5 w-60  rounded-2xl flex items-center justify-around bg-purple-500 text-white h-10  opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-400 ease-out:">
+            <button><Heart size={20} className="hover:scale-95 rounded-2xl hover:bg-black  hover:text-white h-full w-10 p-2 transition-all duration-100 delay-200" /></button>
+            <button className=" hover:bg-black  hover:scale-95 rounded-2xl hover:text-white h-full w-40 transition-all duration-100 delay-300">Select Option</button>
+            <button> <Eye size={20} className="hover:scale-95 rounded-2xl hover:bg-black  hover:text-white h-full w-10 p-2 transition-all duration-100 delay-400" /></button>
         </div>
     </div>
   );
