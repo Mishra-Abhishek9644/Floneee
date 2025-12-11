@@ -24,7 +24,7 @@ const DailyDeals = () => {
                     <button className='hover:text-black'>Best Sellers</button>
                     <button className='hover:text-black'>Sale Items</button>
                 </div>
-                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center items-center mx-auto md:px-20'>
+                <div className='grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4 justify-center items-center mx-auto md:px-40'>
                     {data.map((item) => (
             <Card
               key={item.id}
