@@ -7,12 +7,12 @@ const Carousle = () => {
     {
       title: "Smart Products",
       subtitle: "Summer Offer 2025 Collection",
-      img: "https://flone.jamstacktemplates.dev/assets/img/slider/single-slide-1.png",
+      img: "https://flone.jamstacktemplates.dev/assets/img/slider/single-slide-hm1-2.png",
     },
     {
       title: "Winter Products",
       subtitle: "Winter Offer 2025 Collection",
-      img: "https://flone.jamstacktemplates.dev/assets/img/slider/single-slide-hm1-2.png",
+      img: "https://flone.jamstacktemplates.dev/assets/img/slider/single-slide-1.png",
     },
   ];
 
