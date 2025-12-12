@@ -6,7 +6,7 @@ import { Circle, Dribbble, Facebook, GitCompareArrows, Heart, Instagram, Linkedi
 
 
 
-const ProductDetails = ({id}) => {
+const ProductDetails = ({ id }) => {
 
     const [data, setData] = useState<Product[]>([]);
     const [product, setProduct] = useState([null]);
@@ -98,7 +98,7 @@ const ProductDetails = ({id}) => {
                 </div>
 
                 {/* second section */}
-                <div className='px-5'>
+                <div className='md:px-0 px-5'>
                     <div className='border-b border-gray-300 flex justify-center items-center lg:text-2xl text-sm font-semibold gap-8'>
                         <button onClick={() => setShow("1st")} className={` ${show === "1st" ? "border-b text-black" : "border-none text-gray-500"} border-b-2 pb-2 cursor-pointer `}>Additional Information</button>
                         <button onClick={() => setShow("2nd")} className={` ${show === "2nd" ? "border-b  text-black" : "border-none text-gray-500"} border-b-2 pb-2 cursor-pointer `}>Description</button>
@@ -128,47 +128,63 @@ const ProductDetails = ({id}) => {
                         </div>
                     )}
                     {show === "3rd" && (
-                        <div className='flex justify-center items-center gap-8 px-5 w-full'>
-                            <div className='flex w-[70%]'>
-                                <img src="https://flone.jamstacktemplates.dev/assets/img/testimonial/1.jpg" className='object-cover m-5 border border-gray-300' alt="img" />
-                                <div>
-                                    <h2 className='font-semibold flex gap-4'>White Lewis
-                                        <span className='flex size-18'>
-                                            <Star className='fill-yellow-400' />
-                                            <Star className='fill-yellow-400' />
-                                            <Star className='fill-yellow-400' />
-                                            <Star className='fill-yellow-400' />
-                                            <Star className='fill-yellow-400' />
+                        <div className='grid md:grid-cols-2 grid-cols-1 place-content-center gap-8 md:px-0 px-5 w-full'>
+                            <div>
+                                <div className='flex md:flex-row flex-col sm:justify-start items-center w-full '>
+                                    <img src="https://flone.jamstacktemplates.dev/assets/img/testimonial/1.jpg" className='object-cover m-5 border border-gray-300' alt="img" />
+                                    <div className='w-full'>
+                                        <h2 className='font-semibold flex gap-4'>White Lewis
+                                            <span className='flex'>
+                                                <Star size={18} stroke='' className='fill-yellow-400' />
+                                                <Star size={18} stroke='' className='fill-yellow-400' />
+                                                <Star size={18} stroke='' className='fill-yellow-400' />
+                                                <Star size={18} stroke='' className='fill-yellow-400' />
+                                                <Star size={18} stroke='' className='fill-yellow-400' />
                                             </span>
-                                    </h2>
-                                    <p>Vestibulum ante ipsum primis aucibus orci luctustrices posuere cubilia Curae Suspendisse viverra ed viverra. Mauris ullarper euismod vehicula. Phasellus quam nisi, congue id nulla.</p>
+                                        </h2>
+                                        <p>Vestibulum ante ipsum primis aucibus orci luctustrices posuere cubilia Curae Suspendisse viverra ed viverra. Mauris ullarper euismod vehicula. Phasellus quam nisi, congue id nulla.</p>
+                                    </div>
+                                    <button></button>
                                 </div>
-                                <button></button>
+                                <div className='flex md:flex-row flex-col sm:justify-start items-center w-full '>
+                                    <img src="https://flone.jamstacktemplates.dev/assets/img/testimonial/2.jpg" className='object-cover m-5 border border-gray-300' alt="img" />
+                                    <div className='w-full'>
+                                        <h2 className='font-semibold flex gap-4'>White Lewis
+                                            <span className='flex'>
+                                                <Star size={18} stroke='' className='fill-yellow-400' />
+                                                <Star size={18} stroke='' className='fill-yellow-400' />
+                                                <Star size={18} stroke='' className='fill-yellow-400' />
+                                                <Star size={18} stroke='' className='fill-yellow-400' />
+                                                <Star size={18} stroke='' className='fill-yellow-400' />
+                                            </span>
+                                        </h2>
+                                        <p>Vestibulum ante ipsum primis aucibus orci luctustrices posuere cubilia Curae Suspendisse viverra ed viverra. Mauris ullarper euismod vehicula. Phasellus quam nisi, congue id nulla.</p>
+                                    </div>
+                                    <button></button>
+                                </div>
                             </div>
-                            <div className='w-[30%]'>
+
+                            <div className=' w-full'>
                                 <form action="" method="post">
-                                    <div>
-                                        <h3>Add a Review</h3>
-                                        <div className='flex gap-4'>
+                                    <div className='py-5'>
+                                        <h3 className='font-semibold'>Add a Review</h3>
+                                        <div className='flex md:gap-4 my-2'>
                                             <p>your rating :</p>
-                                            <div className='flex size-18'>
-                                                <Star className='fill-yellow-400' />
-                                                <Star className='fill-yellow-400' />
-                                                <Star className='fill-yellow-400' />
-                                                <Star className='fill-yellow-400' />
-                                                <Star className='' />
+                                            <div className='flex'>
+                                                <Star size={18} stroke='' className='fill-yellow-400' />
+                                                <Star size={18} stroke='' className='fill-yellow-400' />
+                                                <Star size={18} stroke='' className='fill-yellow-400' />
+                                                <Star size={18} stroke='' className='fill-yellow-400' />
+                                                <Star size={18} stroke='' className='' />
                                             </div>
                                         </div>
-                                        <div className='flex gap-4'>
-                                            <label htmlFor="">
-                                                <input type="text" className='border border-gray-200' />
-                                            </label>
-                                            <label htmlFor="">
-                                                <input type="text" className='border border-gray-200' />
-                                            </label>
+                                        <div className='grid md:grid-cols-2 grid-cols-1 gap-4 mb-5'>
+                                            <input type="text" placeholder='Name' className='border border-gray-200 w-full px-5 py-2 outline-hidden ' />
+                                            <input type="text" placeholder='Email' className='border border-gray-200 w-full px-5 py-2 outline-hidden ' />
                                         </div>
+                                        <textarea name="" id="" className='border border-gray-200 w-full h-36 px-5 py-2 outline-hidden ' placeholder='Message'></textarea>
+                                        <button className='px-10 py-3 bg-purple-500 hover:bg-black duration-700 font-semibold  outline-hidden text-white uppercase'>Submit</button>
                                     </div>
-                                    <textarea name="" id="" className='border border-gray-200'></textarea>
                                 </form>
 
                             </div>
