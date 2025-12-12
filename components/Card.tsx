@@ -6,11 +6,12 @@ import Link from "next/link";
 
 interface CardProps {
   product: Product;
+  onOpen: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ product,onOpen }) => {
+const Card: React.FC<CardProps> = ({ product, onOpen }) => {
 
-  
+
   return (
     <div className="p-4 flex flex-col mt-3 justify-center group relative z-0">
       <img
@@ -22,12 +23,63 @@ const Card: React.FC<CardProps> = ({ product,onOpen }) => {
       <h2 className="font-semibold mt-2 truncate">{product.title}</h2>
       <p className="text-gray-600">${product.price}</p>
 
-       {/* Hover overlay */}
-        <div className="absolute z-10 bottom-19 right-0 left-5 w-60  rounded-2xl flex items-center justify-around bg-purple-500 text-white h-10  opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-400 ease-out:">
-            <button><Heart size={20} className="hover:scale-95 rounded-2xl hover:bg-black  hover:text-white h-full w-10 p-2 transition-all duration-100 delay-200" /></button>
-            <Link href={`/shop/product/${product.id}`}><button className=" hover:bg-black  hover:scale-95 rounded-2xl hover:text-white h-full w-40 transition-all duration-100 delay-300">Select Option</button></Link>
-            <button> <Eye size={20} onClick={onOpen} className="hover:scale-95 rounded-2xl hover:bg-black  hover:text-white h-full w-10 p-2 transition-all duration-100 delay-400" /></button>
-        </div>
+      {/* Hover overlay */}
+      <div
+        className="
+    absolute bottom-19 right-0 left-5 w-60 h-10
+    flex items-center justify-around
+    bg-transparent
+    opacity-0 group-hover:opacity-100
+    translate-y-3 group-hover:translate-y-0
+    transition-all duration-300 ease-out z-10
+  "
+      >
+        {/* BTN 1 */}
+        <button
+          className="
+      opacity-0 group-hover:opacity-100 
+      translate-y-2 group-hover:translate-y-0
+      transition-all duration-300 ease-out delay-100
+    "
+        >
+          <Heart
+            size={20}
+            className="bg-purple-500 text-white h-full w-10 p-2  hover:bg-black"
+          />
+        </button>
+
+        {/* BTN 2 */}
+        <button
+          className="
+      opacity-0 group-hover:opacity-100 
+      translate-y-2 group-hover:translate-y-0
+      transition-all duration-300 ease-out delay-200
+    "
+        >
+          <Link href={`/shop/product/${product.id}`}>
+            <div className="bg-purple-500 text-white h-full w-40 p-2  hover:bg-black">
+              Select Option
+            </div>
+          </Link>
+        </button>
+
+        {/* BTN 3 */}
+        <button
+          className="
+      opacity-0 group-hover:opacity-100 
+      translate-y-2 group-hover:translate-y-0
+      transition-all duration-300 ease-out delay-300
+    "
+        >
+          <Eye
+            size={20}
+            className="bg-purple-500 text-white h-full w-10 p-2  hover:bg-black"
+            onClick={onOpen}
+          />
+        </button>
+      </div>
+
+
     </div>
   );
 };
