@@ -2,12 +2,14 @@
 import React, { useEffect, useState } from 'react'
 import Card from './Card';
 import { Product } from "../type/Product";
-import { Circle, Dribbble, Facebook, GitCompareArrows, Heart, Instagram, Linkedin, Twitter } from 'lucide-react';
+import { Circle, Dribbble, Facebook, GitCompareArrows, Heart, Instagram, Linkedin, Star, Twitter } from 'lucide-react';
 
 
 
-const ProductDetails = () => {
-    const [data, setData] = useState<Product[]>([])
+const ProductDetails = ({id}) => {
+
+    const [data, setData] = useState<Product[]>([]);
+    const [product, setProduct] = useState([null]);
     const [qty, setQty] = useState(1);
     const [show, setShow] = useState("1st");
 
@@ -15,7 +17,12 @@ const ProductDetails = () => {
     const decrease = () => { if (qty > 1) setQty(qty - 1); }
 
     useEffect(() => {
-        fetch('https://fakestoreapi.com/products')
+        fetch(`https://fakestoreapi.com/products/${id}`)
+            .then(response => response.json())
+            .then(product => setProduct(product));
+    }, [])
+    useEffect(() => {
+        fetch("https://fakestoreapi.com/products")
             .then(response => response.json())
             .then(data => setData(data));
     }, [])
@@ -27,21 +34,21 @@ const ProductDetails = () => {
                 <div className='grid md:grid-cols-2 sm:grid-cols-1 gap-4 place-content-center py-16'>
                     <div>
                         <div>
-                            <img src="https://flone.jamstacktemplates.dev/assets/img/product/fashion/6.jpg" className='' alt="product-iamge" />
+                            <img src={product?.image} className='bg-[#f6f6f6] w-full p-28' alt="product-iamge" />
                         </div>
                         <div className='my-5 grid grid-cols-5 gap-2'>
-                            <img src="https://flone.jamstacktemplates.dev/assets/img/product/fashion/6.jpg" className='' alt="product-iamge" />
-                            <img src="https://flone.jamstacktemplates.dev/assets/img/product/fashion/6.jpg" className='' alt="product-iamge" />
-                            <img src="https://flone.jamstacktemplates.dev/assets/img/product/fashion/6.jpg" className='' alt="product-iamge" />
-                            <img src="https://flone.jamstacktemplates.dev/assets/img/product/fashion/6.jpg" className='' alt="product-iamge" />
-                            <img src="https://flone.jamstacktemplates.dev/assets/img/product/fashion/6.jpg" className='' alt="product-iamge" />
+                            <img src={product?.image} className='bg-[#f6f6f6] p-5' alt="product-iamge" />
+                            <img src={product?.image} className='bg-[#f6f6f6] p-5' alt="product-iamge" />
+                            <img src={product?.image} className='bg-[#f6f6f6] p-5' alt="product-iamge" />
+                            <img src={product?.image} className='bg-[#f6f6f6] p-5' alt="product-iamge" />
+                            <img src={product?.image} className='bg-[#f6f6f6] p-5' alt="product-iamge" />
 
                         </div>
                     </div>
                     <div className='lg:px-20 md:px-12 px-5'>
-                        <div className='lg:text-2xl'>Title Jacket</div>
-                        <div className='text-2xl text-red-500 py-2'>${15.6}</div>
-                        <div className='text-md border-b pb-8 border-gray-300  leading-7'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium, explicabo. Illum repellat, sit iste, atque ea, hic dolorum blanditiis quidem quia totam perferendis accusantium natus unde quibusdam distinctio nulla facilis?</div>
+                        <div className='lg:text-2xl'>{product.title}</div>
+                        <div className='text-2xl text-red-500 py-2'>${product.price}</div>
+                        <div className='text-md border-b pb-8 border-gray-300  leading-7'>{product.description}</div>
                         <div className='flex justify-start items-center py-10'>
                             <div className='px-2'>
                                 <h3 className='pb-2 font-semibold'>Color</h3>
@@ -69,14 +76,14 @@ const ProductDetails = () => {
                                 <button onClick={increase} className="text-xl px-2 cursor-pointer">+</button>
                             </div>
                             <div>
-                                <button className='bg-gray-800 text-white py-4 px-10 uppercase font-bold'>Add To Cart</button>
+                                <button className="bg-gray-800 text-white py-4 px-10 uppercase cursor-pointer font-bold hover:bg-purple-600 hover:border-purple-600 transition-all duration-700" >Add To Cart</button>
                             </div>
                             <div className='hover:text-purple-600 cursor-pointer mx-3'><Heart /></div>
                             <div className='hover:text-purple-600 cursor-pointer'><GitCompareArrows /></div>
                         </div>
 
                         <div className='my-8 leading-8'>
-                            <p className=''>Categories : <span>{`fashion Men`}</span></p>
+                            <p className=''>Categories : <span>{product.category}</span></p>
                             <p className=''>Tags : <span>{`fashion men jacket full sleeve`}</span></p>
                             <div className='flex items-center gap-8 mt-4'>
                                 <button><Facebook size={20} className='hover:text-blue-800  cursor-pointer' /></button>
@@ -91,11 +98,11 @@ const ProductDetails = () => {
                 </div>
 
                 {/* second section */}
-                <div className=''>
-                    <div className='border-b border-gray-300 flex justify-center items-center text-2xl font-semibold gap-8'>
-                        <button onClick={() => setShow("1st")}  className={` ${show === "1st" ? "border-b text-black" : "border-none text-gray-500" } border-b-2 pb-2 cursor-pointer `}>Additional Information</button>
-                        <button onClick={() => setShow("2nd")}  className={` ${show === "2nd" ? "border-b  text-black" : "border-none text-gray-500" } border-b-2 pb-2 cursor-pointer `}>Description</button>
-                        <button onClick={() => setShow("3rd")}  className={` ${show === "3rd" ? "border-b  text-black" : "border-none text-gray-500" } border-b-2 pb-2 cursor-pointer `}>Reviews (2)</button>
+                <div className='px-5'>
+                    <div className='border-b border-gray-300 flex justify-center items-center lg:text-2xl text-sm font-semibold gap-8'>
+                        <button onClick={() => setShow("1st")} className={` ${show === "1st" ? "border-b text-black" : "border-none text-gray-500"} border-b-2 pb-2 cursor-pointer `}>Additional Information</button>
+                        <button onClick={() => setShow("2nd")} className={` ${show === "2nd" ? "border-b  text-black" : "border-none text-gray-500"} border-b-2 pb-2 cursor-pointer `}>Description</button>
+                        <button onClick={() => setShow("3rd")} className={` ${show === "3rd" ? "border-b  text-black" : "border-none text-gray-500"} border-b-2 pb-2 cursor-pointer `}>Reviews (2)</button>
                     </div>
                     {show === "1st" && (
                         <div className='py-5'>
@@ -121,8 +128,50 @@ const ProductDetails = () => {
                         </div>
                     )}
                     {show === "3rd" && (
-                        <div>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Odio, aperiam.
+                        <div className='flex justify-center items-center gap-8 px-5 w-full'>
+                            <div className='flex w-[70%]'>
+                                <img src="https://flone.jamstacktemplates.dev/assets/img/testimonial/1.jpg" className='object-cover m-5 border border-gray-300' alt="img" />
+                                <div>
+                                    <h2 className='font-semibold flex gap-4'>White Lewis
+                                        <span className='flex size-18'>
+                                            <Star className='fill-yellow-400' />
+                                            <Star className='fill-yellow-400' />
+                                            <Star className='fill-yellow-400' />
+                                            <Star className='fill-yellow-400' />
+                                            <Star className='fill-yellow-400' />
+                                            </span>
+                                    </h2>
+                                    <p>Vestibulum ante ipsum primis aucibus orci luctustrices posuere cubilia Curae Suspendisse viverra ed viverra. Mauris ullarper euismod vehicula. Phasellus quam nisi, congue id nulla.</p>
+                                </div>
+                                <button></button>
+                            </div>
+                            <div className='w-[30%]'>
+                                <form action="" method="post">
+                                    <div>
+                                        <h3>Add a Review</h3>
+                                        <div className='flex gap-4'>
+                                            <p>your rating :</p>
+                                            <div className='flex size-18'>
+                                                <Star className='fill-yellow-400' />
+                                                <Star className='fill-yellow-400' />
+                                                <Star className='fill-yellow-400' />
+                                                <Star className='fill-yellow-400' />
+                                                <Star className='' />
+                                            </div>
+                                        </div>
+                                        <div className='flex gap-4'>
+                                            <label htmlFor="">
+                                                <input type="text" className='border border-gray-200' />
+                                            </label>
+                                            <label htmlFor="">
+                                                <input type="text" className='border border-gray-200' />
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <textarea name="" id="" className='border border-gray-200'></textarea>
+                                </form>
+
+                            </div>
                         </div>
                     )}
                 </div>
