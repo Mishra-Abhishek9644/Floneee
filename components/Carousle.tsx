@@ -27,7 +27,7 @@ const Carousle = () => {
   };
 
   return (
-    <div id="controls-carousel" className="relative w-full bg-[#f0e0ff] overflow-hidden lg:h-[90vh] md:h-[70vh] h-[80vh] md:mt-20 pt-20">
+    <div id="controls-carousel" className="relative w-full bg-[#f0e0ff] overflow-hidden lg:h-[90vh] md:h-[70vh] h-[80vh] md:mt-16 pt-20">
       <div className="flex h-full transition-transform duration-700 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }} >
         {slides.map((slide, index) => (
           <div key={index} className="w-full h-full flex flex-col md:flex-row items-center justify-center shrink-0">
@@ -55,13 +55,13 @@ const Carousle = () => {
 
       <button
         onClick={leftBtn}
-        className="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-8 md:px-14 cursor-pointer" >
+        className="absolute top-0 left-0 flex items-center justify-center h-full px-8 md:px-14 cursor-pointer" >
         <ChevronLeft className="md:size-12 size-6 text-gray-600 hover:text-purple-500" />
       </button>
 
       <button
         onClick={rightBtn}
-        className="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-8 md:px-14 cursor-pointer" >
+        className="absolute top-0 right-0 flex items-center justify-center h-full px-8 md:px-14 cursor-pointer" >
         <ChevronRight className="md:size-12 size-6 text-gray-600 hover:text-purple-500" />
       </button>
 
