@@ -29,10 +29,10 @@ const Navbar = () => {
         </div>
       </Link>
         <div className='hidden lg:flex lg:flex-row lg:gap-8 lg:text-lg '>
+          <Link  className="hover:text-purple-500 hover:scale-105" href='/'>Home</Link>
           <Link  className="hover:text-purple-500 hover:scale-105" href='/shop'>Shop</Link>
           <Link  className="hover:text-purple-500 hover:scale-105" href='/shop'>Collection</Link>
           <Link  className="hover:text-purple-500 hover:scale-105" href='/blog'>Blogs</Link>
-          <Link  className="hover:text-purple-500 hover:scale-105" href='/'>Home</Link>
           <Link  className="hover:text-purple-500 hover:scale-105" href='/contact'>Contact Us</Link>
           <Link  className="hover:text-purple-500 hover:scale-105" href='/'>Pages</Link>
 
@@ -98,7 +98,7 @@ const Navbar = () => {
               <button className="hover:text-purple-500 hover:scale-105 p-1"><Search size={18} /></button></div>
           </div>
           <div className='flex flex-col mt-5 gap-3'>
-            <Link className="hover:text-purple-500 hover:scale-105" href='/home'>Home</Link>
+            <Link className="hover:text-purple-500 hover:scale-105" href='/'>Home</Link>
             <Link className="hover:text-purple-500 hover:scale-105" href='/shop'>Shop</Link>
             <Link className="hover:text-purple-500 hover:scale-105" href='/home'>Pages</Link>
             <Link className="hover:text-purple-500 hover:scale-105" href='/shop'>Collection</Link>
