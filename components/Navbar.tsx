@@ -23,7 +23,7 @@ const Navbar = () => {
   return (
     <>
 
-      <div className='flex justify-around items-center  p-3  text-gray-900   md:fixed bg-white top-0 left-0 right-0 z-10 ' >
+      <div className='flex justify-around items-center  p-3  text-gray-900 shadow-md  md:fixed bg-white top-0 left-0 right-0 z-10 ' >
         <div className='text-4xl font-bold text-gray-900 '>
           Flone.
         </div>
