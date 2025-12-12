@@ -24,24 +24,25 @@ const Navbar = () => {
     <>
 
       <div className='flex justify-around items-center  p-3  text-gray-900 shadow-md  md:fixed bg-white top-0 left-0 right-0 z-10 ' >
-        <div className='text-4xl font-bold text-gray-900 '>
+      <Link href='/'> <div className='text-4xl font-bold text-gray-900 hover:text-purple-500 hover:scale-105 '>
           Flone.
         </div>
+      </Link>
         <div className='hidden lg:flex lg:flex-row lg:gap-8 lg:text-lg '>
-          <Link href='/'>Home</Link>
-          <Link href='/shop'>Shop</Link>
-          <Link href='/'>Pages</Link>
-          <Link href='/shop'>Collection</Link>
-          <Link href='/blog'>Blogs</Link>
-          <Link href='/contact'>Contact Us</Link>
+          <Link  className="hover:text-purple-500 hover:scale-105" href='/shop'>Shop</Link>
+          <Link  className="hover:text-purple-500 hover:scale-105" href='/shop'>Collection</Link>
+          <Link  className="hover:text-purple-500 hover:scale-105" href='/blog'>Blogs</Link>
+          <Link  className="hover:text-purple-500 hover:scale-105" href='/'>Home</Link>
+          <Link  className="hover:text-purple-500 hover:scale-105" href='/contact'>Contact Us</Link>
+          <Link  className="hover:text-purple-500 hover:scale-105" href='/'>Pages</Link>
 
         </div>
         <div className='flex gap-3 '>
           <div className="hidden md:flex gap-7 px-4">
 
-            <button><Search /></button>
+            <button className="hover:text-purple-500 hover:scale-105"><Search /></button>
             <div className="relative">
-              <button className="flex items-center gap-2 hover:scale-105" onClick={() => setLoginBtn(!loginBtn)}>
+              <button className="flex items-center hover:text-purple-500 gap-2 hover:scale-105" onClick={() => setLoginBtn(!loginBtn)}>
                 <UserRoundPen />
               </button>
 
@@ -52,7 +53,7 @@ const Navbar = () => {
                   <button
                     className="block min-w-full text-left mt-1  hover:text-purple-600 hover:pl-2 transition-all duration-300 ease-out"
                   >
-                    <Link href='/login'>
+                    <Link href='/login' className="hover:text-purple-500 hover:scale-105">
                       Login
                     </Link>
                   </button>
@@ -60,7 +61,7 @@ const Navbar = () => {
                   <button
                     className="block min-w-full text-left mt-1 hover:text-purple-600 hover:pl-2 transition-all duration-300 ease-out"
                   >
-                    <Link href='/register'>
+                    <Link href='/register' className="hover:text-purple-500 hover:scale-105">
                       Register
                     </Link>
                   </button>
@@ -69,10 +70,10 @@ const Navbar = () => {
             </div>
           </div>
 
-          <Link href='/compare'><GitCompareArrows /></Link>
-          <Link href='/wishlist'><Heart /></Link>
-          <Link href='/cart'><ShoppingBag /></Link>
-          <div className="lg:hidden"><button onClick={() => (setMenuBtn(!menuBtn))}><Menu /></button></div>
+          <Link href='/compare'className="hover:text-purple-500 hover:scale-105"><GitCompareArrows /></Link>
+          <Link href='/wishlist'className="hover:text-purple-500 hover:scale-105"><Heart /></Link>
+          <Link href='/cart'className="hover:text-purple-500 hover:scale-105"><ShoppingBag /></Link>
+          <div className="lg:hidden hover:text-purple-500 hover:scale-105"><button onClick={() => (setMenuBtn(!menuBtn))}><Menu /></button></div>
 
         </div>
       </div>
@@ -91,20 +92,20 @@ const Navbar = () => {
                 e.stopPropagation();
                 setMenuBtn(!menuBtn);
               }}
-              className="text-black rounded-xl px-1"><X /></button>
+              className="text-black rounded-xl px-1 hover:scale-110 hover:text-purple-500"><X /></button>
             <div className="bg-gray-200 items-center p-2 rounded-xl flex ">
               <input type="text"className="grow min-w-0 outline-none bg-transparent" placeholder="Search..." />
-              <button className="p-1"><Search size={18} /></button></div>
+              <button className="hover:text-purple-500 hover:scale-105 p-1"><Search size={18} /></button></div>
           </div>
           <div className='flex flex-col mt-5 gap-3'>
-            <Link href='/home'>Home</Link>
-            <Link href='/shop'>Shop</Link>
-            <Link href='/home'>Pages</Link>
-            <Link href='/shop'>Collection</Link>
-            <Link href='/blog'>Blogs</Link>
-            <Link href='/contact'>Contact Us</Link>
-            <Link href='/login'>Login</Link>
-            <Link href='/register'>Register</Link>
+            <Link className="hover:text-purple-500 hover:scale-105" href='/home'>Home</Link>
+            <Link className="hover:text-purple-500 hover:scale-105" href='/shop'>Shop</Link>
+            <Link className="hover:text-purple-500 hover:scale-105" href='/home'>Pages</Link>
+            <Link className="hover:text-purple-500 hover:scale-105" href='/shop'>Collection</Link>
+            <Link className="hover:text-purple-500 hover:scale-105" href='/blog'>Blogs</Link>
+            <Link className="hover:text-purple-500 hover:scale-105" href='/contact'>Contact Us</Link>
+            <Link className="hover:text-purple-500 hover:scale-105" href='/login'>Login</Link>
+            <Link className="hover:text-purple-500 hover:scale-105" href='/register'>Register</Link>
           </div>
           <div></div>
           <div></div>
