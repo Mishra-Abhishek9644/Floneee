@@ -5,10 +5,8 @@ import React from 'react'
 const page = () => {
   return (
     <>
-    <Navbar />
     <Breadcrumb />
     <div className=''>Shop</div>
-
     </>
   )
 }
