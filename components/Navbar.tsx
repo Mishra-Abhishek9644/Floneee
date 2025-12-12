@@ -30,7 +30,7 @@ const Navbar = () => {
         <div className='hidden lg:flex lg:flex-row lg:gap-8 lg:text-lg '>
           <Link href='/'>Home</Link>
           <Link href='/shop'>Shop</Link>
-          <Link href='/home'>Pages</Link>
+          <Link href='/'>Pages</Link>
           <Link href='/shop'>Collection</Link>
           <Link href='/blog'>Blogs</Link>
           <Link href='/contact'>Contact Us</Link>
