@@ -12,7 +12,7 @@ const Breadcrumb = () => {
   ).filter(Boolean);
 
   return (
-    <div className='flex justify-center items-center py-10 bg-[#f7f7f7] mt-16'>
+    <div className='flex justify-center items-center py-10 bg-[#f7f7f7] md:mt-16 mt-0'>
       <div className='uppercase flex gap-2'>
         <Link href="/" className='text-gray-500 hover:text-black'>Home</Link>
         {breadcrumbParts.map((p, index) => (

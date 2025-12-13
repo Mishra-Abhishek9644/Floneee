@@ -6,7 +6,10 @@ interface wishListState {
 }
 
 const initialState: wishListState = {
-  items: [],
+  items: 
+        typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("wishlist") || "[]")
+      : [],
 };
 
 const wishlistSlice = createSlice({
@@ -22,7 +25,7 @@ const wishlistSlice = createSlice({
    },
 
     removeFromWishlist: (state, action:PayloadAction<number>) => {
-      state.items.filter(item => item.id !== action.payload)
+      state.items = state.items.filter(item => item.id !== action.payload)
     },
     clearWishlist: (state) => {
       state.items = []

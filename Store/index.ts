@@ -1,8 +1,20 @@
-import { configureStore } from '@reduxjs/toolkit'
-import wishlist from "./Slices/wishlistSlice"
+import { configureStore } from "@reduxjs/toolkit";
+import wishlistReducer from "./Slices/wishlistSlice";
 
-const store = configureStore({
-  reducer:wishlist,
-})
+export const store = configureStore({
+  reducer: {
+    wishlist: wishlistReducer, // 👈 THIS LINE FIXES EVERYTHING
+  },
+});
 
-export default store
+store.subscribe(() => {
+  const state = store.getState();
+
+  localStorage.setItem(
+    "wishlist",
+    JSON.stringify(state.wishlist.items)
+  );
+});
+
+
+export default store;

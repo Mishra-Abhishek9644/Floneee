@@ -3,6 +3,10 @@ import { Eye, Heart } from "lucide-react";
 import React from "react";
 import { Product } from "../type/Product";
 import Link from "next/link";
+import { UseSelector,useDispatch } from "react-redux";
+import { addToWishlist } from "@/Store/Slices/wishlistSlice";
+import toast from "react-hot-toast";
+
 
 interface CardProps {
   product: Product;
@@ -11,6 +15,12 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ product, onOpen }) => {
 
+  const dispatch = useDispatch()
+
+  const handleAddToWishlist = () => {
+  dispatch(addToWishlist(product));
+  toast.success("Added to wishlist ❤️");
+};
 
   return (
     <div className="p-4 flex flex-col mt-3 justify-center group relative z-0">
@@ -44,9 +54,10 @@ const Card: React.FC<CardProps> = ({ product, onOpen }) => {
         >
           <Heart
             size={20}
+            onClick={handleAddToWishlist}
             className="bg-purple-500 text-white h-full w-10 p-2  hover:bg-black"
           />
-        </button>
+        </button> 
 
         {/* BTN 2 */}
         <button
