@@ -4,9 +4,11 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
 
+
 const Navbar = () => {
   const [loginBtn, setLoginBtn] = useState(false)
   const [menuBtn, setMenuBtn] = useState(false)
+
 
   useEffect(() => {
   if (menuBtn) {
