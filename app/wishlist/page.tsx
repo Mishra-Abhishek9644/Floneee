@@ -28,7 +28,7 @@ const Page = () => {
           </h2>
           <Link
             href="/shop"
-            className="bg-gray-800 px-8 rounded-md text-sm text-white py-3.5 uppercase font-bold"
+            className="bg-gray-800 px-8 rounded-md text-sm text-white py-3.5 uppercase font-bold hover:bg-purple-600 hover:text-white hover:scale-110 transition-all duration-300"
           >
             Add Items
           </Link>
@@ -95,14 +95,14 @@ const Page = () => {
           <div className="flex flex-col md:flex-row justify-between mt-10 text-gray-800">
             <Link
               href="/shop"
-              className="px-10 py-4 rounded-full flex justify-center  bg-gray-100 text-sm font-semibold my-2"
+              className="px-10 py-4 rounded-full flex justify-center  bg-gray-100 text-sm font-semibold my-2 hover:bg-purple-600 hover:text-white hover:scale-110 transition-all duration-300"
             >
               CONTINUE SHOPPING
             </Link>
 
             <button
               onClick={() => dispatch(clearWishlist())}
-              className="px-10 py-4 rounded-full flex justify-center  bg-gray-100 text-sm font-semibold my-2"
+              className="px-10 py-4 rounded-full flex justify-center  bg-gray-100 text-sm font-semibold my-2 hover:bg-purple-600 hover:text-white hover:scale-110 transition-all duration-300"
             >
               CLEAR WISHLIST
             </button>
