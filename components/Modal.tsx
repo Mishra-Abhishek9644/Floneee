@@ -74,7 +74,7 @@ if (!open || !product) return null;
                                 <button onClick={increase} className="text-xl md:px-2 cursor-pointer">+</button>
                             </div>
                             <div>
-                                <button className='bg-gray-800  text-white px-2 py-1 sm:py-3.5 lg:text-md  uppercase font-bold'>Add To Cart</button>
+                                <button className='bg-gray-800  text-white px-2 py-1 sm:py-3.5 lg:text-md  uppercase font-bold hover:bg-purple-600 hover:text-white hover:scale-105 cursor-pointer mx-3'>Add To Cart</button>
                             </div>
                             <div className='hover:text-purple-600 cursor-pointer mx-3'><Heart /></div>
                             <div className='hover:text-purple-600 cursor-pointer'><GitCompareArrows /></div>
