@@ -2,13 +2,21 @@
 
 import { Circle, Eye, GitCompareArrows, Heart, X } from "lucide-react";
 import { useState } from "react";
+import { Product } from "@/type/Product";
 
-const Modal = ({ open, onClose, product }) => {
+
+interface ModalProps {
+    open: boolean;
+    onClose: (value: boolean) => void;
+    product: Product | null;
+}
+
+const Modal: React.FC<ModalProps> = ({ open, onClose, product }) => {
     const [qty, setQty] = useState(1);
-    
-        const increase = () => setQty(qty + 1);
-        const decrease = () => { if (qty > 1) setQty(qty - 1); }
-    if (!open) return null;
+
+    const increase = () => setQty(qty + 1);
+    const decrease = () => { if (qty > 1) setQty(qty - 1); }
+if (!open || !product) return null;
 
     return (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -39,7 +47,7 @@ const Modal = ({ open, onClose, product }) => {
                         <div className="text-red-600 text-2xl ">${product.price}</div>
                         <div className="text-gray-500 my-4">{product.description}</div>
 
-                         <div className='flex flex-col md:flex-row justify-start md:items-center py-2 gap-1 md:py-10'>
+                        <div className='flex flex-col md:flex-row justify-start md:items-center py-2 gap-1 md:py-10'>
                             <div className='px-2'>
                                 <h3 className='pb-2 font-semibold'>Color</h3>
                                 <div>
@@ -59,7 +67,7 @@ const Modal = ({ open, onClose, product }) => {
                             </div>
                         </div>
 
-                       <div className='flex gap-2 items-center md:gap-4'>
+                        <div className='flex gap-2 items-center md:gap-4'>
                             <div className="flex items-center border border-gray-300 px-1 py-3 ">
                                 <button onClick={decrease} className="text-xl md:px-2 cursor-pointer">-</button>
                                 <span className="px-4 font-mono">{qty}</span>

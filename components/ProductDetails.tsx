@@ -4,12 +4,16 @@ import Card from './Card';
 import { Product } from "../type/Product";
 import { Circle, Dribbble, Facebook, GitCompareArrows, Heart, Instagram, Linkedin, Star, Twitter } from 'lucide-react';
 
+interface ProductDetailsProps {
+    id:number
+    
+}
 
 
-const ProductDetails = ({ id }) => {
+const ProductDetails = ({ id }: ProductDetailsProps) => {
 
     const [data, setData] = useState<Product[]>([]);
-    const [product, setProduct] = useState([null]);
+  const [product, setProduct] = useState<Product | null>(null);
     const [qty, setQty] = useState(1);
     const [show, setShow] = useState("1st");
 
@@ -20,12 +24,13 @@ const ProductDetails = ({ id }) => {
         fetch(`https://fakestoreapi.com/products/${id}`)
             .then(response => response.json())
             .then(product => setProduct(product));
-    }, [])
+    }, [id])
     useEffect(() => {
         fetch("https://fakestoreapi.com/products")
             .then(response => response.json())
             .then(data => setData(data));
     }, [])
+      if (!product) return null;
 
     return (
         <>
@@ -200,7 +205,7 @@ const ProductDetails = ({ id }) => {
 
                     <div className='grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4 justify-center items-center mx-auto'>
                         {data?.slice(4, 8).map((item) => (
-                            <Card key={item.id} product={item} />
+                            <Card key={item.id} product={item} onOpen={() => {}} />
                         ))}
                     </div>
                 </div>
