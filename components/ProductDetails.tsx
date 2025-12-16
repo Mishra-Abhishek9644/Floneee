@@ -5,6 +5,8 @@ import { Product } from "../type/Product";
 import { Circle, Dribbble, Facebook, GitCompareArrows, Heart, Instagram, Linkedin, Star, Twitter } from 'lucide-react';
 import { UseSelector, useDispatch } from 'react-redux';
 import { addToCompareList } from '@/Store/Slices/compareSlice';
+import { addToCartList } from '@/Store/Slices/cartSlice';
+
 import toast from "react-hot-toast";
 
 
@@ -38,9 +40,14 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
     }, [])
     if (!product) return null;
 
-    const handleAddToWishlist = () => {
+    const handleAddToCompare = () => {
         dispatch(addToCompareList(product));
         toast.success("Added to Compare List ❤️");
+    };
+
+    const handleAddToCart = () => {
+        dispatch(addToCartList(product));
+        toast.success("Added to Cart ❤️");
     };
 
     return (
@@ -92,10 +99,10 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
                                 <button onClick={increase} className="text-xl px-2 cursor-pointer">+</button>
                             </div>
                             <div>
-                                <button className="bg-gray-800 text-white py-4 px-10 uppercase cursor-pointer font-bold hover:bg-purple-600 hover:border-purple-600 transition-all duration-700" >Add To Cart</button>
+                                <button className="bg-gray-800 text-white py-4 px-10 uppercase cursor-pointer font-bold hover:bg-purple-600 hover:border-purple-600 transition-all duration-700" onClick={handleAddToCart}>Add To Cart</button>
                             </div>
                             <div className='hover:text-purple-600 cursor-pointer mx-3'><Heart /></div>
-                            <div className='hover:text-purple-600 cursor-pointer' onClick={handleAddToWishlist}><GitCompareArrows /></div>
+                            <div className='hover:text-purple-600 cursor-pointer' onClick={handleAddToCompare}><GitCompareArrows /></div>
                         </div>
 
                         <div className='my-8 leading-8'>
