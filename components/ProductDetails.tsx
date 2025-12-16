@@ -3,17 +3,23 @@ import React, { useEffect, useState } from 'react'
 import Card from './Card';
 import { Product } from "../type/Product";
 import { Circle, Dribbble, Facebook, GitCompareArrows, Heart, Instagram, Linkedin, Star, Twitter } from 'lucide-react';
+import { UseSelector, useDispatch } from 'react-redux';
+import { addToCompareList } from '@/Store/Slices/compareSlice';
+import toast from "react-hot-toast";
+
 
 interface ProductDetailsProps {
-    id:number
-    
+    id: number
+
 }
 
 
 const ProductDetails = ({ id }: ProductDetailsProps) => {
 
+    const dispatch = useDispatch()
+
     const [data, setData] = useState<Product[]>([]);
-  const [product, setProduct] = useState<Product | null>(null);
+    const [product, setProduct] = useState<Product | null>(null);
     const [qty, setQty] = useState(1);
     const [show, setShow] = useState("1st");
 
@@ -30,7 +36,12 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
             .then(response => response.json())
             .then(data => setData(data));
     }, [])
-      if (!product) return null;
+    if (!product) return null;
+
+    const handleAddToWishlist = () => {
+        dispatch(addToCompareList(product));
+        toast.success("Added to Compare List ❤️");
+    };
 
     return (
         <>
@@ -84,7 +95,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
                                 <button className="bg-gray-800 text-white py-4 px-10 uppercase cursor-pointer font-bold hover:bg-purple-600 hover:border-purple-600 transition-all duration-700" >Add To Cart</button>
                             </div>
                             <div className='hover:text-purple-600 cursor-pointer mx-3'><Heart /></div>
-                            <div className='hover:text-purple-600 cursor-pointer'><GitCompareArrows /></div>
+                            <div className='hover:text-purple-600 cursor-pointer' onClick={handleAddToWishlist}><GitCompareArrows /></div>
                         </div>
 
                         <div className='my-8 leading-8'>
@@ -205,7 +216,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
 
                     <div className='grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4 justify-center items-center mx-auto'>
                         {data?.slice(4, 8).map((item) => (
-                            <Card key={item.id} product={item} onOpen={() => {}} />
+                            <Card key={item.id} product={item} onOpen={() => { }} />
                         ))}
                     </div>
                 </div>
