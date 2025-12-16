@@ -57,7 +57,7 @@ const page = () => {
 
                     {/* BUTTON */}
                     <Link href={`/shop/product/${product.id}`}>
-                      <button className="mt-4 bg-purple-600 text-white px-6 py-2 rounded-full">
+                      <button className="mt-4 bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-black hover:scale-105">
                         Select Option
                       </button>
                     </Link>
