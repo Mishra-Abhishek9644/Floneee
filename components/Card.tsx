@@ -13,7 +13,7 @@ interface CardProps {
   onOpen: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ product, onOpen }) => {
+const Card: React.FC<CardProps> = ({ product, onOpen, }) => {
 
   const dispatch = useDispatch()
 
@@ -35,66 +35,68 @@ const Card: React.FC<CardProps> = ({ product, onOpen }) => {
       <p className="text-gray-600">${product.price}</p>
 
       {/* Hover overlay */}
+      {/* Hover overlay */}
       <div
         className="
-    absolute inset-x-0 bottom-0 h-12  {/* Changed: full width left/right, adjust h-12 or whatever height you want; removed bottom-19 left-5 w-full */}
-    flex items-center justify-center   {/* Added: flex row, center vertically, some gap between buttons */}
-    bg-transparent
+    absolute inset-x-0 bottom-4 h-12
+    hidden items-center
+    bg-purple-500
     opacity-0 group-hover:opacity-100
     translate-y-3 group-hover:translate-y-0
-    transition-all duration-300 ease-out z-10
-    md:flex hidden  {/* Kept your md:flex and hidden */}
+    transition-all duration-300 ease-out
+    md:flex 
+    z-10
   "
       >
-        {/* BTN 1 - Heart (fixed small width) */}
+        {/* BTN 1 - Heart */}
         <button
+          onClick={handleAddToWishlist}
           className="
-      opacity-0 group-hover:opacity-100 
+      w-12 h-full
+      flex items-center justify-center
+      text-white
+      opacity-0 group-hover:opacity-100
       translate-y-2 group-hover:translate-y-0
       transition-all duration-300 ease-out delay-100
-      flex-none  {/* Prevents it from growing/shrinking unnecessarily */}
+      hover:bg-black
     "
         >
-          <Heart
-            size={20}
-            onClick={handleAddToWishlist}
-            className="bg-purple-500 text-white h-10 w-10 p-2  hover:bg-black"  
-          />
+          <Heart size={18} />
         </button>
 
-        {/* BTN 2 - Select Option (takes ~60% + remaining) */}
-        <button
+        {/* BTN 2 - Select Option */}
+        <Link
+          href={`/shop/product/${product.id}`}
           className="
-      opacity-0 group-hover:opacity-100 
+      flex-1 h-full
+      flex items-center justify-center
+      text-white text-sm
+      opacity-0 group-hover:opacity-100
       translate-y-2 group-hover:translate-y-0
       transition-all duration-300 ease-out delay-200
-      basis-3/5 grow  {/* Key: starts at 60% of container, then grows to fill any extra space */}
-      min-w-0  
+      hover:bg-black
     "
         >
-          <Link href={`/shop/product/${product.id}`} className="block w-full">
-            <div className="bg-purple-500 text-white h-10 px-4 flex items-center justify-center  hover:bg-black">
-              Select Option
-            </div>
-          </Link>
-        </button>
+          Select Option
+        </Link>
 
-        {/* BTN 3 - Eye (fixed small width) */}
+        {/* BTN 3 - Eye */}
         <button
+          onClick={onOpen}
           className="
-      opacity-0 group-hover:opacity-100 
+      w-12 h-full
+      flex items-center justify-center
+      text-white
+      opacity-0 group-hover:opacity-100
       translate-y-2 group-hover:translate-y-0
       transition-all duration-300 ease-out delay-300
-      flex-none
+      hover:bg-black
     "
         >
-          <Eye
-            size={20}
-            className="bg-purple-500 text-white h-10 w-10 p-2  hover:bg-black"
-            onClick={onOpen}
-          />
+          <Eye size={18} />
         </button>
       </div>
+
 
     </div>
   );
