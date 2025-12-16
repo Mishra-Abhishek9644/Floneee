@@ -61,45 +61,49 @@ const Navbar = () => {
 
             <div className="relative">
               <button className="flex items-center hover:text-purple-500 gap-2 hover:scale-105" onClick={() => setSearch(!search)}><Search /></button>
-
-
               {search && (
                 <div className="absolute top-10 right-0 bg-white  rounded shadow p-3 mt-2  transition-all  overflow-hidden flex items-center  ">
                   <div className="flex items-center border">
                     <input type="text" placeholder="Seach..." className=" outline-hidden p-2" />
-                    <button className="flex items-center  gap-2 hover:scale-105 p-2 bg-purple-600 text-white"><Search /></button>
+                    <button onClick={() => setSearch(!search)} className="flex items-center  gap-2 hover:scale-105 p-2 bg-purple-600 text-white"><Search /></button>
                   </div>
                 </div>
               )}
             </div>
 
             <div className="relative">
-              <button className="flex items-center hover:text-purple-500 gap-2 hover:scale-105" onClick={() => setLoginBtn(!loginBtn)}>
+              <button
+                className="flex items-center hover:text-purple-500 gap-2 hover:scale-105"
+                onClick={() => setLoginBtn(!loginBtn)}
+              >
                 <UserRoundPen />
               </button>
 
               {loginBtn && (
-                <div className="absolute top-11 right-0 bg-white border rounded shadow p-3 mt-2  transition-all w-[130px]">
-
+                <div className="absolute top-11 right-0 bg-white border rounded shadow p-3 mt-2 transition-all w-[130px]">
 
                   <button
-                    className="block min-w-full text-left mt-1  hover:text-purple-600 hover:pl-2 transition-all duration-300 ease-out"
+                    onClick={() => setLoginBtn(false)}
+                    className="block min-w-full text-left mt-1 hover:text-purple-600 hover:pl-2 transition-all duration-300 ease-out"
                   >
-                    <Link href='/login' className="hover:text-purple-500 hover:scale-105">
+                    <Link href="/login">
                       Login
                     </Link>
                   </button>
 
                   <button
+                    onClick={() => setLoginBtn(false)}
                     className="block min-w-full text-left mt-1 hover:text-purple-600 hover:pl-2 transition-all duration-300 ease-out"
                   >
-                    <Link href='/register' className="hover:text-purple-500 hover:scale-105">
+                    <Link href="/register">
                       Register
                     </Link>
                   </button>
 
-                </div>)}
+                </div>
+              )}
             </div>
+
           </div>
 
           <Link href="/compare" className="relative hover:text-purple-500 hover:scale-105">
