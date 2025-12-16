@@ -1,5 +1,6 @@
 "use client";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
 import React, { useState } from "react";
 
 const Carousle = () => {
@@ -36,14 +37,14 @@ const Carousle = () => {
                 {slide.title}
               </p>
 
-              <h2 className="lg:text-7xl md:text-5xl text-3xl pt-3 pb-6 px-5 md:px-0" >
+              <h2 className="lg:text-7xl md:text-5xl text-3xl pt-3 pb-6 px-5 md:px-0 md:mb-5" >
                 {slide.subtitle}
               </h2>
 
-              <button
+              <Link href={`/shop`}
                 className="border md:py-4 md:px-12 py-2 px-5 hover:bg-purple-600 hover:border-purple-600 hover:text-white transition-all duration-700" >
                 SHOP NOW
-              </button>
+              </Link>
             </div>
 
             <div className="lg:w-[50%] md:w-[50%] w-full flex justify-center lg:p-10 md:p-6 px-8" >

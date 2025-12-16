@@ -30,7 +30,7 @@ const DailyDeals = () => {
                     <Modal product={selectedProduct} open={modal} onClose={() => setModal(false)} />
                 </div>
             )}
-            <div className='m-1 md:mx-auto md:p-10 '>
+            <div className='m-1 md:mx-auto md:px-10 '>
                 <div className='flex justify-center gap-2 sm:gap-4 md:gap-6 text-lg md:text-3xl font-bold md:my-6 items-center'>
                     <div className='w-10 md:w-20'><hr className='border rounded-2xl' /></div>
                     <div className='flex-nowrap'>DAILY DEALS!</div>
