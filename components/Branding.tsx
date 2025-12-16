@@ -4,7 +4,7 @@ import React from 'react'
 const Branding = () => {
     return (
         <>
-            <div className='grid lg:grid-cols-4 md:grid-cols-2 xs:grid-cols-1 gap-4 place-content-center md:py-16 lg:px-24 md:px-16 px-10 my-10'>
+            <div className='grid lg:grid-cols-4 md:grid-cols-2 xs:grid-cols-1 gap-4 place-content-center md:py-16 lg:px-24 md:px-16 px-10 mt-10'>
                 <div className='flex justify-center items-center'>
                     <TruckElectric className='size-13 transition-all hover:animate-bounce duration-500' />
                     <div className='px-3'>
