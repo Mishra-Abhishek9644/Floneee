@@ -7,7 +7,7 @@ import {
   removeFromCartList,
   clearCartList,
 } from "@/Store/Slices/cartSlice";
-import { Heart, X } from "lucide-react";
+import { Heart, ShoppingCart, X } from "lucide-react";
 import Link from "next/link";
 
 const Page = () => {
@@ -24,7 +24,8 @@ const Page = () => {
 
       {cartListItems.length === 0 ? (
         <div className="flex flex-col justify-center items-center gap-4 my-22">
-          <Heart size={150} strokeWidth={0.75} />
+          <ShoppingCart size={150} strokeWidth={0.75} />
+          
           <h2 className="text-md md:text-xl">
             No Items Found in Cart
           </h2>

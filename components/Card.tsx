@@ -23,12 +23,13 @@ const Card: React.FC<CardProps> = ({ product, onOpen }) => {
 };
 
   return (
-    <div className="p-4 flex flex-col mt-3 justify-center group relative z-0">
+    <div className="p-4 flex flex-col mt-3 justify-center group relative z-0 hover:scale-95">
+      <Link href={`/shop/product/${product.id}`}>
       <img
         src={product.image}
         alt={product.title}
         className="w-full h-70 p-8 object-contain shadow-sm hover:shadow-md transition"
-      />
+      /></Link>
 
       <h2 className="font-semibold mt-2 truncate">{product.title}</h2>
       <p className="text-gray-600">${product.price}</p>
