@@ -2,6 +2,10 @@
 import { GitCompareArrows, Heart, Menu, Search, ShoppingBag, UserRoundPen, X } from "lucide-react"
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
+import { useSelector } from "react-redux";
+
+
+
 
 
 
@@ -10,6 +14,18 @@ const Navbar = () => {
   const [menuBtn, setMenuBtn] = useState(false)
   const [search, setSearch] = useState(false)
 
+  const wishlistCount = useSelector(
+    (state: any) => state.wishlist?.items.length
+  );
+
+  const compareCount = useSelector(
+    (state: any) => state.compareList?.items.length
+  );
+
+  // if you have cart slice
+  const cartCount = useSelector(
+    (state: any) => state.cartList.items?.length || 0
+  );
 
   useEffect(() => {
     if (menuBtn) {
@@ -27,7 +43,7 @@ const Navbar = () => {
     <>
 
       <div className='flex justify-around items-center  p-3  text-gray-900 shadow-md  md:fixed bg-white top-0 left-0 right-0 z-10 ' >
-        <Link href='/'> <div className='text-4xl font-bold text-gray-900 hover:text-purple-500 hover:scale-105 '>
+        <Link href='/'> <div className='md:text-4xl text-2xl font-bold text-gray-900 hover:text-purple-500 hover:scale-105 '>
           Flone.
         </div>
         </Link>
@@ -86,9 +102,33 @@ const Navbar = () => {
             </div>
           </div>
 
-          <Link href='/compare' className="hover:text-purple-500 hover:scale-105"><GitCompareArrows /></Link>
-          <Link href='/wishlist' className="hover:text-purple-500 hover:scale-105"><Heart /></Link>
-          <Link href='/cart' className="hover:text-purple-500 hover:scale-105"><ShoppingBag /></Link>
+          <Link href="/compare" className="relative hover:text-purple-500 hover:scale-105">
+            <GitCompareArrows />
+
+            {compareCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                {compareCount}
+              </span>
+            )}
+          </Link>
+          <Link href="/wishlist" className="relative hover:text-purple-500 hover:scale-105">
+            <Heart />
+
+            {wishlistCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                {wishlistCount}
+              </span>
+            )}
+          </Link>
+          <Link href="/cart" className="relative hover:text-purple-500 hover:scale-105">
+            <ShoppingBag />
+
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                {cartCount}
+              </span>
+            )}
+          </Link>
           <div className="lg:hidden hover:text-purple-500 hover:scale-105"><button onClick={() => (setMenuBtn(!menuBtn))}><Menu /></button></div>
 
         </div>

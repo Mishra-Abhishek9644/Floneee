@@ -25,7 +25,7 @@ const Page = () => {
       {cartListItems.length === 0 ? (
         <div className="flex flex-col justify-center items-center gap-4 my-22">
           <ShoppingCart size={150} strokeWidth={0.75} />
-          
+
           <h2 className="text-md md:text-xl">
             No Items Found in Cart
           </h2>
@@ -82,15 +82,6 @@ const Page = () => {
                 >
                   <X />
                 </button>
-
-                {/* <button
-                  onClick={() =>
-                    dispatch(removeFromCartList(item.id))
-                  }
-                  className="absolute top-0 p-2 right-0  md:hidden text-black rounded-xl px-1 hover:scale-110 hover:text-purple-500"
-                >
-                  <X />
-                </button> */}
               </div>
             ))}
           </div>
@@ -103,11 +94,7 @@ const Page = () => {
               CONTINUE SHOPPING
             </Link>
 
-             <button
-              className="px-10 py-4 rounded-full flex justify-center  bg-gray-100 text-sm font-semibold my-2 hover:bg-purple-600 hover:text-white hover:scale-110 transition-all duration-300"
-            >
-              Check Out
-            </button>
+
 
             <button
               onClick={() => dispatch(clearCartList())}
@@ -116,6 +103,14 @@ const Page = () => {
               CLEAR WISHLIST
             </button>
           </div>
+
+          <Link href='/checkout'>
+            <button
+              className="px-10 py-4 rounded-full flex justify-center w-full  hover:bg-black text-lg font-semibold my-2 bg-purple-600 text-white hover:scale-95 m-1 transition-all duration-300"
+            >
+              Check Out
+            </button>
+          </Link>
         </div>
       )}
     </div>
