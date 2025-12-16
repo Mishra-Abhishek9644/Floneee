@@ -8,41 +8,55 @@ import React, { useEffect, useState } from 'react'
 const Navbar = () => {
   const [loginBtn, setLoginBtn] = useState(false)
   const [menuBtn, setMenuBtn] = useState(false)
+  const [search, setSearch] = useState(false)
 
 
   useEffect(() => {
-  if (menuBtn) {
-    document.body.style.overflow = "hidden"; // disable scroll
-  } else {
-    document.body.style.overflow = "auto"; // enable scroll back
-  }
+    if (menuBtn) {
+      document.body.style.overflow = "hidden"; // disable scroll
+    } else {
+      document.body.style.overflow = "auto"; // enable scroll back
+    }
 
-  // cleanup (optional but best practice)
-  return () => {
-    document.body.style.overflow = "auto";
-  };
-}, [menuBtn]);
+    // cleanup (optional but best practice)
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [menuBtn]);
   return (
     <>
 
       <div className='flex justify-around items-center  p-3  text-gray-900 shadow-md  md:fixed bg-white top-0 left-0 right-0 z-10 ' >
-      <Link href='/'> <div className='text-4xl font-bold text-gray-900 hover:text-purple-500 hover:scale-105 '>
+        <Link href='/'> <div className='text-4xl font-bold text-gray-900 hover:text-purple-500 hover:scale-105 '>
           Flone.
         </div>
-      </Link>
+        </Link>
         <div className='hidden lg:flex lg:flex-row lg:gap-8 lg:text-lg '>
-          <Link  className="hover:text-purple-500 hover:scale-105" href='/'>Home</Link>
-          <Link  className="hover:text-purple-500 hover:scale-105" href='/shop'>Shop</Link>
-          <Link  className="hover:text-purple-500 hover:scale-105" href='/shop'>Collection</Link>
-          <Link  className="hover:text-purple-500 hover:scale-105" href='/blog'>Blogs</Link>
-          <Link  className="hover:text-purple-500 hover:scale-105" href='/contact'>Contact Us</Link>
-          <Link  className="hover:text-purple-500 hover:scale-105" href='/'>Pages</Link>
+          <Link className="hover:text-purple-500 hover:scale-105" href='/'>Home</Link>
+          <Link className="hover:text-purple-500 hover:scale-105" href='/shop'>Shop</Link>
+          <Link className="hover:text-purple-500 hover:scale-105" href='/shop'>Collection</Link>
+          <Link className="hover:text-purple-500 hover:scale-105" href='/blog'>Blogs</Link>
+          <Link className="hover:text-purple-500 hover:scale-105" href='/contact'>Contact Us</Link>
+          <Link className="hover:text-purple-500 hover:scale-105" href='/'>Pages</Link>
 
         </div>
         <div className='flex gap-3 '>
           <div className="hidden md:flex gap-7 px-4">
 
-            <button className="hover:text-purple-500 hover:scale-105"><Search /></button>
+            <div className="relative">
+              <button className="flex items-center hover:text-purple-500 gap-2 hover:scale-105" onClick={() => setSearch(!search)}><Search /></button>
+
+
+              {search && (
+                <div className="absolute top-10 right-0 bg-white  rounded shadow p-3 mt-2  transition-all  overflow-hidden flex items-center  ">
+                  <div className="flex items-center border">
+                    <input type="text" placeholder="Seach..." className=" outline-hidden p-2" />
+                    <button className="flex items-center  gap-2 hover:scale-105 p-2 bg-purple-600 text-white"><Search /></button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="relative">
               <button className="flex items-center hover:text-purple-500 gap-2 hover:scale-105" onClick={() => setLoginBtn(!loginBtn)}>
                 <UserRoundPen />
@@ -72,9 +86,9 @@ const Navbar = () => {
             </div>
           </div>
 
-          <Link href='/compare'className="hover:text-purple-500 hover:scale-105"><GitCompareArrows /></Link>
-          <Link href='/wishlist'className="hover:text-purple-500 hover:scale-105"><Heart /></Link>
-          <Link href='/cart'className="hover:text-purple-500 hover:scale-105"><ShoppingBag /></Link>
+          <Link href='/compare' className="hover:text-purple-500 hover:scale-105"><GitCompareArrows /></Link>
+          <Link href='/wishlist' className="hover:text-purple-500 hover:scale-105"><Heart /></Link>
+          <Link href='/cart' className="hover:text-purple-500 hover:scale-105"><ShoppingBag /></Link>
           <div className="lg:hidden hover:text-purple-500 hover:scale-105"><button onClick={() => (setMenuBtn(!menuBtn))}><Menu /></button></div>
 
         </div>
@@ -96,7 +110,7 @@ const Navbar = () => {
               }}
               className="text-black rounded-xl px-1 hover:scale-110 hover:text-purple-500"><X /></button>
             <div className="bg-gray-200 items-center p-2 rounded-xl flex ">
-              <input type="text"className="grow min-w-0 outline-none bg-transparent" placeholder="Search..." />
+              <input type="text" className="grow min-w-0 outline-none bg-transparent" placeholder="Search..." />
               <button className="hover:text-purple-500 hover:scale-105 p-1"><Search size={18} /></button></div>
           </div>
           <div className='flex flex-col mt-5 gap-3'>
