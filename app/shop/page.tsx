@@ -18,7 +18,11 @@ const page = () => {
   const [modal, setModal] = useState(false)
 
   const [activeTab, setActiveTab] = useState<"small" | "mid" | "large">("mid");
-  
+
+  const ITEMS_PER_PAGE = 12;
+  const [currentPage, setCurrentPage] = useState(1);
+
+
 
 
   useEffect(() => {
@@ -38,8 +42,11 @@ const page = () => {
     ? data.filter(item => item.category === selectedCategory)
     : data;
 
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE);
 
-
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
 
   return (
 
@@ -65,11 +72,11 @@ const page = () => {
               <h1>Categories</h1>
               <div className='flex gap-3 my-1 text-lg'>
                 <button
-                      className={`border border-gray-400 px-3 py-2  rounded-md ${activeIndex === null ? "bg-purple-600" : ""
-                        }`}
-                      onClick={() => setActiveIndex(null)}
-                    />    
-                    <span>All</span> 
+                  className={`border border-gray-400 px-3 py-2  rounded-md ${activeIndex === null ? "bg-purple-600" : ""
+                    }`}
+                  onClick={() => setActiveIndex(null)}
+                />
+                <span>All</span>
               </div>
               <div>
                 {uniqueCategories.map((category, index) => (
@@ -101,29 +108,49 @@ const page = () => {
                 <button className={activeTab === 'small' ? "text-purple-600 font-bold" : "text-gray-500 hover:text-purple-600"} onClick={() => setActiveTab("small")}><Logs /></button>
               </div>
             </div>
-             {activeTab === "large" && ( 
-            <div className='grid grid-cols-2 '>
-              {filteredData.slice(0,12).map((item) => (
-                <Card key={item.id} product={item} onOpen={() => (setSelectedProduct(item), setModal(true))} />
-              ))}
-            </div>)}
+            {activeTab === "large" && (
+              <div className='grid grid-cols-2 '>
+                {paginatedData.map((item) => (
+                  <Card key={item.id} product={item} onOpen={() => (setSelectedProduct(item), setModal(true))} />
+                ))}
+              </div>)}
 
 
-            {activeTab === "mid" && ( 
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 '>
-              {filteredData.slice(0,12).map((item) => (
-                <Card key={item.id} product={item} onOpen={() => (setSelectedProduct(item), setModal(true))} />
-              ))}
-            </div>)}
+            {activeTab === "mid" && (
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 '>
+                {paginatedData.map((item) => (
+                  <Card key={item.id} product={item} onOpen={() => (setSelectedProduct(item), setModal(true))} />
+                ))}
+              </div>)}
 
-            {activeTab === "small" && ( 
-            <div className=' '>
-              {filteredData.slice(0,12).map((item) => (
-                <LongCard key={item.id} product={item} onOpen={() => (setSelectedProduct(item), setModal(true))} />
-              ))}
-            </div>)}
+            {activeTab === "small" && (
+              <div className=' '>
+                {paginatedData.map((item) => (
+                  <LongCard key={item.id} product={item} onOpen={() => (setSelectedProduct(item), setModal(true))} />
+                ))}
+              </div>)}
           </div>
         </div>
+        <div className="flex justify-center gap-4 mt-12">
+          {Array.from({ length: totalPages }).map((_, index) => {
+            const page = index + 1;
+
+            return (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-medium
+          ${currentPage === page
+                    ? "bg-purple-600 text-white"
+                    : "bg-white border border-gray-300 text-purple-600 hover:bg-purple-50"
+                  }`}
+              >
+                {page}
+              </button>
+            );
+          })}
+        </div>
+
 
       </div>
     </>

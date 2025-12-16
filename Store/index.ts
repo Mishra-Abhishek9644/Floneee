@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import wishlistReducer from "./Slices/wishlistSlice";
+import comparelistReducer from "./Slices/compareSlice"
 
 export const store = configureStore({
   reducer: {
-    wishlist: wishlistReducer, // 👈 THIS LINE FIXES EVERYTHING
+    wishlist: wishlistReducer,
+    compareList: comparelistReducer,
   },
 });
 
@@ -13,6 +15,13 @@ store.subscribe(() => {
   localStorage.setItem(
     "wishlist",
     JSON.stringify(state.wishlist.items)
+  );
+});
+store.subscribe(() => {
+  const state = store.getState();
+  localStorage.setItem(
+    "compareList",
+    JSON.stringify(state.compareList.items)
   );
 });
 

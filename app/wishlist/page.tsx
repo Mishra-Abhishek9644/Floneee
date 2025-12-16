@@ -66,10 +66,11 @@ const Page = () => {
                 </div>
 
                 <div  className="flex justify-center">€{item.price}</div>
-
+                <Link href={`/shop/product/${item.id}`}>
                 <button className="bg-purple-600 flex justify-center rounded-2xl w-[90%] hover:bg-gray-800   text-white px-3 py-2 text-xs md:text-sm font-semibold">
                   SELECT OPTION
                 </button>
+                </Link>
 
                 <button
                   onClick={() =>
