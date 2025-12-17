@@ -1,19 +1,22 @@
 "use client";
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Card from './Card';
 import { Product } from "../type/Product";
 import { Circle, Dribbble, Facebook, GitCompareArrows, Heart, Instagram, Linkedin, Star, Twitter } from 'lucide-react';
-import { UseSelector, useDispatch } from 'react-redux';
-import { addToCompareList } from '@/Store/Slices/compareSlice';
-import { addToCartList } from '@/Store/Slices/cartSlice';
+import { UseSelector, useDispatch, useSelector } from 'react-redux';
+import { addToCompareList, removeFromCompareList } from '@/Store/Slices/compareSlice';
+import { addToCartList, removeFromCartList } from '@/Store/Slices/cartSlice';
 
 import toast from "react-hot-toast";
+import { addToWishlist, removeFromWishlist } from '@/Store/Slices/wishlistSlice';
 
 
 interface ProductDetailsProps {
     id: number
 
 }
+const colors = ["white", "black", "red"];
+const sizes = ["X", "M", "XL", "XXL"];
 
 
 const ProductDetails = ({ id }: ProductDetailsProps) => {
@@ -25,29 +28,75 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
     const [qty, setQty] = useState(1);
     const [show, setShow] = useState("1st");
 
-    const increase = () => setQty(qty + 1);
-    const decrease = () => { if (qty > 1) setQty(qty - 1); }
-
     useEffect(() => {
         fetch(`https://fakestoreapi.com/products/${id}`)
             .then(response => response.json())
             .then(product => setProduct(product));
     }, [id])
+
     useEffect(() => {
         fetch("https://fakestoreapi.com/products")
             .then(response => response.json())
             .then(data => setData(data));
     }, [])
-    if (!product) return null;
 
-    const handleAddToCompare = () => {
-        dispatch(addToCompareList(product));
-        toast.success("Added to Compare List ❤️");
+    const [selectedColor, setSelectedColor] = useState(colors[0]);
+    const [selectedSize, setSelectedSize] = useState(sizes[0]);
+
+    const wishlistItems = useSelector((state: any) => state.wishlist.items || []);
+    const compareItems = useSelector((state: any) => state.compareList.items || []);
+
+    const isInWishlist = wishlistItems.some((i: any) => i.id === product?.id);
+    const isInCompare = compareItems.some((i: any) => i.id === product?.id);
+
+    const debounceRef = useRef(false);
+
+    if (!open || !product) return null;
+
+    const increase = () => qty < 9 && setQty(qty + 1);
+    const decrease = () => qty > 1 && setQty(qty - 1);
+
+    /* ---------------- WISHLIST ---------------- */
+    const handleWishlistToggle = () => {
+        if (debounceRef.current) return;
+        debounceRef.current = true;
+
+        if (isInWishlist) {
+            dispatch(removeFromWishlist(product.id));
+            toast.success("Removed from wishlist 💔");
+        } else {
+            dispatch(addToWishlist(product));
+            toast.success("Added to wishlist ❤️");
+        }
+
+        setTimeout(() => (debounceRef.current = false), 300);
     };
 
+    /* ---------------- COMPARE ---------------- */
+    const handleCompareToggle = () => {
+        if (debounceRef.current) return;
+        debounceRef.current = true;
+
+        if (isInCompare) {
+            dispatch(removeFromCompareList(product.id));
+            toast.success("Removed from Compare 💔");
+        } else {
+            dispatch(addToCompareList(product));
+            toast.success("Added to Compare ❤️");
+        }
+
+        setTimeout(() => (debounceRef.current = false), 300);
+    };
+
+    /* ---------------- CART (WITH QTY + COLOR + SIZE) ---------------- */
     const handleAddToCart = () => {
+        if (debounceRef.current) return;
+        debounceRef.current = true;
+
         dispatch(addToCartList(product));
         toast.success("Added to Cart ❤️");
+
+        setTimeout(() => (debounceRef.current = false), 1000);
     };
 
     return (
@@ -72,22 +121,40 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
                         <div className='lg:text-2xl'>{product.title}</div>
                         <div className='text-2xl text-red-500 py-2'>${product.price}</div>
                         <div className='text-md border-b pb-8 border-gray-300  leading-7'>{product.description}</div>
-                        <div className='flex justify-start items-center py-10'>
-                            <div className='px-2'>
-                                <h3 className='pb-2 font-semibold'>Color</h3>
-                                <div>
-                                    <button className='rounded-full mx-1 focus:border-2'><Circle size={16} fill='white' className='rounded-full ' /></button>
-                                    <button className='rounded-full mx-1 focus:border-2'><Circle size={16} fill='black' className='rounded-full ' /></button>
-                                    <button className='rounded-full mx-1 focus:border-2'><Circle size={16} fill='red' className='rounded-full ' /></button>
+                        <div className='flex justify-start gap-4 items-center py-10'>
+                            {/* COLOR */}
+                            <div>
+                                <h3 className="font-semibold mb-2">Color</h3>
+                                <div className="flex gap-2">
+                                    {colors.map((c) => (
+                                        <button
+                                            key={c}
+                                            onClick={() => setSelectedColor(c)}
+                                            className={`cursor-pointer border  rounded-full p-1 ${selectedColor === c ? "border-purple-600" : "border-white"
+                                                }`}
+                                        >
+                                            <Circle size={16} fill={c} />
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
-                            <div className='px-2'>
-                                <h3 className='pb-2 font-semibold'>Size</h3>
-                                <div>
-                                    <button className='mx-1 p-2 bg-gray-300 text-xs focus:bg-purple-600 focus:text-white hover:bg-purple-600 hover:text-white cursor-pointer'>X</button>
-                                    <button className='mx-1 p-2 bg-gray-300 text-xs focus:bg-purple-600 focus:text-white hover:bg-purple-600 hover:text-white cursor-pointer'>M</button>
-                                    <button className='mx-1 p-2 bg-gray-300 text-xs focus:bg-purple-600 focus:text-white hover:bg-purple-600 hover:text-white cursor-pointer'>XL</button>
-                                    <button className='mx-1 p-2 bg-gray-300 text-xs focus:bg-purple-600 focus:text-white hover:bg-purple-600 hover:text-white cursor-pointer'>XXL</button>
+
+                            {/* SIZE */}
+                            <div>
+                                <h3 className="font-semibold mb-2">Size</h3>
+                                <div className="flex gap-2">
+                                    {sizes.map((s) => (
+                                        <button
+                                            key={s}
+                                            onClick={() => setSelectedSize(s)}
+                                            className={`px-3 py-2 cursor-pointer text-xs border ${selectedSize === s
+                                                ? "bg-purple-600 text-white"
+                                                : "bg-gray-200"
+                                                }`}
+                                        >
+                                            {s}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -101,8 +168,8 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
                             <div>
                                 <button className="bg-gray-800 text-white py-4 px-10 uppercase cursor-pointer font-bold hover:bg-purple-600 hover:border-purple-600 transition-all duration-700" onClick={handleAddToCart}>Add To Cart</button>
                             </div>
-                            <div className='hover:text-purple-600 cursor-pointer mx-3'><Heart /></div>
-                            <div className='hover:text-purple-600 cursor-pointer' onClick={handleAddToCompare}><GitCompareArrows /></div>
+                            <div className='hover:text-purple-600 cursor-pointer mx-3' onClick={handleWishlistToggle}><Heart /></div>
+                            <div className='hover:text-purple-600 cursor-pointer' onClick={handleCompareToggle}><GitCompareArrows /></div>
                         </div>
 
                         <div className='my-8 leading-8'>

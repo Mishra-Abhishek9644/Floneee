@@ -11,18 +11,15 @@ import LongCard from '@/components/LongCard';
 
 const page = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState<"" | "high" | "low">("");
 
   const [data, setData] = useState<Product[]>([])
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-
   const [modal, setModal] = useState(false)
-
   const [activeTab, setActiveTab] = useState<"small" | "mid" | "large">("mid");
-
-  const ITEMS_PER_PAGE = 12;
+  const ITEMS_PER_PAGE = 4;
   const [currentPage, setCurrentPage] = useState(1);
-
-
 
 
   useEffect(() => {
@@ -38,11 +35,27 @@ const page = () => {
   const selectedCategory =
     activeIndex !== null ? uniqueCategories[activeIndex] : null;
 
-  const filteredData = selectedCategory
-    ? data.filter(item => item.category === selectedCategory)
-    : data;
+  const filteredData = data.filter((item) => {
+    const matchesCategory =
+      activeIndex !== null
+        ? item.category === uniqueCategories[activeIndex]
+        : true;
 
-  const paginatedData = filteredData.slice(
+    const matchesSearch =
+      item.title.toLowerCase().includes(search.toLowerCase()) ||
+      item.category.toLowerCase().includes(search.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
+
+  const sortedData = [...filteredData].sort((a, b) => {
+    if (sortOrder === "high") return b.price - a.price;
+    if (sortOrder === "low") return a.price - b.price;
+    return 0;
+  });
+
+
+  const paginatedData = sortedData.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE);
 
@@ -65,8 +78,16 @@ const page = () => {
           <div className='flex flex-col gap-4'>
             <h1 className='text-lg'>Search</h1>
             <div className="bg-white border border-gray-200 items-center p-2  flex col-span-1/3 ">
-              <input type="text" className="grow min-w-0 outline-none bg-transparent" placeholder="Search here..." />
-              <button className="hover:text-purple-500 hover:scale-105 p-1"><Search size={18} /></button>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="grow min-w-0 outline-none bg-transparent"
+                placeholder="Search by name or category..."
+              />
             </div>
             <div className='flex flex-col mt-8'>
               <h1>Categories</h1>
@@ -95,11 +116,17 @@ const page = () => {
           <div>
             <div className='flex justify-around items-center'>
               <div className=''>
-                <select name="" id="" className=''>
+                <select value={sortOrder} onChange={(e) => {
+                  setSortOrder(e.target.value as "" | "high" | "low");
+                  setCurrentPage(1);
+                }}
+                  className="border px-3 py-1 rounded"
+                >
                   <option value="">Default</option>
-                  <option value="">Price - Hight to Low</option>
-                  <option value="">Price - Low to High</option>
+                  <option value="high">Price - High to Low</option>
+                  <option value="low">Price - Low to High</option>
                 </select>
+
               </div>
 
               <div className='flex gap-3'>

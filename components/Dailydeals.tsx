@@ -37,13 +37,13 @@ const DailyDeals = () => {
                     <div className='w-10 md:w-20'><hr className='border rounded-2xl' /></div>
                 </div>
                 <div className='flex justify-center text-sm gap-2 md:w-xl mx-auto my-10 md:text-xl  text-gray-500 md:gap-14'>
-                    <button className={activeTab === 'new' ? "text-black font-bold" : "text-gray-500 hover:text-black"} onClick={() => setActiveTab("new")}>New Arrivals</button>
-                    <button className={activeTab === 'best' ? "text-black font-bold" : "text-gray-500 hover:text-black"} onClick={() => setActiveTab("best")}>Best Sellers</button>
-                    <button className={activeTab === 'sale' ? "text-black font-bold" : "text-gray-500 hover:text-black"} onClick={() => setActiveTab("sale")}>Sale Items</button>
+                    <button className={activeTab === 'new' ? "text-black font-medium" : "text-gray-500 hover:text-black"} onClick={() => setActiveTab("new")}>New Arrivals</button>
+                    <button className={activeTab === 'best' ? "text-black font-medium" : "text-gray-500 hover:text-black"} onClick={() => setActiveTab("best")}>Best Sellers</button>
+                    <button className={activeTab === 'sale' ? "text-black font-medium" : "text-gray-500 hover:text-black"} onClick={() => setActiveTab("sale")}>Sale Items</button>
                 </div>
                 {activeTab === "new" && (
                     <div className='grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4 justify-center items-center mx-auto xl:px-40'>
-                        {data.slice(0, 20).map((item) => (
+                        {data.slice(0, 4).map((item) => (
                             <Card key={item.id} product={item} onOpen={() => (setSelectedProduct(item), setModal(true))}
                             />
 
@@ -52,7 +52,7 @@ const DailyDeals = () => {
 
                 {activeTab === "best" && (
                     <div className='grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4 justify-center items-center mx-auto xl:px-40'>
-                        {data.slice(0, 8).map((item) => (
+                        {data.slice(4, 8).map((item) => (
                             <Card key={item.id} product={item} onOpen={() => (setSelectedProduct(item), setModal(true))}
                             />
 
@@ -61,7 +61,7 @@ const DailyDeals = () => {
 
                 {activeTab === "sale" && (
                     <div className='grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4 justify-center items-center mx-auto xl:px-40'>
-                        {data.slice(0, 12).map((item) => (
+                        {data.slice(8, 12).map((item) => (
                             <Card key={item.id} product={item} onOpen={() => (setSelectedProduct(item), setModal(true))}
 
                             />

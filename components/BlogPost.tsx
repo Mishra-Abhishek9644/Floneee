@@ -34,7 +34,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ id }) => {
 
     if (loading) {
         return (
-            <div className="max-w-7xl mx-auto py-20 text-center">
+            <div className="max-w-7xl mx-auto py-12 text-center">
                 Loading...
             </div>
         );

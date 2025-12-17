@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Poppins, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import store from "@/Store";
 import ReduxProvider from "./providers";
+import PageLoader from "@/components/PageLoader";
 
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+/* Load Poppins (global font) */
+const poppins = Poppins({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
+/* Optional: Mono font for code */
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -24,17 +24,19 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        className={`${poppins.className} font-sans antialiased`}
+      >
         <ReduxProvider>
-        <Navbar />
-        {children}
-        <Footer />
+          <PageLoader />
+          <Navbar />
+          {children}
+          <Footer />
         </ReduxProvider>
       </body>
     </html>

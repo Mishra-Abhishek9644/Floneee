@@ -42,20 +42,20 @@ const Navbar = () => {
   return (
     <>
 
-      <div className='flex justify-around items-center  p-3  text-gray-900 shadow-md  md:fixed bg-white top-0 left-0 right-0 z-10 ' >
-        <Link href='/'> <div className='md:text-4xl text-2xl font-bold text-gray-900 hover:text-purple-500 hover:scale-105 '>
+      <div className='flex justify-between items-center md:px-20 px-5 py-5 text-gray-900 shadow-md  fixed bg-white top-0 left-0 right-0 z-10 ' >
+        <Link href='/'> <div className='text-4xl font-bold text-gray-900 hover:text-purple-500 hover:scale-105 '>
           Flone.
         </div>
         </Link>
-        <div className='hidden lg:flex lg:flex-row lg:gap-8 lg:text-lg '>
-          <Link className="hover:text-purple-500 hover:scale-105" href='/'>Home</Link>
-          <Link className="hover:text-purple-500 hover:scale-105" href='/shop'>Shop</Link>
-          <Link className="hover:text-purple-500 hover:scale-105" href='/shop'>Collection</Link>
-          <Link className="hover:text-purple-500 hover:scale-105" href='/blog'>Blogs</Link>
-          <Link className="hover:text-purple-500 hover:scale-105" href='/contact'>Contact Us</Link>
-          <Link className="hover:text-purple-500 hover:scale-105" href='/'>Pages</Link>
 
+        <div className='hidden lg:flex lg:flex-row lg:gap-8 lg:text-[15px] '>
+          <Link className="text-[#555252] hover:text-purple-600" href='/'>Home</Link>
+          <Link className="text-[#555252] hover:text-purple-600" href='/shop'>Shop</Link>
+          <Link className="text-[#555252] hover:text-purple-600" href='/blog'>Blogs</Link>
+          <Link className="text-[#555252] hover:text-purple-600" href='/about'>About Us</Link>
+          <Link className="text-[#555252] hover:text-purple-600" href='/contact'>Contact Us</Link>
         </div>
+
         <div className='flex gap-3 '>
           <div className="hidden md:flex gap-7 px-4">
 
@@ -126,7 +126,6 @@ const Navbar = () => {
           </Link>
           <Link href="/cart" className="relative hover:text-purple-500 hover:scale-105">
             <ShoppingBag />
-
             {cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                 {cartCount}
@@ -167,8 +166,7 @@ const Navbar = () => {
             <Link className="hover:text-purple-500 hover:scale-105" href='/login'>Login</Link>
             <Link className="hover:text-purple-500 hover:scale-105" href='/register'>Register</Link>
           </div>
-          <div></div>
-          <div></div>
+          
         </div>
       )}
     </>

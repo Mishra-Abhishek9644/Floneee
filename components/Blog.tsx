@@ -10,7 +10,7 @@ const Blog = () => {
                 <div className='grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-2  place-content-center md:px-32'>
                     <div className='relative flex justify-center my-10'>
                         <div className='overflow-hidden w-fit'>
-                            <img src="https://flone.jamstacktemplates.dev/assets/img/blog/blog-1.jpg" className='scale-100 transition-all duration-500 object-cover hover:scale-125' alt="image" />
+                            <img src="https://flone.jamstacktemplates.dev/assets/img/blog/blog-1.jpg" className='scale-100 transition-all duration-1000 object-cover hover:scale-125' alt="image" />
                         </div>
                         <div className='text-center bg-white absolute -bottom-14 px-14 left-1/2 -translate-x-2/4  py-5 w-[300px]'>
                             <h2 className='text-xl font-medium'>A guide to latest trends</h2>
@@ -19,7 +19,7 @@ const Blog = () => {
                     </div>
                     <div className='relative flex justify-center my-10'>
                         <div className='overflow-hidden w-fit'>
-                            <img src="https://flone.jamstacktemplates.dev/assets/img/blog/blog-2.jpg" className='scale-100 transition-all duration-500 object-cover hover:scale-125' alt="image" />
+                            <img src="https://flone.jamstacktemplates.dev/assets/img/blog/blog-2.jpg" className='scale-100 transition-all duration-1000 object-cover hover:scale-125' alt="image" />
                         </div>
                         <div className='text-center bg-white absolute -bottom-14 px-14 left-1/2 -translate-x-2/4  py-5 w-[300px]'>
                             <h2 className='text-xl font-medium'>Five ways to lead a happy life</h2>
@@ -28,7 +28,7 @@ const Blog = () => {
                     </div>
                     <div className='relative flex justify-center my-10'>
                         <div className='overflow-hidden w-fit'>
-                            <img src="https://flone.jamstacktemplates.dev/assets/img/blog/blog-3.jpg" className='scale-100 transition-all duration-500 object-cover hover:scale-125' alt="image" />
+                            <img src="https://flone.jamstacktemplates.dev/assets/img/blog/blog-3.jpg" className='scale-100 transition-all duration-1000 object-cover hover:scale-125' alt="image" />
                         </div>
                         <div className='text-center bg-white absolute -bottom-14 px-14 left-1/2 -translate-x-2/4  py-5 w-[300px]'>
                             <h2 className='text-xl font-medium'>Tips on having a happy life</h2>
