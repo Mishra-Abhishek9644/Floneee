@@ -32,12 +32,12 @@ const Carousle = () => {
       <div className="flex h-full transition-transform duration-700 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }} >
         {slides.map((slide, index) => (
           <div key={index} className="w-full h-full flex flex-col md:flex-row items-center justify-center shrink-0">
-            <div className="lg:w-[50%] md:w-[50%] w-full text-center md:text-start lg:pl-52 md:pl-20 px-5 lg:py-40 md:py-20 py-10" >
+            <div className=" md:w-[50%] w-full text-center md:text-start lg:pl-48 md:pl-20 px-5 lg:py-40 md:py-20 py-10" >
               <p className="lg:text-3xl md:text-2xl text-lg py-3">
                 {slide.title}
               </p>
 
-              <h2 className="lg:text-7xl md:text-5xl text-3xl pt-3 pb-6 px-5 md:px-0 md:mb-5" >
+              <h2 className="lg:text-6xl md:text-4xl text-3xl pt-3 pb-6 md:px-0 md:mb-5" >
                 {slide.subtitle}
               </h2>
 
@@ -47,7 +47,7 @@ const Carousle = () => {
               </Link>
             </div>
 
-            <div className="lg:w-[50%] md:w-[50%] w-full flex justify-center lg:p-10 md:p-6 px-8" >
+            <div className=" md:w-[50%] w-full flex justify-center lg:p-10 md:p-6 px-8" >
               <img src={slide.img} className="w-full max-h-[450px] md:max-h-full object-contain" alt="Slide" />
             </div>
           </div>

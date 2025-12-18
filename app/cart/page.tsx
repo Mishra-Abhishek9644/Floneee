@@ -68,7 +68,7 @@ const Page = () => {
                   {item.title}
                 </div>
 
-                <div className="flex justify-center">€{item.price}</div>
+                <div className="flex justify-center">${item.price}</div>
                 <div className="flex justify-center items-center border border-gray-300 px-1 py-3 ">
                   <button onClick={decrease} className="text-xl md:px-2 cursor-pointer">-</button>
                   <span className="px-4 font-mono">{qty}</span>
@@ -100,7 +100,7 @@ const Page = () => {
               onClick={() => dispatch(clearCartList())}
               className="px-10 py-4 rounded-full flex justify-center  bg-gray-100 text-sm font-semibold my-2 hover:bg-purple-600 hover:text-white hover:scale-110 transition-all duration-300"
             >
-              CLEAR WISHLIST
+              CLEAR CartList
             </button>
           </div>
 

@@ -1,104 +1,131 @@
 "use client";
 import { Eye, Heart } from "lucide-react";
-import React from "react";
-import { Product } from "../type/Product";
+import React, { useRef } from "react";
 import Link from "next/link";
-import { UseSelector, useDispatch } from "react-redux";
-import { addToWishlist } from "@/Store/Slices/wishlistSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "@/Store/Slices/wishlistSlice";
 import toast from "react-hot-toast";
 
-
-interface CardProps {
-  product: Product;
-  onOpen: () => void;
+interface cardProp {
+  product: any;
+  onOpen: any;
 }
 
-const Card: React.FC<CardProps> = ({ product, onOpen, }) => {
+const Card = ({ product, onOpen }: cardProp) => {
+  const dispatch = useDispatch();
+  const wishlistItems = useSelector((state: any) => state.wishlist.items);
 
-  const dispatch = useDispatch()
+  const isInWishlist = wishlistItems.some(
+    (item: any) => item.id === product.id
+  );
 
-  const handleAddToWishlist = () => {
-    dispatch(addToWishlist(product));
-    toast.success("Added to wishlist ❤️");
+  // ⏳ debounce ref (3 seconds)
+  const debounceRef = useRef(false);
+
+  const handleWishlistToggle = () => {
+    if (debounceRef.current) return;
+
+    debounceRef.current = true;
+
+    if (isInWishlist) {
+      dispatch(removeFromWishlist(product.id));
+      toast.success("Removed from wishlist 💔");
+    } else {
+      dispatch(addToWishlist(product));
+      toast.success("Added to wishlist ❤️");
+    }
+
+    setTimeout(() => {
+      debounceRef.current = false;
+    }, 3000); // 3 seconds debounce
   };
 
   return (
-    <div className="p-4 flex flex-col mt-3 justify-center group relative z-0 hover:scale-95">
-      <Link href={`/shop/product/${product.id}`}>
-        <img
-          src={product.image}
-          alt={product.title}
-          className="w-full h-70 p-8 object-contain shadow-sm hover:shadow-md transition"
-        /></Link>
+    <>
+      <div className="p-4 flex flex-col mt-3 justify-center group relative z-0">
+        <div className="overflow-hidden border border-gray-100 bg-[#f6f6f6] shadow-md p-5">
+          <Link href={`/shop/product/${product.id}`}>
+            <img
+              src={product.image}
+              alt={product.title}
+              className="w-full h-70 p-8 object-contain scale-100 hover:scale-110 duration-700 transition"
+            />
+          </Link>
+        </div>
+          <h2 className="font-semibold mt-2 truncate">{product.title}</h2>
+          <p className="text-gray-600">${product.price}</p>
 
-      <h2 className="font-semibold mt-2 truncate">{product.title}</h2>
-      <p className="text-gray-600">${product.price}</p>
-
-      {/* Hover overlay */}
-      {/* Hover overlay */}
-      <div
-        className="
-    absolute inset-x-0 bottom-4 h-12
-    hidden items-center
-    bg-purple-500
-    opacity-0 group-hover:opacity-100
-    translate-y-3 group-hover:translate-y-0
-    transition-all duration-300 ease-out
-    md:flex 
-    z-10
-  "
-      >
-        {/* BTN 1 - Heart */}
-        <button
-          onClick={handleAddToWishlist}
+        {/* Hover overlay */}
+        <div
           className="
-      w-12 h-full
-      flex items-center justify-center
-      text-white
-      opacity-0 group-hover:opacity-100
-      translate-y-2 group-hover:translate-y-0
-      transition-all duration-300 ease-out delay-100
-      hover:bg-black
-    "
+          absolute inset-x-0 bottom-18 h-12 mx-4
+          hidden items-center
+          bg-purple-500
+          opacity-0 group-hover:opacity-100
+          translate-y-3 group-hover:translate-y-0
+          transition-all duration-700 ease-out
+          md:flex 
+          z-10
+        "
         >
-          <Heart size={18} />
-        </button>
+          {/* ❤️ Wishlist */}
+          <button
+            onClick={handleWishlistToggle}
+            className={`
+            w-12 h-full
+            flex items-center justify-center
+            text-white
+            opacity-0 group-hover:opacity-100
+            translate-y-2 group-hover:translate-y-0
+            transition-all duration-300 ease-out delay-100
+            hover:bg-black ${isInWishlist ? "bg-black " : ""}
+          `}
+          >
+            <Heart
+              size={18}
+              className={isInWishlist ? "fill-white " : ""}
+            />
+          </button>
 
-        {/* BTN 2 - Select Option */}
-        <Link
-          href={`/shop/product/${product.id}`}
-          className="
-      flex-1 h-full
-      flex items-center justify-center
-      text-white text-sm
-      opacity-0 group-hover:opacity-100
-      translate-y-2 group-hover:translate-y-0
-      transition-all duration-300 ease-out delay-200
-      hover:bg-black
-    "
-        >
-          Select Option
-        </Link>
+          {/* Select Option */}
+          <Link
+            href={`/shop/product/${product.id}`}
+            className="
+            flex-1 h-full
+            flex items-center justify-center
+            text-white text-sm
+            opacity-0 group-hover:opacity-100
+            translate-y-2 group-hover:translate-y-0
+            transition-all duration-300 ease-out delay-200
+            hover:bg-black border-x border-white/60
+          "
+          >
+            Select Option
+          </Link>
 
-        {/* BTN 3 - Eye */}
-        <button
-          onClick={onOpen}
-          className="
-      w-12 h-full
-      flex items-center justify-center
-      text-white
-      opacity-0 group-hover:opacity-100
-      translate-y-2 group-hover:translate-y-0
-      transition-all duration-300 ease-out delay-300
-      hover:bg-black
-    "
-        >
-          <Eye size={18} />
-        </button>
+          {/* Eye */}
+          <button
+            onClick={onOpen}
+            className="
+            w-12 h-full
+            flex items-center justify-center
+            text-white
+            opacity-0 group-hover:opacity-100
+            translate-y-2 group-hover:translate-y-0
+            transition-all duration-300 ease-out delay-300
+            hover:bg-black
+          "
+          >
+            <Eye size={18} />
+          </button>
+        </div>
       </div>
 
+    </>
 
-    </div>
   );
 };
 

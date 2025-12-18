@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react'
 const Page = () => {
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
+  const [search, setSearch] = useState("");
   const [data, setData] = useState<Product[]>([])
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
@@ -25,24 +25,37 @@ const Page = () => {
   const selectedCategory =
     activeIndex !== null ? categories[activeIndex] : null;
 
-  const filteredData = selectedCategory
-    ? data.filter(item => item.category === selectedCategory)
-    : data;
+  const filteredData = data.filter((item) => {
+    const matchesCategory =
+      activeIndex !== null
+        ? item.category === categories[activeIndex]
+        : true;
+
+    const matchesSearch =
+      item.title.toLowerCase().includes(search.toLowerCase()) ||
+      item.category.toLowerCase().includes(search.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
+
+
 
   return (
     <>
       <Breadcrumb />
 
-      <div className='max-w-7xl mx-auto md:px-20 px-5 w-full md:py-20 py-5'>
+      <div className=' container md:px-20 px-5 w-full md:py-20 py-5'>
         <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-6">
 
           <div>
             <div className='flex flex-col gap-4'>
               <h1 className='text-lg'>Search</h1>
               <div className="bg-white border border-gray-200 items-center p-2  flex col-span-1/3 ">
-                <input type="text" className="grow min-w-0 outline-none bg-transparent px-2" placeholder="Search here..." />
-                <button className="hover:text-purple-500 hover:scale-105 p-1 border-l pl-4"><Search size={18} />
-                </button>
+                <input type="text" value={search} onChange={(e) => { setSearch(e.target.value); }}
+                  className="grow min-w-0 outline-none bg-transparent"
+                  placeholder="Search by name or category..."
+                />
+
               </div>
 
               <div className='flex flex-col mt-8'>
@@ -116,7 +129,7 @@ const Page = () => {
           </div>
 
         </div>
-      </div>
+      </div >
     </>
   )
 }

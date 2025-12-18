@@ -12,7 +12,7 @@ const Footer = () => {
         </div>
         <div className='flex flex-col leading-8 pb-5'>
           <h3 className='text-gray-900 text-md'>ABUOT US</h3>
-          <Link href="/" className='text-gray-500 hover:text-purple-500 cursor-pointer'>About us</Link>
+          <Link href="/about" className='text-gray-500 hover:text-purple-500 cursor-pointer'>About us</Link>
           <Link href="/contact" className='text-gray-500 hover:text-purple-500 cursor-pointer'>Store location</Link>
           <Link href="/contact" className='text-gray-500 hover:text-purple-500 cursor-pointer'>Contact</Link>
           <Link href="/shop" className='text-gray-500 hover:text-purple-500 cursor-pointer'>Orders Tracking</Link>
