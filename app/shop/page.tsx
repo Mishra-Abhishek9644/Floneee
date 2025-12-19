@@ -7,10 +7,15 @@ import { Product } from "@/type/Product";
 import Card from '@/components/Card';
 import Modal from '@/components/Modal';
 import LongCard from '@/components/LongCard';
+import { useRouter, useSearchParams } from "next/navigation";
+
 
 
 const page = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const searchParams = useSearchParams();
+  const searchFromUrl = searchParams.get("search") || "";
+
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState<"" | "high" | "low">("");
 
@@ -20,6 +25,10 @@ const page = () => {
   const [activeTab, setActiveTab] = useState<"small" | "mid" | "large">("mid");
   const ITEMS_PER_PAGE = 4;
   const [currentPage, setCurrentPage] = useState(1);
+    const router = useRouter();
+  
+
+  
 
 
   useEffect(() => {
@@ -54,6 +63,12 @@ const page = () => {
     return 0;
   });
 
+  useEffect(() => {
+  setSearch(searchFromUrl);
+  setCurrentPage(1);
+}, [searchFromUrl]);
+
+
 
   const paginatedData = sortedData.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -84,6 +99,7 @@ const page = () => {
                 onChange={(e) => {
                   setSearch(e.target.value);
                   setCurrentPage(1);
+                  router.push(`/shop?search=${encodeURIComponent(e.target.value)}`)
                 }}
                 className="grow min-w-0 outline-none bg-transparent"
                 placeholder="Search by name or category..."

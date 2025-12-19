@@ -50,15 +50,17 @@ const Page = () => {
               <div className="flex justify-center">ACTION</div>
             </div>
 
-            {cartListItems.map((item: any) => (
+            {cartListItems.map((item: any, index: number) => (
+              
+
               <div
-                key={item.id}
+                key={item.id ?? `cart-${index}`}
                 className="grid grid-cols-1  md:grid-cols-6 items-center px-6 py-6 border-y border-gray-200 relative gap-3 md:gap-0"
               >
                 <div className="flex justify-center bg-gray-100 h-30  items-center">
                   <img
                     src={item.image}
-                    alt={item.name}
+                    alt={item.title}
                     className="w-20 h-24 object-contain "
                   />
                 </div>

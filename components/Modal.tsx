@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToWishlist, removeFromWishlist } from "@/Store/Slices/wishlistSlice";
 import { addToCompareList, removeFromCompareList } from "@/Store/Slices/compareSlice";
 import { addToCartList, removeFromCartList } from "@/Store/Slices/cartSlice";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 
 
 interface ModalProps {
@@ -98,7 +98,13 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
         }
         debounceRef.current = true;
 
-        dispatch(addToCartList(product));
+        dispatch(
+            addToCartList({
+                product,
+                quantity: qty,
+            })
+        );
+
         toast.success("Added to Cart ❤️");
 
 

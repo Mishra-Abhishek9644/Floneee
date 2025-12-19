@@ -4,7 +4,8 @@ import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from "react-redux";
 import { logout } from '@/Store/Slices/loginSlice'
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+
 
 
 
@@ -15,9 +16,12 @@ import { usePathname } from "next/navigation";
 const Navbar = () => {
   const [loginBtn, setLoginBtn] = useState(false)
   const [menuBtn, setMenuBtn] = useState(false)
-  const [search, setSearch] = useState(false)
+  const [seearch, setSeearch] = useState(false)
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
+  const [search, setSearch] = useState("");
+  const router = useRouter();
+
 
   useEffect(() => {
     setMenuBtn(false);
@@ -38,7 +42,11 @@ const Navbar = () => {
 
   // if you have cart slice
   const cartCount = useSelector(
-    (state: any) => state.cartList.items?.length || 0
+    (state: any) => state.cartList.items.reduce(
+  (total: number, item: any) => total + item.quantity,
+  0
+)
+
   );
 
   useEffect(() => {
@@ -70,6 +78,13 @@ const Navbar = () => {
     };
   }, []);
 
+  const handleSearch = () => {
+    if (!search.trim()) return;
+
+    router.push(`/shop?search=${encodeURIComponent(search)}`)
+    setSearch("");
+    setSeearch(!seearch)
+  }
   return (
     <>
 
@@ -91,12 +106,19 @@ const Navbar = () => {
           <div className="hidden md:flex gap-7 px-4">
 
             <div className="relative">
-              <button className="flex items-center hover:text-purple-500 gap-2 hover:scale-105" onClick={() => setSearch(!search)}><Search /></button>
-              {search && (
+              <button className="flex items-center hover:text-purple-500 gap-2 hover:scale-105" onClick={() => setSeearch(!seearch)}><Search /></button>
+              {seearch && (
                 <div className="absolute top-10 right-0 bg-white  rounded shadow p-3 mt-2  transition-all  overflow-hidden flex items-center  ">
                   <div className="flex items-center border">
-                    <input type="text" placeholder="Seach..." className=" outline-hidden p-2" />
-                    <button onClick={() => setSearch(!search)} className="flex items-center  gap-2 hover:scale-105 p-2 bg-purple-600 text-white"><Search /></button>
+                    <input type="text"
+                      placeholder="Search products..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSearch();
+                      }} 
+                      className=" outline-hidden p-2" />
+                    <button onClick={handleSearch}  className="flex items-center  gap-2 hover:scale-105 p-2 bg-purple-600 text-white"><Search /></button>
                   </div>
                 </div>
               )}
@@ -111,7 +133,7 @@ const Navbar = () => {
               </button>
 
               {loginBtn && (
-                <div className="absolute top-11 right-0 bg-white border rounded shadow p-3 mt-2 w-[130px]">
+                <div className="absolute top-11 right-0 bg-white border rounded shadow p-3 mt-2 w-32.5">
                   {!user ? (
                     <>
                       <Link
