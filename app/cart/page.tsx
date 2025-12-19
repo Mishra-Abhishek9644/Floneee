@@ -4,6 +4,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  updateCartQuantity,
   removeFromCartList,
   clearCartList,
 } from "@/Store/Slices/cartSlice";
@@ -15,9 +16,7 @@ const Page = () => {
   const cartListItems = useSelector(
     (state: any) => state.cartList.items
   );
-  const [qty, setQty] = useState(1);
-  const increase = () => setQty(qty + 1);
-  const decrease = () => { if (qty > 1) setQty(qty - 1); }
+
   return (
     <div className="">
       <Breadcrumb />
@@ -70,9 +69,23 @@ const Page = () => {
 
                 <div className="flex justify-center">${item.price}</div>
                 <div className="flex justify-center items-center border border-gray-300 px-1 py-3 ">
-                  <button onClick={decrease} className="text-xl md:px-2 cursor-pointer">-</button>
-                  <span className="px-4 font-mono">{qty}</span>
-                  <button onClick={increase} className="text-xl md:px-2 cursor-pointer">+</button>
+                  <button onClick={() =>
+                    dispatch(
+                      updateCartQuantity({
+                        id: item.id,
+                        quantity: item.quantity - 1,
+                      })
+                    )
+                  } className="text-xl md:px-2 cursor-pointer">-</button>
+                  <span className="px-4 font-mono">{item.quantity}</span>
+                  <button onClick={() =>
+                    dispatch(
+                      updateCartQuantity({
+                        id: item.id,
+                        quantity: item.quantity + 1,
+                      })
+                    )
+                  } className="text-xl md:px-2 cursor-pointer">+</button>
                 </div>
                 <button
                   onClick={() =>

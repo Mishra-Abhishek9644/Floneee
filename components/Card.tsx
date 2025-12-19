@@ -8,6 +8,8 @@ import {
   removeFromWishlist,
 } from "@/Store/Slices/wishlistSlice";
 import toast from "react-hot-toast";
+import { login } from "@/Store/Slices/loginSlice";
+import { useRouter } from "next/navigation"; 
 
 interface cardProp {
   product: any;
@@ -21,16 +23,27 @@ const Card = ({ product, onOpen }: cardProp) => {
   const isInWishlist = wishlistItems.some(
     (item: any) => item.id === product.id
   );
+  
+  const currentUser  = useSelector((state: any) => state.login.currentUser)
+  const isLoggedIn = Boolean(currentUser);
+  const router = useRouter();
+
 
   // ⏳ debounce ref (3 seconds)
   const debounceRef = useRef(false);
 
   const handleWishlistToggle = () => {
     if (debounceRef.current) return;
+    
+        if(!isLoggedIn){
+          toast.error("Login To Continue")
+          router.push("/login");
+          return;
+        }
 
     debounceRef.current = true;
 
-    if (isInWishlist) {
+    if (isInWishlist ) {
       dispatch(removeFromWishlist(product.id));
       toast.success("Removed from wishlist 💔");
     } else {

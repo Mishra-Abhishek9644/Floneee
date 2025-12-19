@@ -1,8 +1,11 @@
 "use client";
 import { GitCompareArrows, Heart, Menu, Search, ShoppingBag, UserRoundPen, X } from "lucide-react"
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from "react-redux";
+import { logout } from '@/Store/Slices/loginSlice'
+import { usePathname } from "next/navigation";
+
 
 
 
@@ -13,6 +16,17 @@ const Navbar = () => {
   const [loginBtn, setLoginBtn] = useState(false)
   const [menuBtn, setMenuBtn] = useState(false)
   const [search, setSearch] = useState(false)
+  const userMenuRef = useRef<HTMLDivElement | null>(null);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setMenuBtn(false);
+    document.body.style.overflow = "auto";
+  }, [pathname]);
+
+  const user = useSelector(
+    (state: any) => state.login.currentUser
+  );
 
   const wishlistCount = useSelector(
     (state: any) => state.wishlist?.items.length
@@ -39,6 +53,23 @@ const Navbar = () => {
       document.body.style.overflow = "auto";
     };
   }, [menuBtn]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setLoginBtn(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
 
@@ -71,38 +102,47 @@ const Navbar = () => {
               )}
             </div>
 
-            <div className="relative">
+            <div ref={userMenuRef} className="relative">
               <button
                 className="flex items-center hover:text-purple-500 gap-2 hover:scale-105"
-                onClick={() => setLoginBtn(!loginBtn)}
+                onClick={() => setLoginBtn(prev => !prev)}
               >
                 <UserRoundPen />
               </button>
 
               {loginBtn && (
-                <div className="absolute top-11 right-0 bg-white border rounded shadow p-3 mt-2 transition-all w-[130px]">
+                <div className="absolute top-11 right-0 bg-white border rounded shadow p-3 mt-2 w-[130px]">
+                  {!user ? (
+                    <>
+                      <Link
+                        href="/login"
+                        onClick={() => setLoginBtn(false)}
+                        className="block mt-1 hover:text-purple-600"
+                      >
+                        Login
+                      </Link>
 
-                  <button
-                    onClick={() => setLoginBtn(false)}
-                    className="block min-w-full text-left mt-1 hover:text-purple-600 hover:pl-2 transition-all duration-300 ease-out"
-                  >
-                    <Link href="/login">
-                      Login
+                      <Link
+                        href="/register"
+                        onClick={() => setLoginBtn(false)}
+                        className="block mt-1 hover:text-purple-600"
+                      >
+                        Register
+                      </Link>
+                    </>
+                  ) : (
+                    <Link
+                      href="/account"
+                      onClick={() => setLoginBtn(false)}
+                      className="block mt-1 hover:text-purple-600"
+                    >
+                      My Account
                     </Link>
-                  </button>
-
-                  <button
-                    onClick={() => setLoginBtn(false)}
-                    className="block min-w-full text-left mt-1 hover:text-purple-600 hover:pl-2 transition-all duration-300 ease-out"
-                  >
-                    <Link href="/register">
-                      Register
-                    </Link>
-                  </button>
-
+                  )}
                 </div>
               )}
             </div>
+
 
           </div>
 
@@ -166,7 +206,7 @@ const Navbar = () => {
             <Link className="hover:text-purple-500 hover:scale-105" href='/login'>Login</Link>
             <Link className="hover:text-purple-500 hover:scale-105" href='/register'>Register</Link>
           </div>
-          
+
         </div>
       )}
     </>

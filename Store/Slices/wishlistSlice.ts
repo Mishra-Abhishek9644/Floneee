@@ -1,6 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Product } from "@/type/Product";
 
+
+
+
 interface wishListState {
   items: Product[];   // change this type according to your needs
 }
