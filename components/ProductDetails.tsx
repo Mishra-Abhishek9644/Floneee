@@ -9,6 +9,8 @@ import { addToCartList, removeFromCartList } from '@/Store/Slices/cartSlice';
 
 import toast from "react-hot-toast";
 import { addToWishlist, removeFromWishlist } from '@/Store/Slices/wishlistSlice';
+import { useRouter } from "next/navigation";
+
 
 
 interface ProductDetailsProps {
@@ -50,6 +52,9 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
     const isInCompare = compareItems.some((i: any) => i.id === product?.id);
 
     const debounceRef = useRef(false);
+    const currentUser = useSelector((state: any) => state.login.currentUser)
+    const isLoggedIn = Boolean(currentUser);
+    const router = useRouter();
 
     if (!open || !product) return null;
 
@@ -57,8 +62,15 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
     const decrease = () => qty > 1 && setQty(qty - 1);
 
     /* ---------------- WISHLIST ---------------- */
+
+
     const handleWishlistToggle = () => {
         if (debounceRef.current) return;
+        if (!isLoggedIn) {
+            toast.error("Login To Continue")
+            router.push("/login");
+            return;
+        }
         debounceRef.current = true;
 
         if (isInWishlist) {
@@ -75,6 +87,11 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
     /* ---------------- COMPARE ---------------- */
     const handleCompareToggle = () => {
         if (debounceRef.current) return;
+        if (!isLoggedIn) {
+            toast.error("Login To Continue")
+            router.push("/login");
+            return;
+        }
         debounceRef.current = true;
 
         if (isInCompare) {
@@ -91,9 +108,17 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
     /* ---------------- CART (WITH QTY + COLOR + SIZE) ---------------- */
     const handleAddToCart = () => {
         if (debounceRef.current) return;
+        if (!isLoggedIn) {
+            toast.error("Login To Continue")
+            router.push("/login");
+            return;
+        }
         debounceRef.current = true;
 
-        dispatch(addToCartList(product));
+        dispatch(addToCartList({
+            product,
+            quantity: qty,
+        }));
         toast.success("Added to Cart ❤️");
 
         setTimeout(() => (debounceRef.current = false), 1000);

@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToWishlist, removeFromWishlist } from "@/Store/Slices/wishlistSlice";
 import { addToCompareList, removeFromCompareList } from "@/Store/Slices/compareSlice";
 import { addToCartList, removeFromCartList } from "@/Store/Slices/cartSlice";
+import { useRouter } from "next/navigation"; 
+
 
 interface ModalProps {
     open: boolean;
@@ -32,6 +34,9 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
     const isInCompare = compareItems.some((i: any) => i.id === product?.id);
 
     const debounceRef = useRef(false);
+    const currentUser = useSelector((state: any) => state.login.currentUser)
+    const isLoggedIn = Boolean(currentUser);
+    const router = useRouter();
 
     if (!open || !product) return null;
 
@@ -41,6 +46,12 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
     /* ---------------- WISHLIST ---------------- */
     const handleWishlistToggle = () => {
         if (debounceRef.current) return;
+        if (!isLoggedIn) {
+            toast.error("Login To Continue")
+            router.push("/login");
+            return;
+        }
+
         debounceRef.current = true;
 
         if (isInWishlist) {
@@ -57,6 +68,13 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
     /* ---------------- COMPARE ---------------- */
     const handleCompareToggle = () => {
         if (debounceRef.current) return;
+
+        if (!isLoggedIn) {
+            toast.error("Login To Continue")
+            router.push("/login");
+            return;
+        }
+
         debounceRef.current = true;
 
         if (isInCompare) {
@@ -73,6 +91,11 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
     /* ---------------- CART (WITH QTY + COLOR + SIZE) ---------------- */
     const handleAddToCart = () => {
         if (debounceRef.current) return;
+        if (!isLoggedIn) {
+            toast.error("Login To Continue")
+            router.push("/login");
+            return;
+        }
         debounceRef.current = true;
 
         dispatch(addToCartList(product));
