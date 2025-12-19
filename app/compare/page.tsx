@@ -38,7 +38,7 @@ const page = () => {
               <tr className='bg-gray-200'>
                 <th className="bg-gray-200 sm:flex justify-start  p-4 text-left px-4 md:w-xs  whitespace-nowrap overflow-hidden text-ellipsis hidden">Product Info</th>
                 {CompareList.map((product: any) => (
-                  <td key={product.id} className="p-6 bg-white text-center relative min-w-[280px]">
+                  <td key={product.id} className="p-6 bg-white text-center relative min-w-70">
 
                     {/* REMOVE */}
                     <button
@@ -51,7 +51,7 @@ const page = () => {
                     <img src={product.image} alt={product.title} className='h-40 mx-auto object-contain' />
 
                     {/* TITLE */}
-                    <h3 className="md:col-span-2 max-w-[220px] text-center mx-auto truncate">
+                    <h3 className="md:col-span-2 max-w-55 text-center mx-auto truncate">
                       {product.title}
                     </h3>
 
@@ -72,7 +72,7 @@ const page = () => {
                 </th>
 
                 {CompareList.map((product: any) => (
-                  <td key={product.id} className="p-6 bg-white text-center relative min-w-[280px]">
+                  <td key={product.id} className="p-6 bg-white text-center relative min-w-70">
                     ₹{product.price}
                   </td>
                 ))}
@@ -85,7 +85,7 @@ const page = () => {
                 </th>
 
                 {CompareList.map((product: any) => (
-                  <td key={product.id} className="p-6 bg-white text-center relative min-w-[280px]">
+                  <td key={product.id} className="p-6 bg-white text-center relative min-w-70">
                     {product.description}
                   </td>
                 ))}
@@ -98,7 +98,7 @@ const page = () => {
                 </th>
 
                 {CompareList.map((product: any) => (
-                  <td key={product.id} className="p-6 bg-white text-center relative min-w-[280px]">
+                  <td key={product.id} className="p-6 bg-white text-center relative min-w-70">
                     ⭐ {product.rating?.rate}
                   </td>
                 ))}
