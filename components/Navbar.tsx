@@ -11,8 +11,6 @@ import { usePathname, useRouter } from "next/navigation";
 
 
 
-
-
 const Navbar = () => {
   const [loginBtn, setLoginBtn] = useState(false)
   const [menuBtn, setMenuBtn] = useState(false)
@@ -21,6 +19,15 @@ const Navbar = () => {
   const pathname = usePathname();
   const [search, setSearch] = useState("");
   const router = useRouter();
+
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+
+ 
 
 
   useEffect(() => {
@@ -43,9 +50,9 @@ const Navbar = () => {
   // if you have cart slice
   const cartCount = useSelector(
     (state: any) => state.cartList.items.reduce(
-  (total: number, item: any) => total + item.quantity,
-  0
-)
+      (total: number, item: any) => total + item.quantity,
+      0
+    )
 
   );
 
@@ -85,6 +92,10 @@ const Navbar = () => {
     setSearch("");
     setSeearch(!seearch)
   }
+
+   if (!isClient) {
+    return null
+  }
   return (
     <>
 
@@ -116,9 +127,9 @@ const Navbar = () => {
                       onChange={(e) => setSearch(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") handleSearch();
-                      }} 
+                      }}
                       className=" outline-hidden p-2" />
-                    <button onClick={handleSearch}  className="flex items-center  gap-2 hover:scale-105 p-2 bg-purple-600 text-white"><Search /></button>
+                    <button onClick={handleSearch} className="flex items-center  gap-2 hover:scale-105 p-2 bg-purple-600 text-white"><Search /></button>
                   </div>
                 </div>
               )}

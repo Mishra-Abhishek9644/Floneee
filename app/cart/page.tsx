@@ -75,7 +75,7 @@ const Page = () => {
                     dispatch(
                       updateCartQuantity({
                         id: item.id,
-                        quantity: item.quantity - 1,
+                        quantity: item.quantity > 1 ? item.quantity - 1 : 1,
                       })
                     )
                   } className="text-xl md:px-2 cursor-pointer">-</button>

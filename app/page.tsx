@@ -9,7 +9,8 @@ import Blog from "@/components/Blog";
 import { useEffect } from "react";
 
 export default function Home() {
-if (typeof window == 'undefined') null
+  if (typeof window == 'undefined') null;
+
   return (
     <>
       <Carousle />
