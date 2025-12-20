@@ -105,25 +105,28 @@ const Page = () => {
                   setSelectedProduct(item)
                 }}
               >
-                <div className=' overflow-hidden'>
-                  <img src={item.image} className="h-60 bg-gray-300 w-full p-2 mx-auto object-contain scale-100 hover:scale-105 duration-500" />
-                </div>
-                <div className='py-5 px-3'>
-                  <p className='text-sm text-gray-600'>22 April, 2024 - 4 </p>
-                  <h3 className="text-lg font-bold line-clamp-1 my-2">{item.title}</h3>
-                  <p className="line-clamp-3">{item.description}</p>
-                  <div className='flex justify-between px-2 pt-5 pb-3'>
-                    <Link href={`/blog/post/${item.id}`} className='font-semibold'>Read More</Link>
-                    <button className='flex'> Share : &nbsp;
-                      <span className='grid grid-cols-3 gap-2'>
-                        <Facebook className='bg-blue-700 p-1 fill-white rounded-full hover:bg-white hover:fill-blue-700 border hover:border hover:border-blue-700 ' />
-                        <Twitter className='bg-sky-600 p-1 fill-white rounded-full hover:bg-white hover:fill-sky-600 border hover:border hover:border-sky-600 ' />
-                        <Instagram className='bg-pink-600 p-1 fill-white rounded-full hover:bg-white hover:fill-pink-600 border hover:border hover:border-pink-600 ' />
-                      </span>
-                    </button>
+                <Link href={`/blog/post/${item.id}`}>
 
+                  <div className=' overflow-hidden'>
+                    <img src={item.image} className="h-60 bg-gray-300 w-full p-2 mx-auto object-contain scale-100 hover:scale-105 duration-500" />
                   </div>
-                </div>
+
+                  <div className='py-5 px-3'>
+                    <p className='text-sm text-gray-600'>22 April, 2024 - 4 </p>
+                    <h3 className="text-lg font-bold line-clamp-1 my-2">{item.title}</h3>
+                    <p className="line-clamp-3">{item.description}</p>
+                    <div className='flex justify-between px-2 pt-5 pb-3'>
+                      <button className='font-semibold cursor-pointer'>Read More</button>
+                      <button className='flex '> Share : &nbsp;
+                        <span className='grid grid-cols-3 gap-2'>
+                          <Facebook className='bg-blue-700 p-1 fill-white rounded-full hover:bg-white hover:fill-blue-700 border hover:border hover:border-blue-700 ' />
+                          <Twitter className='bg-sky-600 p-1 fill-white rounded-full hover:bg-white hover:fill-sky-600 border hover:border hover:border-sky-600 ' />
+                          <Instagram className='bg-pink-600 p-1 fill-white rounded-full hover:bg-white hover:fill-pink-600 border hover:border hover:border-pink-600 ' />
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </Link>
               </div>
             ))}
           </div>
