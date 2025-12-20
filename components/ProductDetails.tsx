@@ -43,6 +43,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
             .then(data => setData(data));
     }, [])
 
+    const pathname = usePathname();
     const [selectedColor, setSelectedColor] = useState(colors[0]);
     const [selectedSize, setSelectedSize] = useState(sizes[0]);
 
@@ -57,7 +58,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
     const isLoggedIn = Boolean(currentUser);
     const router = useRouter();
 
-    if (!open || !product) return null;
+    if (!product) return null;
 
     const increase = () => qty < 9 && setQty(qty + 1);
     const decrease = () => qty > 1 && setQty(qty - 1);
@@ -125,7 +126,6 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
         setTimeout(() => (debounceRef.current = false), 1000);
     };
 
-    const pathname = usePathname();
 
 
     return (
