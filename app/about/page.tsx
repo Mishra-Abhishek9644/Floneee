@@ -92,7 +92,7 @@ const page = () => {
                         <p className='text-sm'>Lorem ipsum dolor sit amet conse ctetu.</p>
 
                         <div className='md:mt-20 mt-5'>
-                            <div className='grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-8'>
+                            <div className='grid  md:grid-cols-2 grid-cols-1 gap-8'>
                                 <div className='bg-[#f7f7f7]'>
                                     <img src="https://flone.jamstacktemplates.dev/assets/img/team/team-1.jpg" className='' alt="image" />
                                     <div className='py-5'>
@@ -109,7 +109,7 @@ const page = () => {
                                     </div>
                                 </div>
 
-                                <div className='bg-[#f7f7f7]'>
+                                {/* <div className='bg-[#f7f7f7]'>
                                     <img src="https://flone.jamstacktemplates.dev/assets/img/team/team-1.jpg" className='' alt="image" />
                                     <div className='py-5'>
                                         <h1 className='text-xl font-bold '>Mishra Abhishek</h1>
@@ -123,7 +123,7 @@ const page = () => {
                                         <h1 className='text-xl font-bold '>Yadav Avanish</h1>
                                         <p className='italic'>Web Developer</p>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

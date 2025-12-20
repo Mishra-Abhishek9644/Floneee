@@ -2,14 +2,15 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Card from './Card';
 import { Product } from "../type/Product";
-import { Circle, Dribbble, Facebook, GitCompareArrows, Heart, Instagram, Linkedin, Star, Twitter } from 'lucide-react';
+import { Circle, Dribbble, Facebook, GitCompareArrows, Heart, Instagram, Linkedin, MoveLeft, Star, Twitter } from 'lucide-react';
 import { UseSelector, useDispatch, useSelector } from 'react-redux';
 import { addToCompareList, removeFromCompareList } from '@/Store/Slices/compareSlice';
 import { addToCartList, removeFromCartList } from '@/Store/Slices/cartSlice';
 
 import toast from "react-hot-toast";
 import { addToWishlist, removeFromWishlist } from '@/Store/Slices/wishlistSlice';
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import Link from 'next/link';
 
 
 
@@ -124,11 +125,28 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
         setTimeout(() => (debounceRef.current = false), 1000);
     };
 
+    const pathname = usePathname();
+
+
     return (
         <>
             <section className='my-10 lg:mx-44 md:mx-28 sm:mx-10 '>
+
                 {/* first seciton */}
+                {pathname.startsWith("/shop/product/") && (
+                    <>
+                        <div className=" border w-fit py-1 px-3 hover:text-purple-600 ">
+                            <Link href="/shop" className="flex items-center gap-2">
+                                <MoveLeft size={18} />
+                                Back
+                            </Link>
+                        </div>
+                    </>
+                )}
+
                 <div className='grid md:grid-cols-2 sm:grid-cols-1 gap-4 place-content-center py-16'>
+
+
                     <div>
                         <div>
                             <img src={product?.image} className='bg-[#f6f6f6] w-full p-28' alt="product-iamge" />

@@ -1,8 +1,9 @@
 "use client";
 import Breadcrumb from '@/components/Breadcrumb'
 import { Product } from '@/type/Product';
-import { Check, Facebook, Instagram, Search, Twitter } from 'lucide-react';
+import { Check, Facebook, Instagram, MoveLeft, Search, Twitter } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
 const BlogLeftSidebar = () => {
@@ -27,16 +28,36 @@ const BlogLeftSidebar = () => {
         ? data.filter(item => item.category === selectedCategory)
         : data;
 
+    const pathname = usePathname();
+
     return (
         <>
 
             <div>
                 <div className='flex flex-col gap-4'>
-                    <h1 className='text-lg'>Search</h1>
-                    <div className="bg-white border border-gray-200 items-center p-2  flex col-span-1/3 ">
-                        <input type="text" className="grow min-w-0 outline-none bg-transparent px-2" placeholder="Search here..." />
-                        <button className="hover:text-purple-500 hover:scale-105 p-1 border-l pl-4"><Search size={18} /></button>
-                    </div>
+                    {pathname === "/blog" ? (
+                        <>
+                            <h1 className="text-lg">Search</h1>
+                            <div className="bg-white border border-gray-200 items-center p-2 flex col-span-1/3">
+                                <input
+                                    type="text"
+                                    className="grow min-w-0 outline-none bg-transparent px-2"
+                                    placeholder="Search here..."
+                                />
+                                <button className="hover:text-purple-500 hover:scale-105 p-1 border-l pl-4">
+                                    <Search size={18} />
+                                </button>
+                            </div>
+                        </>
+                    ) : (
+                        <div className=" border w-fit py-1 px-3 hover:text-purple-600 ">
+                            <Link href="/blog" className="flex items-center gap-2">
+                                <MoveLeft size={18} />
+                                Back
+                            </Link>
+                        </div>
+                    )}
+
 
                     <div className='flex flex-col mt-8'>
                         <h1 className='text-lg font-semibold'>Recents Projects</h1>
