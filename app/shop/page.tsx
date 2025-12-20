@@ -6,5 +6,6 @@ export default function Page() {
     <Suspense fallback={<div>Loading products...</div>}>
       <ShopClient />
     </Suspense>
+    // {}
   );
 }
