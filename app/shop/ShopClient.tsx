@@ -8,14 +8,13 @@ import Card from '@/components/Card';
 import Modal from '@/components/Modal';
 import LongCard from '@/components/LongCard';
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
-const ShopClient = ({
-  searchParams,
-}: {
-  searchParams: { search?: string };
-}) => {
+
+const ShopClient = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const searchFromUrl = searchParams?.search || "";
+  const searchParams = useSearchParams();
+  const searchFromUrl = searchParams.get("search") || "";
 
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState<"" | "high" | "low">("");
@@ -109,9 +108,8 @@ const ShopClient = ({
 
               <div className='flex gap-3 my-1 text-lg'>
                 <button
-                  className={`border border-gray-400 px-3 py-2 rounded-md ${
-                    activeIndex === null ? "bg-purple-600" : ""
-                  }`}
+                  className={`border border-gray-400 px-3 py-2 rounded-md ${activeIndex === null ? "bg-purple-600" : ""
+                    }`}
                   onClick={() => setActiveIndex(null)}
                 />
                 <span>All</span>
@@ -120,9 +118,8 @@ const ShopClient = ({
               {uniqueCategories.map((category, index) => (
                 <div className='flex gap-3 my-2 text-lg' key={category}>
                   <button
-                    className={`border border-gray-400 px-3 py-2 rounded-md ${
-                      activeIndex === index ? "bg-purple-600" : ""
-                    }`}
+                    className={`border border-gray-400 px-3 py-2 rounded-md ${activeIndex === index ? "bg-purple-600" : ""
+                      }`}
                     onClick={() => setActiveIndex(index)}
                   />
                   <span>{category}</span>
@@ -195,11 +192,10 @@ const ShopClient = ({
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
-                className={`w-12 h-12 rounded-full ${
-                  currentPage === page
+                className={`w-12 h-12 rounded-full ${currentPage === page
                     ? "bg-purple-600 text-white"
                     : "bg-white border text-purple-600"
-                }`}
+                  }`}
               >
                 {page}
               </button>

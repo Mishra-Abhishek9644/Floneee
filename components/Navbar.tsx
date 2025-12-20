@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from "react-redux";
 import { logout } from '@/Store/Slices/loginSlice'
 import { usePathname, useRouter } from "next/navigation";
+import { Fascinate } from "next/font/google";
 
 
 
@@ -15,19 +16,22 @@ const Navbar = () => {
   const [loginBtn, setLoginBtn] = useState(false)
   const [menuBtn, setMenuBtn] = useState(false)
   const [seearch, setSeearch] = useState(false)
-  const userMenuRef = useRef<HTMLDivElement | null>(null);
-  const pathname = usePathname();
   const [search, setSearch] = useState("");
+  const [isClient, setIsClient] = useState(false)
+
+  const userMenuRef = useRef<HTMLDivElement | null>(null);
+  const searchRef = useRef<HTMLDivElement | null>(null);
+
+  const pathname = usePathname();
   const router = useRouter();
 
-  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
     setIsClient(true)
   }, [])
 
 
- 
+
 
 
   useEffect(() => {
@@ -79,9 +83,9 @@ const Navbar = () => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, []);
 
@@ -90,10 +94,26 @@ const Navbar = () => {
 
     router.push(`/shop?search=${encodeURIComponent(search)}`)
     setSearch("");
-    setSeearch(!seearch)
+    setSeearch(false)
   }
 
-   if (!isClient) {
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
+        setSeearch(false);
+      }
+    }
+    document.addEventListener("click", handleClickOutside)
+    return () => {
+      document.removeEventListener("click", handleClickOutside)
+    }
+  }, [])
+
+
+  if (!isClient) {
     return null
   }
   return (
@@ -116,20 +136,29 @@ const Navbar = () => {
         <div className='flex gap-3 '>
           <div className="hidden md:flex gap-7 px-4">
 
-            <div className="relative">
-              <button className="flex items-center hover:text-purple-500 gap-2 hover:scale-105" onClick={() => setSeearch(!seearch)}><Search /></button>
+            <div ref={searchRef} className="relative">
+              <button className="flex items-center hover:text-purple-500 gap-2 hover:scale-105" onClick={(e) => {
+                e.stopPropagation();
+                setSeearch(true);
+              }}><Search /></button>
               {seearch && (
                 <div className="absolute top-10 right-0 bg-white  rounded shadow p-3 mt-2  transition-all  overflow-hidden flex items-center  ">
                   <div className="flex items-center border">
                     <input type="text"
                       placeholder="Search products..."
+                      onClick={(e) => e.stopPropagation()}
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") handleSearch();
                       }}
                       className=" outline-hidden p-2" />
-                    <button onClick={handleSearch} className="flex items-center  gap-2 hover:scale-105 p-2 bg-purple-600 text-white"><Search /></button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSearch();
+                      }}
+                      className="flex items-center  gap-2 hover:scale-105 p-2 bg-purple-600 text-white"><Search /></button>
                   </div>
                 </div>
               )}
