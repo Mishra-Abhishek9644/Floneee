@@ -7,10 +7,18 @@ import { signup } from '@/Store/Slices/loginSlice'
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 
+interface RegisterForm {
+  username: string;
+  email: string;
+  password: string;
+  password2: string;
+}
+
+
 
 const page = () => {
   const dispatch = useDispatch()
-  const { register, reset, handleSubmit } = useForm()
+  const { register, reset, handleSubmit, formState: { errors } } = useForm<RegisterForm>()
 
   const { users } = useSelector(
     (state: any) => state.login
@@ -57,29 +65,62 @@ const page = () => {
               <div className="grid grid-cols-1 gap-4">
 
                 <input
-                  type="username"
-                  className="py-2 sm:w-md w-full px-3 outline-hidden border border-gray-300"
+                  type="text"
+                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${errors.username ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Username"
-                  {...register("username", { required: true })}
+                  {...register("username", { required: "Username is required" })}
                 />
+                {errors.username && (
+                  <p className="text-red-500 text-sm">{errors.username.message}</p>
+                )}
+
                 <input
                   type="email"
-                  className="py-2 sm:w-md w-full px-3 outline-hidden border border-gray-300"
+                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${errors.email ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Email"
-                  {...register("email", { required: true })}
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                      message: "Enter a valid email",
+                    },
+                  })}
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-sm">{errors.email.message}</p>
+                )}
+
                 <input
                   type="password"
-                  className="py-2 sm:w-md w-full px-3 outline-hidden border border-gray-300"
+                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${errors.password ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Password"
-                  {...register("password", { required: true })}
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  })}
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-sm">{errors.password.message}</p>
+                )}
+
                 <input
-                  type="password2"
-                  className="py-2 sm:w-md w-full px-3 outline-hidden border border-gray-300"
+                  type="password"
+                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${errors.password2 ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Enter Password Again"
-                  {...register("password2", { required: true })}
+                  {...register("password2", {
+                    required: "Please confirm your password",
+                  })}
                 />
+                {errors.password2 && (
+                  <p className="text-red-500 text-sm">{errors.password2.message}</p>
+                )}
               </div>
 
               <div className="mt-10">

@@ -9,6 +9,8 @@ import Modal from '@/components/Modal';
 import LongCard from '@/components/LongCard';
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
+import ReactPaginate from "react-paginate";
+
 
 
 const ShopClient = () => {
@@ -25,7 +27,7 @@ const ShopClient = () => {
   const [activeTab, setActiveTab] = useState<"small" | "mid" | "large">("mid");
 
   const ITEMS_PER_PAGE = 4;
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const router = useRouter();
 
   /* ---------------- FETCH DATA ---------------- */
@@ -38,7 +40,7 @@ const ShopClient = () => {
   /* ---------------- URL → STATE ---------------- */
   useEffect(() => {
     setSearch(searchFromUrl);
-    setCurrentPage(1);
+    setCurrentPage(0);
   }, [searchFromUrl]);
 
   const uniqueCategories = Array.from(
@@ -65,11 +67,15 @@ const ShopClient = () => {
   });
 
   const paginatedData = sortedData.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+    currentPage * ITEMS_PER_PAGE,
+    (currentPage + 1) * ITEMS_PER_PAGE);
 
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+
+  const handlePageChange = (selectedItem: { selected: number }) => {
+    setCurrentPage(selectedItem.selected);
+  };
+
 
   return (
     <>
@@ -186,21 +192,21 @@ const ShopClient = () => {
         </div>
 
         <div className="flex justify-center gap-4 mt-12">
-          {Array.from({ length: totalPages }).map((_, index) => {
-            const page = index + 1;
-            return (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`w-12 h-12 rounded-full ${currentPage === page
-                    ? "bg-purple-600 text-white"
-                    : "bg-white border text-purple-600"
-                  }`}
-              >
-                {page}
-              </button>
-            );
-          })}
+          <ReactPaginate
+            previousLabel="←"
+            nextLabel="→"
+            breakLabel="..."
+            pageCount={Math.ceil(sortedData.length / ITEMS_PER_PAGE)}
+            onPageChange={handlePageChange}
+            forcePage={currentPage}   // ✅ ADD THIS
+            containerClassName="flex justify-center gap-3 mt-12"
+            pageClassName="w-10 h-10 flex items-center justify-center border rounded-full cursor-pointer"
+            activeClassName="bg-purple-600 text-white"
+            previousClassName="px-3 py-2 border rounded cursor-pointer"
+            nextClassName="px-3 py-2 border rounded cursor-pointer"
+            disabledClassName="opacity-50 cursor-not-allowed"
+          />
+
         </div>
       </div>
     </>
