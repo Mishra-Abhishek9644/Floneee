@@ -6,11 +6,22 @@ import { useDispatch, useSelector } from 'react-redux'
 import { signup } from '@/Store/Slices/loginSlice'
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
+import { useRouter } from 'next/navigation';
+
+
+interface RegisterForm {
+  username: string;
+  email: string;
+  password: string;
+  password2: string;
+}
+
 
 
 const page = () => {
   const dispatch = useDispatch()
-  const { register, reset, handleSubmit } = useForm()
+  const { register, reset, handleSubmit,formState: { errors } } = useForm<RegisterForm>()
+  const route = useRouter()
 
   const { users } = useSelector(
     (state: any) => state.login

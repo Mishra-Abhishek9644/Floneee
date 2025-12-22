@@ -30,6 +30,9 @@ const ShopClient = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const router = useRouter();
 
+  const pageFromUrl = Number(searchParams.get("page")) || 1;
+
+
   /* ---------------- FETCH DATA ---------------- */
   useEffect(() => {
     fetch('https://fakestoreapi.com/products')
@@ -40,8 +43,8 @@ const ShopClient = () => {
   /* ---------------- URL → STATE ---------------- */
   useEffect(() => {
     setSearch(searchFromUrl);
-    setCurrentPage(0);
-  }, [searchFromUrl]);
+    setCurrentPage(pageFromUrl - 1);
+  }, [searchFromUrl, pageFromUrl]);
 
   const uniqueCategories = Array.from(
     new Set(data.map(item => item.category))
@@ -73,7 +76,10 @@ const ShopClient = () => {
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
 
   const handlePageChange = (selectedItem: { selected: number }) => {
-    setCurrentPage(selectedItem.selected);
+    const newPage = selectedItem.selected
+    setCurrentPage(newPage);
+
+    router.push(`/shop?search=${encodeURIComponent(search)}&page=${newPage + 1}`, { scroll: false })
   };
 
 
@@ -101,8 +107,8 @@ const ShopClient = () => {
                 value={search}
                 onChange={(e) => {
                   setSearch(e.target.value);
-                  setCurrentPage(1);
-                  router.push(`/shop?search=${encodeURIComponent(e.target.value)}`);
+                  setCurrentPage(0);
+                  router.push(`/shop?search=${encodeURIComponent(e.target.value)}&page=1`);
                 }}
                 className="grow min-w-0 outline-none bg-transparent"
                 placeholder="Search by name or category..."
@@ -140,7 +146,9 @@ const ShopClient = () => {
                 value={sortOrder}
                 onChange={(e) => {
                   setSortOrder(e.target.value as "" | "high" | "low");
-                  setCurrentPage(1);
+                  setCurrentPage(0);
+
+                  router.push(`/shop?search=${encodeURIComponent(search)}&page=1`);
                 }}
                 className="border px-3 py-1 rounded"
               >
@@ -150,9 +158,9 @@ const ShopClient = () => {
               </select>
 
               <div className='flex gap-3'>
-                <button onClick={() => setActiveTab("large")} className={`${activeTab === "large" ?  " text-purple-600": "" }`}><Grid2x2 /></button>
-                <button onClick={() => setActiveTab("mid")} className={`${activeTab === "mid" ?  " text-purple-600": "" }`}><Grid3x3 /></button>
-                <button onClick={() => setActiveTab("small")} className={`${activeTab === "small" ?  " text-purple-600": "" }`}><Logs /></button>
+                <button onClick={() => setActiveTab("large")} className={`${activeTab === "large" ? " text-purple-600" : ""}`}><Grid2x2 /></button>
+                <button onClick={() => setActiveTab("mid")} className={`${activeTab === "mid" ? " text-purple-600" : ""}`}><Grid3x3 /></button>
+                <button onClick={() => setActiveTab("small")} className={`${activeTab === "small" ? " text-purple-600" : ""}`}><Logs /></button>
               </div>
             </div>
 
@@ -223,18 +231,33 @@ const ShopClient = () => {
             previousLabel="←"
             nextLabel="→"
             breakLabel="..."
+
             pageCount={Math.ceil(sortedData.length / ITEMS_PER_PAGE)}
             onPageChange={handlePageChange}
-            forcePage={currentPage}   // ✅ ADD THIS
+            forcePage={currentPage}
+
+            pageRangeDisplayed={3}
+            marginPagesDisplayed={1}
+
             containerClassName="flex justify-center gap-3 mt-12"
-            pageClassName="w-10 h-10 flex items-center justify-center border rounded-full cursor-pointer"
-            activeClassName="bg-purple-600 text-white"
-            previousClassName="px-3 py-2 border rounded cursor-pointer"
-            nextClassName="px-3 py-2 border rounded cursor-pointer"
+
+            pageClassName="rounded-full border"
+
+            pageLinkClassName="w-10 h-10 flex items-center justify-center cursor-pointer"
+
+            activeClassName="bg-purple-600"
+            activeLinkClassName="text-white"
+
+            previousClassName="border rounded"
+            previousLinkClassName="px-3 py-2 cursor-pointer"
+
+            nextClassName="border rounded"
+            nextLinkClassName="px-3 py-2 cursor-pointer"
+
             disabledClassName="opacity-50 cursor-not-allowed"
           />
-
         </div>
+
       </div>
     </>
   );
