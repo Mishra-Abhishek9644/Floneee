@@ -102,12 +102,13 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
             addToCartList({
                 product,
                 quantity: qty,
+                color: selectedColor,
+                size : selectedSize,
             })
         );
 
         toast.success("Added to Cart ❤️");
-
-
+        router.push("/cart");
         setTimeout(() => (debounceRef.current = false), 300);
     };
 

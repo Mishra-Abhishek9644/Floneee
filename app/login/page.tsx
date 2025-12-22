@@ -34,7 +34,7 @@ const page = () => {
     if (user) {
       dispatch(login(user));
       toast.success("Logged in successfully");
-      router.push("/");
+      router.push("/account");
     } else {
       toast.error("No user found");
       reset();

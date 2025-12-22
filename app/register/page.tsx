@@ -7,18 +7,10 @@ import { signup } from '@/Store/Slices/loginSlice'
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 
-interface RegisterForm {
-  username: string;
-  email: string;
-  password: string;
-  password2: string;
-}
-
-
 
 const page = () => {
   const dispatch = useDispatch()
-  const { register, reset, handleSubmit, formState: { errors } } = useForm<RegisterForm>()
+  const { register, reset, handleSubmit } = useForm()
 
   const { users } = useSelector(
     (state: any) => state.login
@@ -44,6 +36,7 @@ const page = () => {
         password: data.password
       }));
       toast.success("Signed Up Successfully");
+      route.push("/login")
       reset();
     }
   }
