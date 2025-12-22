@@ -103,6 +103,7 @@ const Page = () => {
                             Full Name
                             <input
                                 name="username"
+                                readOnly
                                 value={billing.username}
                                 onChange={handleChange}
                                 className={inputClass("username")}
@@ -189,6 +190,7 @@ const Page = () => {
                                 Postcode / Zip
                                 <input
                                     name="zip"
+                                    type="number"
                                     value={billing.zip}
                                     onChange={handleChange}
                                     className={inputClass("zip")}
@@ -204,6 +206,7 @@ const Page = () => {
                                 Phone
                                 <input
                                     name="phone"
+                                    type="number"
                                     value={billing.phone}
                                     onChange={handleChange}
                                     className={inputClass("phone")}
@@ -217,6 +220,7 @@ const Page = () => {
                                 Email Address
                                 <input
                                     name="email"
+                                    readOnly
                                     value={billing.email}
                                     onChange={handleChange}
                                     className={inputClass("email")}
