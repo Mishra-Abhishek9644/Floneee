@@ -35,27 +35,28 @@ const Page = () => {
             Add Items
           </Link>
         </div>
+
       ) : (
+
         <div className="max-w-6xl mx-auto my-20 ">
           <h1 className="text-xl font-semibold mb-6">
             Your Cart items
           </h1>
 
           <div className="border border-gray-200 rounded-md">
-            <div className="hidden md:grid grid-cols-6 text-sm bg-gray-100 text-gray-800  px-6 py-6">
+            <div className="hidden md:grid grid-cols-8 text-sm place-content-center bg-gray-100 text-gray-800  px-6 py-6">
               <div className="flex justify-center">IMAGE</div>
               <div className="col-span-2 flex justify-center">PRODUCT NAME</div>
               <div className="flex justify-center">UNIT PRICE</div>
+              <div className="flex justify-center">COLOLR</div>
+              <div className="flex justify-center">SIZE</div>
               <div className="flex justify-center">ADD TO CART</div>
               <div className="flex justify-center">ACTION</div>
             </div>
 
             {cartListItems.map((item: any, index: number) => (
-              
-
-              <div
-                key={item.id ?? `cart-${index}`}
-                className="grid grid-cols-1  md:grid-cols-6 items-center px-6 py-6 border-y border-gray-200 relative gap-3 md:gap-0"
+              <div key={item.id ?? `cart-${index}`}
+                className="grid grid-cols-1  md:grid-cols-8 place-content-center items-center px-6 py-6 border-y border-gray-200 relative gap-3 md:gap-0"
               >
                 <div className="flex justify-center bg-gray-100 h-30  items-center">
                   <img
@@ -65,11 +66,13 @@ const Page = () => {
                   />
                 </div>
 
-                <div className="md:col-span-2 truncate flex justify-center">
+                <div className="md:col-span-2 truncate flex justify-center text-center text-wrap">
                   {item.title}
                 </div>
 
                 <div className="flex justify-center">${item.price}</div>
+                <div className="flex justify-center">{item.color}</div>
+                <div className="flex justify-center">{item.size}</div>
                 <div className="flex justify-center items-center border border-gray-300 px-1 py-3 ">
                   <button onClick={() =>
                     dispatch(
@@ -90,13 +93,12 @@ const Page = () => {
                   } className="text-xl md:px-2 cursor-pointer">+</button>
                 </div>
                 <button
-                  onClick={() =>
-                    dispatch(removeFromCartList(item.id))
-                  }
-                  className="hidden  md:flex justify-center text-black rounded-xl px-1 hover:scale-110 hover:text-purple-500"
+                  onClick={() => dispatch(removeFromCartList(index))}
+                  className="hidden md:flex justify-center text-black rounded-xl px-1 hover:scale-110 hover:text-purple-500"
                 >
                   <X />
                 </button>
+
               </div>
             ))}
           </div>

@@ -6,11 +6,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { signup } from '@/Store/Slices/loginSlice'
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
+import { useRouter } from 'next/navigation';
 
 
 const page = () => {
   const dispatch = useDispatch()
   const { register, reset, handleSubmit } = useForm()
+  const route = useRouter();
 
   const { users } = useSelector(
     (state: any) => state.login
@@ -36,6 +38,7 @@ const page = () => {
         password: data.password
       }));
       toast.success("Signed Up Successfully");
+      route.push("/login")
       reset();
     }
   }

@@ -129,7 +129,7 @@ const page = () => {
                     </div>
                 </div>
 
-                <div className="overflow-hidden w-full md:py-28 py-10">
+                <div className="overflow-hidden w-full md:pt-28 pt-10">
                     <div className="marquee gap-40 cursor-grabbing">
                         <img src="https://flone.jamstacktemplates.dev/assets/img/brand-logo/brand-logo-5.png" alt="" />
                         <img src="https://flone.jamstacktemplates.dev/assets/img/brand-logo/brand-logo-1.png" alt="" />

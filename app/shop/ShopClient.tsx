@@ -144,43 +144,70 @@ const ShopClient = () => {
               </select>
 
               <div className='flex gap-3'>
-                <button onClick={() => setActiveTab("large")}><Grid2x2 /></button>
-                <button onClick={() => setActiveTab("mid")}><Grid3x3 /></button>
-                <button onClick={() => setActiveTab("small")}><Logs /></button>
+                <button onClick={() => setActiveTab("large")} className={`${activeTab === "large" ?  " text-purple-600": "" }`}><Grid2x2 /></button>
+                <button onClick={() => setActiveTab("mid")} className={`${activeTab === "mid" ?  " text-purple-600": "" }`}><Grid3x3 /></button>
+                <button onClick={() => setActiveTab("small")} className={`${activeTab === "small" ?  " text-purple-600": "" }`}><Logs /></button>
               </div>
             </div>
 
             {activeTab === "large" && (
-              <div className='grid grid-cols-2'>
-                {paginatedData.map(item => (
-                  <Card key={item.id} product={item} onOpen={() => {
-                    setSelectedProduct(item);
-                    setModal(true);
-                  }} />
-                ))}
-              </div>
+              <>
+                {paginatedData.length === 0 ? (
+                  <div className="text-center py-20 text-gray-500">
+                    <h2 className="text-2xl font-semibold">Product not found</h2>
+                    <p className="mt-2">Try searching with a different keyword.</p>
+                  </div>
+                ) : (
+                  <div className='grid grid-cols-2'>
+                    {paginatedData.map(item => (
+                      <Card key={item.id} product={item} onOpen={() => {
+                        setSelectedProduct(item);
+                        setModal(true);
+                      }} />
+                    ))}
+                  </div>
+                )}
+              </>
             )}
 
             {activeTab === "mid" && (
-              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
-                {paginatedData.map(item => (
-                  <Card key={item.id} product={item} onOpen={() => {
-                    setSelectedProduct(item);
-                    setModal(true);
-                  }} />
-                ))}
-              </div>
+              <>
+                {paginatedData.length === 0 ? (
+                  <div className="text-center py-20 text-gray-500">
+                    <h2 className="text-2xl font-semibold">Product not found</h2>
+                    <p className="mt-2">Try searching with a different keyword.</p>
+                  </div>
+                ) : (
+                  <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
+                    {paginatedData.map(item => (
+                      <Card key={item.id} product={item} onOpen={() => {
+                        setSelectedProduct(item);
+                        setModal(true);
+                      }} />
+                    ))}
+                  </div>
+                )}
+              </>
             )}
 
             {activeTab === "small" && (
-              <div>
-                {paginatedData.map(item => (
-                  <LongCard key={item.id} product={item} onOpen={() => {
-                    setSelectedProduct(item);
-                    setModal(true);
-                  }} />
-                ))}
-              </div>
+              <>
+                {paginatedData.length === 0 ? (
+                  <div className="text-center py-20 text-gray-500">
+                    <h2 className="text-2xl font-semibold">Product not found</h2>
+                    <p className="mt-2">Try searching with a different keyword.</p>
+                  </div>
+                ) : (
+                  <div>
+                    {paginatedData.map(item => (
+                      <LongCard key={item.id} product={item} onOpen={() => {
+                        setSelectedProduct(item);
+                        setModal(true);
+                      }} />
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -193,8 +220,8 @@ const ShopClient = () => {
                 key={page}
                 onClick={() => setCurrentPage(page)}
                 className={`w-12 h-12 rounded-full ${currentPage === page
-                    ? "bg-purple-600 text-white"
-                    : "bg-white border text-purple-600"
+                  ? "bg-purple-600 text-white"
+                  : "bg-white border text-purple-600"
                   }`}
               >
                 {page}

@@ -33,7 +33,7 @@ export default function RootLayout({
         className={`${poppins.className} font-sans antialiased`}
       >
         <ReduxProvider>
-          <PageLoader />
+          {/* <PageLoader /> */}
           <Navbar />
           {children}
           <Footer />

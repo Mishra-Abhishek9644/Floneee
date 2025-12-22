@@ -12,15 +12,13 @@ import { addToWishlist, removeFromWishlist } from '@/Store/Slices/wishlistSlice'
 import { usePathname, useRouter } from "next/navigation";
 import Link from 'next/link';
 
-
-
 interface ProductDetailsProps {
     id: number
 
 }
+
 const colors = ["white", "black", "red"];
 const sizes = ["X", "M", "XL", "XXL"];
-
 
 const ProductDetails = ({ id }: ProductDetailsProps) => {
 
@@ -117,13 +115,18 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
         }
         debounceRef.current = true;
 
-        dispatch(addToCartList({
-            product,
-            quantity: qty,
-        }));
-        toast.success("Added to Cart ❤️");
+        dispatch(
+            addToCartList({
+                product,
+                quantity: qty,
+                color: selectedColor,
+                size : selectedSize,
+            })
+        );
 
-        setTimeout(() => (debounceRef.current = false), 1000);
+        toast.success("Added to Cart ❤️");
+        router.push("/cart");
+        setTimeout(() => (debounceRef.current = false), 300);
     };
 
 
