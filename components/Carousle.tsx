@@ -54,15 +54,11 @@ const Carousle = () => {
         ))}
       </div>
 
-      <button
-        onClick={leftBtn}
-        className="absolute top-0 left-0 flex items-center justify-center h-full px-8 md:px-14 cursor-pointer" >
+      <button onClick={leftBtn} className="absolute top-0 left-0 flex items-center justify-center h-full px-8 md:px-14 cursor-pointer" >
         <ChevronLeft className="md:size-12 size-6 text-gray-600 hover:text-purple-500" />
       </button>
 
-      <button
-        onClick={rightBtn}
-        className="absolute top-0 right-0 flex items-center justify-center h-full px-8 md:px-14 cursor-pointer" >
+      <button onClick={rightBtn} className="absolute top-0 right-0 flex items-center justify-center h-full px-8 md:px-14 cursor-pointer" >
         <ChevronRight className="md:size-12 size-6 text-gray-600 hover:text-purple-500" />
       </button>
 
