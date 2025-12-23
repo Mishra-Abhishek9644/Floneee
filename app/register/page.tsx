@@ -3,10 +3,11 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { signup } from '@/Store/Slices/loginSlice'
+// import { signup } from '@/Store/Slices/loginSlice'
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { useRouter } from 'next/navigation';
+import { registerUser } from "@/lib/auth";
 
 
 interface RegisterForm {
@@ -20,7 +21,7 @@ interface RegisterForm {
 
 const page = () => {
   const dispatch = useDispatch()
-  const { register, reset, handleSubmit,formState: { errors } } = useForm<RegisterForm>()
+  const { register, reset, handleSubmit, formState: { errors } } = useForm<RegisterForm>()
   const route = useRouter()
 
   const { users } = useSelector(
@@ -28,29 +29,27 @@ const page = () => {
   );
 
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     if (data.password !== data.password2) {
       toast.error("Passwords do not match");
       return;
     }
 
-    const userExists = users.some(
-      (u: any) => u.username === data.username && u.email === data.email
-    );
-    if (userExists) {
-      toast.error("User Already has an account");
-    }
-    else {
-      dispatch(signup({
-        username: data.username,
+    try {
+      await registerUser({
+        name: data.username,
         email: data.email,
-        password: data.password
-      }));
-      toast.success("Signed Up Successfully");
-      route.push("/login")
+        password: data.password,
+      });
+
+      toast.success("Signed up successfully");
+      route.push("/login");
       reset();
+    } catch (error: any) {
+      toast.error(error.message);
     }
-  }
+  };
+
 
   return (
     <>
