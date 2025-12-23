@@ -21,7 +21,7 @@ const wishlistSlice = createSlice({
   reducers: {
     addToWishlist: (state, action: PayloadAction<Product>) => {
       const exists = state.items.some(
-        (item) => item.id === action.payload.id
+        (item) => item._id === action.payload._id
       );
       if (!exists) {
         state.items.push(action.payload);
@@ -29,9 +29,9 @@ const wishlistSlice = createSlice({
       }
     },
 
-    removeFromWishlist: (state, action: PayloadAction<number>) => {
+    removeFromWishlist: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter(
-        (item) => item.id !== action.payload
+        (item) => item._id !== action.payload
       );
       localStorage.setItem("wishlist", JSON.stringify(state.items));
     },
@@ -58,10 +58,10 @@ export const toggleWishlistDebounced =
     }, 400);
 
     const { items } = getState().wishlist;
-    const exists = items.some((item: Product) => item.id === product.id);
+    const exists = items.some((item: Product) => item._id === product._id);
 
     if (exists) {
-      dispatch(removeFromWishlist(product.id));
+      dispatch(removeFromWishlist(product._id));
       toast.success("Removed from wishlist 💔");
     } else {
       dispatch(addToWishlist(product));

@@ -17,15 +17,15 @@ const compareListSlice  = createSlice({
   initialState,
   reducers: {
    addToCompareList: (state, action:PayloadAction<Product>)  => {
-     const exists = state.items.some(item => item.id === action.payload.id);
+     const exists = state.items.some(item => item._id === action.payload._id);
      if(!exists) {
             state.items.push(action.payload);
 
      }
    },
 
-    removeFromCompareList: (state, action:PayloadAction<number>) => {
-      state.items = state.items.filter(item => item.id !== action.payload)
+    removeFromCompareList: (state, action:PayloadAction<string>) => {
+      state.items = state.items.filter(item => item._id !== action.payload)
     },
     
   },
