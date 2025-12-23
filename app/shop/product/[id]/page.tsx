@@ -1,16 +1,19 @@
-import Breadcrumb from '@/components/Breadcrumb'
-import ProductDetails from '@/components/ProductDetails'
-import React from 'react'
+import Breadcrumb from "@/components/Breadcrumb";
+import ProductDetails from "@/components/ProductDetails";
 
-const page = async ({ params }: { params: { id: number } }) => {
-  const { id } = await params;
+const page = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
+  const { id } = await params; // ✅ REQUIRED in new Next.js
 
   return (
     <>
       <Breadcrumb />
       <ProductDetails id={id} />
     </>
-  )
-}
+  );
+};
 
-export default page
+export default page;

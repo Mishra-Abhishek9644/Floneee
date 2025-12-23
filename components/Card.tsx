@@ -18,7 +18,7 @@ const Card = ({ product, onOpen }: cardProp) => {
   const wishlistItems = useSelector((state: any) => state.wishlist.items);
 
   const isInWishlist = wishlistItems.some(
-    (item: any) => item.id === product.id
+    (item: any) => item._id === product._id
   );
 
   const currentUser = useSelector((state: any) => state.login.currentUser);
@@ -49,7 +49,7 @@ const Card = ({ product, onOpen }: cardProp) => {
   return (
     <div className="p-4 flex flex-col mt-3 justify-center group relative z-0">
       <div className="overflow-hidden border border-gray-100 bg-[#f6f6f6] shadow-md p-5">
-        <Link href={`/shop/product/${product.id}`}>
+        <Link href={`/shop/product/${product._id}`}>
           <img
             src={product.image}
             alt={product.title}
