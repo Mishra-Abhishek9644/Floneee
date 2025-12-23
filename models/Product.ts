@@ -11,6 +11,8 @@ export interface IProduct extends Document {
   description: string;
   categoryId: Types.ObjectId;
   stock: number;
+   sizes: string[];     
+  colors: string[];
   rating: number;
   createdAt: Date;
   updatedAt: Date;
@@ -55,6 +57,17 @@ const ProductSchema = new Schema<IProduct>(
       min: 0,
     },
 
+    sizes: {
+      type: [String],
+      default: [],
+    },
+
+    colors: {
+      type: [String],
+      default: [],
+    },
+
+
     rating: {
       type: Number,
       default: 0,
@@ -68,6 +81,6 @@ const ProductSchema = new Schema<IProduct>(
 /**
  * Prevent model overwrite error in Next.js
  */
-const Product =  models.Product || mongoose.model<IProduct>("Product", ProductSchema);
+const Product = models.Product || mongoose.model<IProduct>("Product", ProductSchema);
 
 export default Product;
