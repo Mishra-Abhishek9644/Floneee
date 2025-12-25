@@ -1,12 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Breadcrumb from "@/components/Breadcrumb";
 import { RootState } from "@/Store";
+import { logout } from "@/Store/Slices/loginSlice";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const UserDashboard = () => {
+  const router = useRouter();
+  const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.login.currentUser);
+
   const [loading, setLoading] = useState(true);
   const [dashboard, setDashboard] = useState<any>(null);
 
@@ -15,7 +21,9 @@ const UserDashboard = () => {
 
     const loadDashboard = async () => {
       try {
-        const res = await fetch("/api/user/dashboard");
+        const res = await fetch("/api/user/dashboard", {
+          credentials: "include",
+        });
         const data = await res.json();
         setDashboard(data);
       } catch (err) {
@@ -28,23 +36,49 @@ const UserDashboard = () => {
     loadDashboard();
   }, [user]);
 
-  if (!user || loading) return null;
+  // 🔥 LOGOUT HANDLER
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      dispatch(logout());          // Redux clear
+      toast.success("Logged out");
+      router.replace("/login");    // Redirect
+    } catch {
+      toast.error("Logout failed");
+    }
+  };
+
+  if (!user || loading || !dashboard) return null;
 
   return (
     <>
       <Breadcrumb />
 
       <div className="max-w-6xl mx-auto py-20">
-        <h1 className="text-2xl font-bold mb-6">My Account</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">My Account</h1>
 
-        {/* ================= PROFILE ================= */}
+          {/* 🔥 LOGOUT BUTTON */}
+          <button
+            onClick={handleLogout}
+            className="bg-gray-200 hover:bg-red-600 hover:text-white px-4 py-2 text-sm uppercase duration-500"
+          >
+            Logout
+          </button>
+        </div>
+
+        {/* PROFILE */}
         <div className="bg-gray-100 p-6 rounded-md mb-8">
           <p><strong>Name:</strong> {user.name}</p>
           <p><strong>Email:</strong> {user.email}</p>
-          <p className="text-purple-600 font-semibold">Role: USER</p>
+          <p className="text-purple-600 font-semibold">Role: {user.role}</p>
         </div>
 
-        {/* ================= STATS ================= */}
+        {/* STATS */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
           <Stat title="Cart Items" value={dashboard.cartCount} />
           <Stat title="Wishlist" value={dashboard.wishlistCount} />
@@ -52,7 +86,7 @@ const UserDashboard = () => {
           <Stat title="Orders" value={dashboard.ordersCount} />
         </div>
 
-        {/* ================= RECENT ORDERS ================= */}
+        {/* RECENT ORDERS */}
         <div className="bg-white shadow p-6 rounded-md">
           <h2 className="font-semibold mb-4">Recent Orders</h2>
 

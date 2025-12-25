@@ -2,10 +2,12 @@ import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { signToken } from "@/lib/jwt";
 
 export async function POST(req: Request) {
   try {
     await connectDB();
+
     const { email, password } = await req.json();
 
     if (!email || !password) {
@@ -15,8 +17,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const user = await User.findOne({ email });
-    if (!user) {
+    // ✅ Always select password explicitly
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user || !user.password) {
       return NextResponse.json(
         { message: "Invalid email or password" },
         { status: 401 }
@@ -31,19 +35,38 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json(
+    // 🔥 CREATE JWT TOKEN
+    const token = signToken({
+      userId: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    });
+
+    // 🔥 RESPONSE + COOKIE
+    const res = NextResponse.json(
       {
         message: "Login successful",
         user: {
-          id: user._id,
+          id: user._id.toString(),
           name: user.name,
           email: user.email,
-          role: "user",
+          role: user.role,
         },
       },
       { status: 200 }
     );
-  } catch {
+
+    // 🔥 SET COOKIE (MOST IMPORTANT)
+    res.cookies.set("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    return res;
+  } catch (err) {
+    console.error("LOGIN ERROR:", err);
     return NextResponse.json(
       { message: "Login failed" },
       { status: 500 }

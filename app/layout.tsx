@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import ReduxProvider from "./providers";
 import PageLoader from "@/components/PageLoader";
+import AuthHydrator from "./AuthHydrator";
 
 /* Load Poppins (global font) */
 const poppins = Poppins({
@@ -33,10 +34,11 @@ export default function RootLayout({
         className={`${poppins.className} font-sans antialiased`}
       >
         <ReduxProvider>
-          {/* <PageLoader /> */}
-          <Navbar />
-          {children}
-          <Footer />
+          <AuthHydrator>
+            <Navbar />
+            {children}
+            <Footer />
+          </AuthHydrator>
         </ReduxProvider>
       </body>
     </html>

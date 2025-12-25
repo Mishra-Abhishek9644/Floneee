@@ -2,13 +2,14 @@
 
 import Breadcrumb from "@/components/Breadcrumb";
 import Link from "next/link";
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { loginUser } from "@/lib/auth";
 import { setUser } from "@/Store/Slices/loginSlice";
+import { RootState } from "@/Store";
 
 interface LoginForm {
   email: string;
@@ -19,6 +20,8 @@ const page = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const user = useSelector((state: RootState) => state.login.currentUser);
+
   const {
     register,
     handleSubmit,
@@ -26,26 +29,29 @@ const page = () => {
     formState: { errors },
   } = useForm<LoginForm>();
 
+  // 🔹 LOGIN ONLY (NO REDIRECT HERE)
   const onSubmit = async (data: LoginForm) => {
     try {
       const res = await loginUser(data);
 
-      dispatch(setUser(res.user)); // store logged user
+      dispatch(setUser(res.user)); // ✅ Redux update
       toast.success("Logged in successfully");
-
-      // ✅ ROLE BASED REDIRECT
-      if (res.user.role === "admin") {
-        router.push("/account/admin");
-      } else {
-        router.push("/account/user");
-      }
-
     } catch (error: any) {
       toast.error(error.message || "Invalid email or password");
       reset();
     }
   };
 
+  // 🔥 REDIRECT AFTER REDUX UPDATE (CORRECT WAY)
+  useEffect(() => {
+    if (!user) return;
+
+    if (user.role === "user") {
+      router.replace("/account/user");
+    } else {
+      router.replace("/account/admin");
+    }
+  }, [user, router]);
 
   return (
     <>
@@ -65,8 +71,9 @@ const page = () => {
               <div className="grid grid-cols-1 gap-4">
                 <input
                   type="email"
-                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${errors.email ? "border-red-500" : "border-gray-300"
-                    }`}
+                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  }`}
                   placeholder="Email"
                   {...register("email", {
                     required: "Email is required",
@@ -84,8 +91,9 @@ const page = () => {
 
                 <input
                   type="password"
-                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${errors.password ? "border-red-500" : "border-gray-300"
-                    }`}
+                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${
+                    errors.password ? "border-red-500" : "border-gray-300"
+                  }`}
                   placeholder="Password"
                   {...register("password", {
                     required: "Password is required",

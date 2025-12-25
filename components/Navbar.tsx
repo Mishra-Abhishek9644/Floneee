@@ -2,10 +2,11 @@
 import { GitCompareArrows, Heart, Menu, Search, ShoppingBag, UserRoundPen, X } from "lucide-react"
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from '@/Store/Slices/loginSlice'
 import { usePathname, useRouter } from "next/navigation";
 import { Fascinate } from "next/font/google";
+import toast from "react-hot-toast";
 
 
 
@@ -30,8 +31,7 @@ const Navbar = () => {
     setIsClient(true)
   }, [])
 
-
-
+  const dispatch = useDispatch();
 
 
   useEffect(() => {
@@ -111,6 +111,21 @@ const Navbar = () => {
       document.removeEventListener("click", handleClickOutside)
     }
   }, [])
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      dispatch(logout());          // Redux clear
+      toast.success("Logged out");
+      router.replace("/login");    // Redirect
+    } catch {
+      toast.error("Logout failed");
+    }
+  };
 
 
   if (!isClient) {
@@ -193,14 +208,23 @@ const Navbar = () => {
                       </Link>
                     </>
                   ) : (
-                    <Link
-                      href="/account"
-                      onClick={() => setLoginBtn(false)}
-                      className="block mt-1 hover:text-purple-600"
-                    >
-                      My Account
-                    </Link>
+                    <>
+                      <Link
+                        href={user.role === "admin" ? "/account/admin" : "/account/user"}
+                        onClick={() => setLoginBtn(false)}
+                        className="block mt-1 hover:text-purple-600"
+                      >
+                        My Account
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="hover:text-red-600 cursor-pointer duration-500"
+                      >
+                        Logout
+                      </button>
+                    </>
                   )}
+
                 </div>
               )}
             </div>

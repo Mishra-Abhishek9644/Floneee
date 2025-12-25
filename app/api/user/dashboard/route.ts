@@ -18,10 +18,10 @@ export async function GET() {
   const user = verifyToken(token);
 
   const [cart, wishlist, compare, orders] = await Promise.all([
-    Cart.findOne({ userId: user.id }),
-    Wishlist.findOne({ userId: user.id }),
-    Compare.findOne({ userId: user.id }),
-    Order.find({ userId: user.id }).sort({ createdAt: -1 }).limit(5),
+    Cart.findOne({ userId: user.userId }),
+    Wishlist.findOne({ userId: user.userId }),
+    Compare.findOne({ userId: user.userId }),
+    Order.find({ userId: user.userId }).sort({ createdAt: -1 }).limit(5),
   ]);
 
   return NextResponse.json({
