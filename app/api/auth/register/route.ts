@@ -1,7 +1,8 @@
+// app/api/auth/register/route.ts
+
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
@@ -11,37 +12,36 @@ export async function POST(req: Request) {
 
     if (!name || !email || !password) {
       return NextResponse.json(
-        { message: "All fields are required!" },
+        { message: "All fields are required" },
         { status: 400 }
       );
     }
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({
+      email: email.toLowerCase(),
+    });
+
     if (existingUser) {
       return NextResponse.json(
-        { message: "Email already exists" },
-        { status: 409 }
+        { message: "User already exists" },
+        { status: 400 }
       );
     }
 
-    // ✅ HASH PASSWORD
-    const hashedPassword = await bcrypt.hash(password, 10);
-
+    // IMPORTANT: DO NOT HASH HERE
     await User.create({
       name,
-      email,
-      password: hashedPassword,
-      role: "user",
+      email: email.toLowerCase(),
+      password, // schema will hash
     });
 
     return NextResponse.json(
-      { message: "User Registered Successfully" },
+      { message: "Registration successful" },
       { status: 201 }
     );
   } catch (error) {
-    console.error("REGISTER ERROR:", error);
     return NextResponse.json(
-      { message: "Registration Failed" },
+      { message: "Registration failed" },
       { status: 500 }
     );
   }
