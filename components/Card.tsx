@@ -71,7 +71,7 @@ const Card = ({ product, onOpen }: cardProp) => {
         </button>
 
         <Link
-          href={`/shop/product/${product.id}`}
+          href={`/shop/product/${product._id}`}
           className="flex-1 h-full flex items-center justify-center text-white text-sm hover:bg-black border-x border-white/60"
         >
           Select Option

@@ -11,9 +11,10 @@ export interface IProduct extends Document {
   description: string;
   categoryId: Types.ObjectId;
   stock: number;
-   sizes: string[];     
+  sizes: string[];
   colors: string[];
   rating: number;
+  discount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -67,6 +68,12 @@ const ProductSchema = new Schema<IProduct>(
       default: [],
     },
 
+    discount: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+    },
 
     rating: {
       type: Number,

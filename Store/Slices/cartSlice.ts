@@ -34,7 +34,7 @@ const cartListSlice = createSlice({
       const { product, quantity, color, size } = action.payload;
 
       const existingItem = state.items.find(
-        item => item.id === product.id && item.color === color && item.size === size
+        item => item._id === product._id && item.color === color && item.size === size
       );
 
       if (existingItem) {
@@ -53,9 +53,9 @@ const cartListSlice = createSlice({
 
     updateCartQuantity: (
       state,
-      action: PayloadAction<{ id: number; quantity: number }>
+      action: PayloadAction<{ _id: string; quantity: number }>
     ) => {
-      const item = state.items.find(i => i.id === action.payload.id);
+      const item = state.items.find(i => i._id === action.payload._id);
       if (item && action.payload.quantity >= 1) {
         item.quantity = action.payload.quantity;
       }

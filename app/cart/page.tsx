@@ -77,7 +77,7 @@ const Page = () => {
                   <button onClick={() =>
                     dispatch(
                       updateCartQuantity({
-                        id: item.id,
+                        _id: item.id,
                         quantity: item.quantity > 1 ? item.quantity - 1 : 1,
                       })
                     )
@@ -86,7 +86,7 @@ const Page = () => {
                   <button onClick={() =>
                     dispatch(
                       updateCartQuantity({
-                        id: item.id,
+                        _id: item.id,
                         quantity: item.quantity + 1,
                       })
                     )

@@ -15,7 +15,7 @@ const LongCard: React.FC<CardProps> = ({ product, onOpen }) => {
   const dispatch = useDispatch();
 
   const wishlistItems = useSelector((state: any) => state.wishlist.items || []);
-  const isInWishlist = wishlistItems.some((i: any) => i.id === product?.id);
+  const isInWishlist = wishlistItems.some((i: any) => i.id === product?._id);
   const debounceRef = useRef(false);
 
   const handleWishlistToggle = () => {
@@ -23,7 +23,7 @@ const LongCard: React.FC<CardProps> = ({ product, onOpen }) => {
     debounceRef.current = true;
 
     if (isInWishlist) {
-      dispatch(removeFromWishlist(product.id));
+      dispatch(removeFromWishlist(product._id));
       toast.success("Removed from wishlist 💔");
     } else {
       dispatch(addToWishlist(product));
@@ -51,7 +51,7 @@ const LongCard: React.FC<CardProps> = ({ product, onOpen }) => {
             <button
               className=" "
             >
-              <Link href={`/shop/product/${product.id}`}>
+              <Link href={`/shop/product/${product._id}`}>
                 <div className="bg-purple-500 text-white h-full w-40 p-2  hover:bg-black">
                   Select Option
                 </div>
