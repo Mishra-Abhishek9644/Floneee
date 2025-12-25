@@ -1,31 +1,42 @@
 // lib/jwt.ts
-import jwt, { JwtPayload as JWTVerifyPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 if (!JWT_SECRET) throw new Error("JWT_SECRET is not defined!");
 
-export interface JwtPayload {
-  id: unknown;
+/**
+ * ✅ Single source of truth for JWT payload
+ */
+export interface AppJwtPayload {
   userId: string;
+  email: string;
   role: "user" | "admin";
 }
 
-// Generate JWT
-export function signToken(payload: JwtPayload): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
+/* -------- SIGN TOKEN -------- */
+export function signToken(payload: AppJwtPayload): string {
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: "7d",
+  });
 }
 
-// Verify JWT
-export function verifyToken(token: string): JwtPayload {
-  const decoded = jwt.verify(token, JWT_SECRET) as JWTVerifyPayload;
+/* -------- VERIFY TOKEN -------- */
+export function verifyToken(token: string): AppJwtPayload {
+  const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
 
-  // Extra safety: check required fields
-  if (!decoded || typeof decoded !== "object" || !("userId" in decoded) || !("role" in decoded)) {
+  if (
+    !decoded ||
+    typeof decoded !== "object" ||
+    !decoded.userId ||
+    !decoded.email ||
+    !decoded.role
+  ) {
     throw new Error("Invalid token payload");
   }
 
   return {
     userId: decoded.userId as string,
+    email: decoded.email as string,
     role: decoded.role as "user" | "admin",
   };
 }
