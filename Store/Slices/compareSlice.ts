@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Action, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Product } from "@/type/Product";
 
 interface compareListState {
@@ -27,10 +27,13 @@ const compareListSlice  = createSlice({
     removeFromCompareList: (state, action:PayloadAction<string>) => {
       state.items = state.items.filter(item => item._id !== action.payload)
     },
-    
+    clearCompareList:(state) => {
+      state.items = [];
+      localStorage.removeItem("compareList");
+    }
   },
 });
 
-export const { addToCompareList,removeFromCompareList } = compareListSlice.actions;
+export const { addToCompareList,removeFromCompareList,clearCompareList } = compareListSlice.actions;
 
 export default compareListSlice.reducer;

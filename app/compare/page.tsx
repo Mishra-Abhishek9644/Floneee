@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeFromCompareList } from "@/Store/Slices/compareSlice";
 import { GitCompareArrows, Heart, X } from "lucide-react";
 import Link from "next/link";
+import { clearCompareList } from '@/Store/Slices/compareSlice';
 
 
 
@@ -38,11 +39,11 @@ const page = () => {
               <tr className='bg-gray-200'>
                 <th className="bg-gray-200 sm:flex justify-start  p-4 text-left px-4 md:w-xs  whitespace-nowrap overflow-hidden text-ellipsis hidden">Product Info</th>
                 {CompareList.map((product: any) => (
-                  <td key={product.id} className="p-6 bg-white text-center relative min-w-70">
+                  <td key={product._id} className="p-6 bg-white text-center relative min-w-70">
 
                     {/* REMOVE */}
                     <button
-                      onClick={() => dispatch(removeFromCompareList(product.id))}
+                      onClick={() => dispatch(removeFromCompareList(product._id))}
                       className="absolute top-3 right-3"
                     >
                       <X size={18} />
@@ -56,7 +57,7 @@ const page = () => {
                     </h3>
 
                     {/* BUTTON */}
-                    <Link href={`/shop/product/${product.id}`}>
+                    <Link href={`/shop/product/${product._id}`}>
                       <button className="mt-4 bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-black hover:scale-105">
                         Select Option
                       </button>
@@ -72,7 +73,7 @@ const page = () => {
                 </th>
 
                 {CompareList.map((product: any) => (
-                  <td key={product.id} className="p-6 bg-white text-center relative min-w-70">
+                  <td key={product._id} className="p-6 bg-white text-center relative min-w-70">
                     ₹{product.price}
                   </td>
                 ))}
@@ -85,7 +86,7 @@ const page = () => {
                 </th>
 
                 {CompareList.map((product: any) => (
-                  <td key={product.id} className="p-6 bg-white text-center relative min-w-70">
+                  <td key={product._id} className="p-6 bg-white text-center relative min-w-70">
                     {product.description}
                   </td>
                 ))}
@@ -98,13 +99,19 @@ const page = () => {
                 </th>
 
                 {CompareList.map((product: any) => (
-                  <td key={product.id} className="p-6 bg-white text-center relative min-w-70">
+                  <td key={product._id} className="p-6 bg-white text-center relative min-w-70">
                     ⭐ {product.rating?.rate}
                   </td>
                 ))}
               </tr>
             </tbody>
           </table>
+          <button
+            onClick={() => dispatch(clearCompareList())}
+            className=" px-10 py-4 w-full rounded-full flex justify-center  bg-gray-100 text-sm font-semibold my-4 hover:bg-purple-600 hover:text-white hover:scale-95 transition-all duration-300 "
+          >
+            CLEAR CartList
+          </button>
         </div>)}
 
     </div>

@@ -52,6 +52,7 @@ async function seed() {
         stock: 15,
         sizes: ["S", "M", "L"],
         colors: ["Black", "White"],
+        discount: 20,
         rating: 4
     });
 

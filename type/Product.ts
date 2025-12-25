@@ -17,5 +17,9 @@ export interface Product {
   };
   colors?: string[];   // ✅ optional
   sizes?: string[];    // ✅ optional
+  createdAt?: string;
+  rating?: number;
+  discount?: number;
+
 }
 

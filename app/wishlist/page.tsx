@@ -50,7 +50,7 @@ const Page = () => {
 
             {wishlistItems.map((item:any) => (
               <div
-                key={item.id}
+                key={item._id}
                 className="grid grid-cols-1  md:grid-cols-6 items-center px-6 py-6 border-y border-gray-200 relative gap-3 md:gap-0"
               >
                 <div className="flex justify-center bg-gray-100 h-30  items-center">
@@ -66,7 +66,7 @@ const Page = () => {
                 </div>
 
                 <div  className="flex justify-center">${item.price}</div>
-                <Link href={`/shop/product/${item.id}`}>
+                <Link href={`/shop/product/${item._id}`}>
                 <button className="bg-purple-600 flex justify-center rounded-2xl w-[90%] hover:bg-gray-800   text-white px-3 py-2 text-xs md:text-sm font-semibold">
                   SELECT OPTION
                 </button>
@@ -74,7 +74,7 @@ const Page = () => {
 
                 <button
                   onClick={() =>
-                    dispatch(removeFromWishlist(item.id))
+                    dispatch(removeFromWishlist(item._id))
                   }
                   className="hidden  md:flex justify-center text-black rounded-xl px-1 hover:scale-110 hover:text-purple-500"
                 >
@@ -83,7 +83,7 @@ const Page = () => {
 
                 <button
                   onClick={() =>
-                    dispatch(removeFromWishlist(item.id))
+                    dispatch(removeFromWishlist(item._id))
                   }
                   className="absolute top-0 p-2 right-0  md:hidden text-black rounded-xl px-1 hover:scale-110 hover:text-purple-500"
                 >
