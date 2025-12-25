@@ -229,35 +229,39 @@ const Navbar = () => {
               )}
             </div>
 
-
           </div>
+          {user?.role !== "admin" && (
+            <>
+              <Link href="/compare" className="relative hover:text-purple-500 hover:scale-105">
+                <GitCompareArrows />
 
-          <Link href="/compare" className="relative hover:text-purple-500 hover:scale-105">
-            <GitCompareArrows />
+                {compareCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                    {compareCount}
+                  </span>
+                )}
+              </Link>
+              <Link href="/wishlist" className="relative hover:text-purple-500 hover:scale-105">
+                <Heart />
 
-            {compareCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                {compareCount}
-              </span>
-            )}
-          </Link>
-          <Link href="/wishlist" className="relative hover:text-purple-500 hover:scale-105">
-            <Heart />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
+              <Link href="/cart" className="relative hover:text-purple-500 hover:scale-105">
+                <ShoppingBag />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+            </>
 
-            {wishlistCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                {wishlistCount}
-              </span>
-            )}
-          </Link>
-          <Link href="/cart" className="relative hover:text-purple-500 hover:scale-105">
-            <ShoppingBag />
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                {cartCount}
-              </span>
-            )}
-          </Link>
+          )}
+
           <div className="lg:hidden hover:text-purple-500 hover:scale-105"><button onClick={() => (setMenuBtn(!menuBtn))}><Menu /></button></div>
 
         </div>
