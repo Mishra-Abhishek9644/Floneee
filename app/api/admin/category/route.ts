@@ -4,6 +4,13 @@ import { connectDB } from "@/lib/db";
 import Category from "@/models/Category";
 import { NextResponse } from "next/server";
 
+export async function GET(req:Request) {
+  await connectDB();
+
+  const categories = await Category.find().sort({createAt : -1});
+  return NextResponse.json(categories,{status:200});
+}
+
 export async function POST(req: Request) {
   await connectDB();
 
@@ -14,9 +21,9 @@ export async function POST(req: Request) {
   if (admin.role !== "admin")
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
 
-  const { name, slug } = await req.json();
-
-  if (!name || !slug) {
+  const { name } = await req.json();
+  const slug = name.trim().toLowerCase().replace(/\s+/g, "-");
+  if (!name) {
     return NextResponse.json({ message: "All fields required" }, { status: 400 });
   }
 

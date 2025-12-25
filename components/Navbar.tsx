@@ -259,7 +259,6 @@ const Navbar = () => {
                 )}
               </Link>
             </>
-
           )}
 
           <div className="lg:hidden hover:text-purple-500 hover:scale-105"><button onClick={() => (setMenuBtn(!menuBtn))}><Menu /></button></div>
