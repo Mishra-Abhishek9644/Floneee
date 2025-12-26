@@ -15,6 +15,9 @@ const page = () => {
   const CompareList = useSelector(
     (state: any) => state.compareList.items
   );
+  const currentUser = useSelector(
+          (state: any) => state.login.currentUser
+      );
   return (
     <div className='lg:px-20'>
       <Breadcrumb />
@@ -43,7 +46,7 @@ const page = () => {
 
                     {/* REMOVE */}
                     <button
-                      onClick={() => dispatch(removeFromCompareList(product._id))}
+                      onClick={() => dispatch(removeFromCompareList({userId:currentUser._id,_id:product._id}))}
                       className="absolute top-3 right-3"
                     >
                       <X size={18} />
@@ -107,7 +110,7 @@ const page = () => {
             </tbody>
           </table>
           <button
-            onClick={() => dispatch(clearCompareList())}
+            onClick={() => dispatch(clearCompareList({userId:currentUser._id}))}
             className=" px-10 py-4 w-full rounded-full flex justify-center  bg-gray-100 text-sm font-semibold my-4 hover:bg-purple-600 hover:text-white hover:scale-95 transition-all duration-300 "
           >
             CLEAR CartList

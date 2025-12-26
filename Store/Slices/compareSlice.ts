@@ -1,39 +1,85 @@
-import { Action, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Product } from "@/type/Product";
 
-interface compareListState {
-  items: Product[];   // change this type according to your needs
+interface CompareState {
+  items: Product[];
 }
 
-const initialState: compareListState = {
-  items: 
-        typeof window !== "undefined"
-      ? JSON.parse(localStorage.getItem("compareList") || "[]")
-      : [],
+const getCompareKey = (userId: string) => `compare_${userId}`;
+
+const initialState: CompareState = {
+  items: [],
 };
 
-const compareListSlice  = createSlice({
+const compareListSlice = createSlice({
   name: "compareList",
   initialState,
   reducers: {
-   addToCompareList: (state, action:PayloadAction<Product>)  => {
-     const exists = state.items.some(item => item._id === action.payload._id);
-     if(!exists) {
-            state.items.push(action.payload);
+    // ================= ADD =================
+    addToCompareList: (
+      state,
+      action: PayloadAction<{
+        userId: string;
+        product: Product;
+      }>
+    ) => {
+      const { userId, product } = action.payload;
 
-     }
-   },
+      if (!userId) {
+        console.error("❌ addToCompareList called WITHOUT userId", action.payload);
+        return;
+      }
 
-    removeFromCompareList: (state, action:PayloadAction<string>) => {
-      state.items = state.items.filter(item => item._id !== action.payload)
+      const exists = state.items.some(item => item._id === product._id);
+      if (!exists) {
+        state.items.push(product);
+      }
+
+      localStorage.setItem(
+        getCompareKey(userId),
+        JSON.stringify(state.items)
+      );
     },
-    clearCompareList:(state) => {
+
+    // ================= REMOVE =================
+    removeFromCompareList: (
+      state,
+      action: PayloadAction<{
+        userId: string;
+        _id: string;
+      }>
+    ) => {
+      const { userId, _id } = action.payload;
+
+      state.items = state.items.filter(item => item._id !== _id);
+
+      localStorage.setItem(
+        getCompareKey(userId),
+        JSON.stringify(state.items)
+      );
+    },
+
+    // ================= CLEAR =================
+    clearCompareList: (
+      state,
+      action: PayloadAction<{ userId: string }>
+    ) => {
+      localStorage.removeItem(getCompareKey(action.payload.userId));
       state.items = [];
-      localStorage.removeItem("compareList");
-    }
+    },
+
+    // ================= LOAD AFTER LOGIN =================
+    loadCompareList: (state, action: PayloadAction<Product[]>) => {
+      state.items = action.payload;
+    },
   },
 });
 
-export const { addToCompareList,removeFromCompareList,clearCompareList } = compareListSlice.actions;
+export const {
+  addToCompareList,
+  removeFromCompareList,
+  clearCompareList,
+  loadCompareList,
+} = compareListSlice.actions;
 
 export default compareListSlice.reducer;

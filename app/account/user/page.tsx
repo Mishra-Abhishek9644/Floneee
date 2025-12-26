@@ -8,15 +8,20 @@ import { logout } from "@/Store/Slices/loginSlice";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { loadCartList } from "@/Store/Slices/cartSlice";
+import { clearCompareList } from "@/Store/Slices/compareSlice";
+import { clearWishlist } from "@/Store/Slices/wishlistSlice";
 
 
 const UserDashboard = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.login.currentUser);
+  const user:any = useSelector((state: RootState) => state.login.currentUser);
 
   const [loading, setLoading] = useState(true);
   const [dashboard, setDashboard] = useState<any>(null);
+   const currentUser = useSelector(
+            (state: any) => state.login.currentUser
+        );
 
   useEffect(() => {
     if (!user) return;
@@ -49,6 +54,9 @@ const UserDashboard = () => {
       dispatch(logout());          // Redux clear
       toast.success("Logged out");
       dispatch(loadCartList([]));
+      dispatch(clearCompareList({ userId:user._id }));
+      dispatch(clearWishlist({ userId:currentUser._id }));
+
       router.replace("/login");    // Redirect
     } catch {
       toast.error("Logout failed");
