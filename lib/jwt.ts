@@ -8,6 +8,7 @@ if (!JWT_SECRET) throw new Error("JWT_SECRET is not defined!");
  * ✅ Single source of truth for JWT payload
  */
 export interface AppJwtPayload {
+  name : string,
   userId: string;
   email: string;
   role: "user" | "admin";
@@ -35,6 +36,7 @@ export function verifyToken(token: string): AppJwtPayload {
   }
 
   return {
+    name: decoded.name as string,
     userId: decoded.userId as string,
     email: decoded.email as string,
     role: decoded.role as "user" | "admin",

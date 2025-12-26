@@ -17,7 +17,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ id }) => {
     useEffect(() => {
         setLoading(true);
 
-        fetch(`https://fakestoreapi.com/products/${id}`)
+        fetch(`/api/products/${id}`)
             .then((res) => {
                 if (!res.ok) throw new Error("Failed to fetch product");
                 return res.json();
@@ -31,7 +31,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ id }) => {
                 setLoading(false);
             });
     }, [id]);
-
+    
     if (loading) {
         return (
             <div className="max-w-7xl mx-auto py-12 text-center">
@@ -91,7 +91,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ id }) => {
 
                     <div className="flex justify-between items-center px-2 pt-5 pb-3">
                         <button className="text-sm text-gray-600">
-                            {product.category}
+                            {product.categoryId.name}
                         </button>
 
                         <div className="flex items-center gap-3">
