@@ -221,7 +221,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
 
                         {/* COLORS */}
                         <div className="mt-6">
-                            {product.colors?.length > 0 && (
+                            {product.colors && product.colors.length > 0 && (
                                 <div>
                                     <h3 className="font-semibold mb-2">Color</h3>
                                     <div className="flex gap-2">
@@ -243,7 +243,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
 
                         {/* SIZES */}
                         <div className="mt-4">
-                            {product.sizes?.length > 0 && (
+                            {product.sizes && product.sizes.length > 0 && (
                                 <div>
                                     <h3 className="font-semibold mb-2">Size</h3>
                                     <div className="flex gap-2">
