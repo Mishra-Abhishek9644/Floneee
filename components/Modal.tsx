@@ -9,12 +9,14 @@ import { addToWishlist, removeFromWishlist } from "@/Store/Slices/wishlistSlice"
 import { addToCompareList, removeFromCompareList } from "@/Store/Slices/compareSlice";
 import { addToCartList, removeFromCartList } from "@/Store/Slices/cartSlice";
 import { useRouter } from "next/navigation";
+import { Product } from "../type/Product";
+
 
 
 interface ModalProps {
     open: boolean;
     onClose: (value: boolean) => void;
-    product: any; // 🔥 simplest & safest (no TS issues)
+    product: Product; // 🔥 simplest & safest (no TS issues)
 }
 
 const colors = ["white", "black", "red"];
@@ -148,40 +150,47 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
                         <p className="text-gray-500">{product.description}</p>
 
 
-                        {/* COLOR */}
-                        <div>
-                            <h3 className="font-semibold mb-2">Color</h3>
-                            <div className="flex gap-2">
-                                {colors.map((c) => (
-                                    <button
-                                        key={c}
-                                        onClick={() => setSelectedColor(c)}
-                                        className={`cursor-pointer border  rounded-full p-1 ${selectedColor === c ? "border-purple-600" : "border-white"
-                                            }`}
-                                    >
-                                        <Circle size={16} fill={c} />
-                                    </button>
-                                ))}
+                        {/* COLORS */}
+                        {product.colors && product.colors.length > 0 && (
+                            <div className="mt-6">
+                                <h3 className="font-semibold mb-2">Color</h3>
+                                <div className="flex gap-2">
+                                    {product.colors.map((c) => (
+                                        <button
+                                            key={c}
+                                            onClick={() => setSelectedColor(c)}
+                                            className={`cursor-pointer border rounded-full p-1 ${selectedColor === c ? "border-purple-600" : "border-white"
+                                                }`}
+                                        >
+                                            <Circle size={16} fill={c} />
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        )}
 
-                        {/* SIZE */}
-                        <div>
-                            <h3 className="font-semibold mb-2">Size</h3>
-                            <div className="flex gap-2">
-                                {sizes.map((s) => (
-                                    <button
-                                        key={s}
-                                        onClick={() => setSelectedSize(s)}
-                                        className={`px-3 py-2 cursor-pointer text-xs border ${selectedSize === s
-                                            ? "bg-purple-600 text-white"
-                                            : "bg-gray-200"
-                                            }`}
-                                    >
-                                        {s}
-                                    </button>
-                                ))}
-                            </div>
+
+                        {/* SIZES */}
+                        <div className="mt-4">
+                            {product.sizes && product.sizes.length > 0 && (
+                                <div>
+                                    <h3 className="font-semibold mb-2">Size</h3>
+                                    <div className="flex gap-2">
+                                        {product.sizes.map((s: any) => (
+                                            <button
+                                                key={s}
+                                                onClick={() => setSelectedSize(s)}
+                                                className={`px-3 py-2 text-xs border ${selectedSize === s
+                                                    ? "bg-purple-600 text-white"
+                                                    : "bg-gray-200"
+                                                    }`}
+                                            >
+                                                {s}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
 
