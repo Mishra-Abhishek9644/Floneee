@@ -8,11 +8,28 @@ import { RootState } from "@/Store";
 import { logout } from "@/Store/Slices/loginSlice";
 import toast from "react-hot-toast";
 import AdminProducts from "./products/page";
+import AdminContacts from "./contacts/page";
+import AdminCategories from "./categories/page";
+import { useRef } from "react";
+
+
+
+const generateDescription = (product: {
+  title: string;
+  sizes: string;
+  colors: string;
+}) => {
+  return `${product.title} is made from premium quality fabric, designed for everyday comfort and style.
+  Available in sizes ${product.sizes || "standard"} and colors ${product.colors || "multiple"}.
+  Perfect for casual wear, daily use, and all-day comfort.`;
+};
+
 
 const AdminDashboard = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.login.currentUser);
+  const fileRef = useRef<HTMLInputElement | null>(null);
 
   const [addingProduct, setAddingProduct] = useState(false);
   const [addOption, setAddOption] = useState("product");
@@ -53,7 +70,7 @@ const AdminDashboard = () => {
   }, [])
 
 
-  console.log(user?.name);
+  // console.log(user?.name);
   if (!user) return null;
   /* ---------------- LOGOUT ---------------- */
   const handleLogout = async () => {
@@ -81,7 +98,7 @@ const AdminDashboard = () => {
         credentials: "include",
         body: JSON.stringify(category),
       });
-      console.log(res);
+      // console.log(res);
       toast.success("Category added");
       setCategory({ name: "" });
     } catch {
@@ -122,11 +139,13 @@ const AdminDashboard = () => {
         return;
       }
 
+      const finalDescription = product.description.trim() || generateDescription(product);
+
       const formData = new FormData();
       formData.append("title", product.title);
       formData.append("price", product.price);
       formData.append("stock", product.stock);
-      formData.append("description", product.description);
+      formData.append("description", product.description || finalDescription);
       formData.append("categoryId", product.categoryId);
       formData.append("sizes", product.sizes);
       formData.append("colors", product.colors);
@@ -144,6 +163,10 @@ const AdminDashboard = () => {
       }
 
       toast.success("Product added");
+
+      if (fileRef.current) {
+        fileRef.current.value = "";
+      }
 
       setProduct({
         title: "",
@@ -192,6 +215,8 @@ const AdminDashboard = () => {
           <div className="flex gap-4 border-b border-gray-500 w-fit">
             <button className={`${addOption === "product" ? "border-b font-bold text-purple-600" : "border-none"}  pb-2 cursor-pointer`} onClick={() => setAddOption("product")}>Add Products</button>
             <button className={`${addOption === "category" ? "border-b font-bold text-purple-600" : "border-none"} pb-2 cursor-pointer`} onClick={() => setAddOption("category")}>Add Categories</button>
+            <button className={`${addOption === "contact" ? "border-b font-bold text-purple-600" : "border-none"} pb-2 cursor-pointer`} onClick={() => setAddOption("contact")}>See Contacts</button>
+            <button className={`${addOption === "order" ? "border-b font-bold text-purple-600" : "border-none"} pb-2 cursor-pointer`} onClick={() => setAddOption("order")}>See Orders</button>
           </div>
         </div>
 
@@ -214,6 +239,7 @@ const AdminDashboard = () => {
                 Add Category
               </button>
             </div>
+            <AdminCategories />
           </>
         )}
 
@@ -226,7 +252,15 @@ const AdminDashboard = () => {
                 <input className="border border-gray-400 outline-hidden p-2 w-full mb-2" placeholder="Price" onChange={(e) => setProduct({ ...product, price: e.target.value })} />
               </div>
               <div className="grid grid-cols-2 gap-8">
-                <input type="file" accept="image/*" className="border border-gray-400 outline-hidden p-2 w-full mb-2" onChange={(e) => setProduct({ ...product, image: e.target.files?.[0] || null })} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileRef}
+                  className="border border-gray-400 p-2 mb-2"
+                  onChange={(e) =>
+                    setProduct({ ...product, image: e.target.files?.[0] || null })
+                  }
+                />
                 <select
                   className="border p-2 w-full mb-2"
                   value={product.categoryId}
@@ -251,9 +285,9 @@ const AdminDashboard = () => {
                 <textarea className="border border-gray-400 outline-hidden p-2 w-full mb-2" placeholder="Description" onChange={(e) => setProduct({ ...product, description: e.target.value })} />
               </div>
               <button
-                onClick={addProduct}
+                onClick={() => addProduct()}
                 disabled={addingProduct}
-                className="bg-purple-600 text-white px-4 py-2 disabled:opacity-50"
+                className="bg-purple-600 text-white px-4 py-2 disabled:opacity-50 cursor-pointer"
               >
                 {addingProduct ? "Adding..." : "Add Product"}
               </button>
@@ -262,9 +296,25 @@ const AdminDashboard = () => {
             <AdminProducts />
           </>
         )}
+
+        {addOption === "contact" && (
+          <>
+            <AdminContacts />
+          </>
+        )}
+
+        {addOption === "order" && (
+          <>
+            <div>All orders here....</div>
+          </>
+        )}
+
+
+
       </div>
     </>
   );
 };
 
 export default AdminDashboard;
+

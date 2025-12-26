@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Breadcrumb from "@/components/Breadcrumb";
+import Link from "next/link";
+import { MoveLeft } from "lucide-react";
 
 export default function EditProduct() {
     const { id } = useParams();
+    const pathname = usePathname();
     const router = useRouter();
 
     const [loading, setLoading] = useState(true);
@@ -116,7 +119,7 @@ export default function EditProduct() {
             }
 
             toast.success("Product updated");
-            router.push("/account/admin/products");
+            router.push("/account/admin");
 
         } catch {
             toast.error("Update failed");
@@ -130,6 +133,16 @@ export default function EditProduct() {
     return (
         <>
             <div className="max-w-4xl mx-auto py-20 my-10">
+
+                <div className="my-5">
+                    {pathname.startsWith("/account/admin/products") && (
+                        <div className="border w-fit py-1 px-3 hover:text-purple-600">
+                            <Link href="/account/admin" className="flex items-center gap-2">
+                                <MoveLeft size={18} /> Back
+                            </Link>
+                        </div>
+                    )}
+                </div>
                 <h1 className="text-xl font-bold mb-6">Edit Product</h1>
 
                 <div className="bg-white shadow p-6 rounded space-y-4">
