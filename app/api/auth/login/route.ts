@@ -40,6 +40,7 @@ export async function POST(req: Request) {
       userId: user._id.toString(),
       email: user.email,
       role: user.role,
+      name: user.name,
     });
 
     // 🔥 RESPONSE + COOKIE
