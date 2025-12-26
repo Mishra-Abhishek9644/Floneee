@@ -39,7 +39,9 @@ const Card = ({ product, onOpen }: cardProp) => {
 
     debounceRef.current = true;
 
-    dispatch(toggleWishlistDebounced(product));
+    dispatch(
+      toggleWishlistDebounced(currentUser._id, product)
+    );
 
     setTimeout(() => {
       debounceRef.current = false;

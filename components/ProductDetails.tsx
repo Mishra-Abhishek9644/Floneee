@@ -115,10 +115,18 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
         debounceRef.current = true;
 
         if (isInWishlist) {
-            dispatch(removeFromWishlist(product._id));
+            dispatch(
+                removeFromWishlist({
+                    userId: currentUser._id,
+                    _id: product._id,
+                })
+            );
             toast.success("Removed from wishlist 💔");
         } else {
-            dispatch(addToWishlist(product));
+            dispatch(addToWishlist({
+                userId: currentUser._id,
+                product,
+            }));
             toast.success("Added to wishlist ❤️");
         }
 
@@ -136,10 +144,10 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
         debounceRef.current = true;
 
         if (isInCompare) {
-            dispatch(removeFromCompareList(product._id));
+            dispatch(removeFromCompareList({ userId: currentUser._id, _id: product._id }));
             toast.success("Removed from Compare 💔");
         } else {
-            dispatch(addToCompareList(product));
+            dispatch(addToCompareList({ userId: currentUser._id, product }));
             toast.success("Added to Compare ❤️");
         }
 

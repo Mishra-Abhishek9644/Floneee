@@ -17,16 +17,19 @@ const LongCard: React.FC<CardProps> = ({ product, onOpen }) => {
   const wishlistItems = useSelector((state: any) => state.wishlist.items || []);
   const isInWishlist = wishlistItems.some((i: any) => i._id === product?._id);
   const debounceRef = useRef(false);
+  const currentUser = useSelector(
+              (state: any) => state.login.currentUser
+          );
 
   const handleWishlistToggle = () => {
     if (debounceRef.current) return;
     debounceRef.current = true;
 
     if (isInWishlist) {
-      dispatch(removeFromWishlist(product._id));
+      dispatch(removeFromWishlist({userId:currentUser._id,_id:product._id}));
       toast.success("Removed from wishlist 💔");
     } else {
-      dispatch(addToWishlist(product));
+      dispatch(addToWishlist({userId:currentUser._id,product}));
       toast.success("Added to wishlist ❤️");
     }
 

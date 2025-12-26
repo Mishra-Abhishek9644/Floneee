@@ -11,6 +11,8 @@ import { loginUser } from "@/lib/auth";
 import { setUser } from "@/Store/Slices/loginSlice";
 import { RootState } from "@/Store";
 import { loadCartList } from "@/Store/Slices/cartSlice";
+import { loadCompareList } from "@/Store/Slices/compareSlice";
+import { loadWishlist } from "@/Store/Slices/wishlistSlice";
 
 interface LoginForm {
   email: string;
@@ -43,6 +45,22 @@ const page = () => {
           )
         )
       );
+      dispatch(
+        loadCompareList(
+          JSON.parse(
+            localStorage.getItem(`compare_${res.user._id}`) || "[]"
+          )
+        )
+      );
+      dispatch(
+        loadWishlist(
+          JSON.parse(
+            localStorage.getItem(`wishlist_${res.user._id}`) || "[]"
+          )
+        )
+      );
+
+
       toast.success("Logged in successfully");
     } catch (error: any) {
       toast.error(error.message || "Invalid email or password");

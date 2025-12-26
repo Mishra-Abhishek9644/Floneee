@@ -15,6 +15,9 @@ const Page = () => {
   const wishlistItems = useSelector(
     (state:any) => state.wishlist.items
   );
+  const currentUser = useSelector(
+            (state: any) => state.login.currentUser
+        );
 
   return (
     <div className="">
@@ -74,7 +77,7 @@ const Page = () => {
 
                 <button
                   onClick={() =>
-                    dispatch(removeFromWishlist(item._id))
+                    dispatch(removeFromWishlist({userId:currentUser._id,_id:item._id}))
                   }
                   className="hidden  md:flex justify-center text-black rounded-xl px-1 hover:scale-110 hover:text-purple-500"
                 >
@@ -102,7 +105,7 @@ const Page = () => {
             </Link>
 
             <button
-              onClick={() => dispatch(clearWishlist())}
+              onClick={() => dispatch(clearWishlist({userId:currentUser._id}))}
               className="px-10 py-4 rounded-full flex justify-center  bg-gray-100 text-sm font-semibold my-2 hover:bg-purple-600 hover:text-white hover:scale-110 transition-all duration-300"
             >
               CLEAR WISHLIST
