@@ -15,7 +15,7 @@ const LongCard: React.FC<CardProps> = ({ product, onOpen }) => {
   const dispatch = useDispatch();
 
   const wishlistItems = useSelector((state: any) => state.wishlist.items || []);
-  const isInWishlist = wishlistItems.some((i: any) => i.id === product?._id);
+  const isInWishlist = wishlistItems.some((i: any) => i._id === product?._id);
   const debounceRef = useRef(false);
 
   const handleWishlistToggle = () => {

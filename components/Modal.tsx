@@ -30,8 +30,8 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
     const wishlistItems = useSelector((state: any) => state.wishlist.items || []);
     const compareItems = useSelector((state: any) => state.compareList.items || []);
 
-    const isInWishlist = wishlistItems.some((i: any) => i.id === product?.id);
-    const isInCompare = compareItems.some((i: any) => i.id === product?.id);
+    const isInWishlist = wishlistItems.some((i: any) => i._id === product?._id);
+    const isInCompare = compareItems.some((i: any) => i._id === product?._id);
 
     const debounceRef = useRef(false);
     const currentUser = useSelector((state: any) => state.login.currentUser)
@@ -55,7 +55,7 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
         debounceRef.current = true;
 
         if (isInWishlist) {
-            dispatch(removeFromWishlist(product.id));
+            dispatch(removeFromWishlist(product._id));
             toast.success("Removed from wishlist 💔");
         } else {
             dispatch(addToWishlist(product));
@@ -78,7 +78,7 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
         debounceRef.current = true;
 
         if (isInCompare) {
-            dispatch(removeFromCompareList(product.id));
+            dispatch(removeFromCompareList(product._id));
             toast.success("Removed from Compare 💔");
         } else {
             dispatch(addToCompareList(product));
@@ -91,19 +91,26 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
     /* ---------------- CART (WITH QTY + COLOR + SIZE) ---------------- */
     const handleAddToCart = () => {
         if (debounceRef.current) return;
-        if (!isLoggedIn) {
-            toast.error("Login To Continue")
+        if (!currentUser) {
+            toast.error("Login to continue");
             router.push("/login");
+            return;
+        }
+
+        // 2️⃣ Logged in but auth still hydrating
+        if (!currentUser._id) {
+            toast.loading("Please wait…");
             return;
         }
         debounceRef.current = true;
 
         dispatch(
             addToCartList({
+                userId: currentUser._id,
                 product,
                 quantity: qty,
                 color: selectedColor,
-                size : selectedSize,
+                size: selectedSize,
             })
         );
 

@@ -11,30 +11,41 @@ interface cartListState {
   items: CartItem[];
 }
 
+const getCartKey = (userId: string) => `cart_${userId}`; // ✅ NEW
+
 const initialState: cartListState = {
-  items:
-    typeof window !== "undefined"
-      ? JSON.parse(localStorage.getItem("cartList") || "[]")
-      : [],
+  items: [], // ❌ REMOVED localStorage from here
 };
 
 const cartListSlice = createSlice({
   name: "cartList",
   initialState,
   reducers: {
+    // ================= ADD =================
     addToCartList: (
       state,
       action: PayloadAction<{
+        userId: string; // ✅ NEW
         product: Product;
         quantity: number;
         color: string;
         size: string;
       }>
     ) => {
-      const { product, quantity, color, size } = action.payload;
 
+      const { userId, product, quantity, color, size } = action.payload;
+      if (!userId) {
+        console.error(
+          "❌ addToCartList called WITHOUT userId",
+          action.payload
+        );
+        return;
+      }
       const existingItem = state.items.find(
-        item => item._id === product._id && item.color === color && item.size === size
+        item =>
+          item._id === product._id &&
+          item.color === color &&
+          item.size === size
       );
 
       if (existingItem) {
@@ -48,29 +59,64 @@ const cartListSlice = createSlice({
         });
       }
 
-      localStorage.setItem("cartList", JSON.stringify(state.items));
+      localStorage.setItem(
+        getCartKey(userId), // ✅ USER-SPECIFIC KEY
+        JSON.stringify(state.items)
+      );
     },
 
+    // ================= UPDATE =================
     updateCartQuantity: (
       state,
-      action: PayloadAction<{ _id: string; quantity: number }>
+      action: PayloadAction<{
+        userId: string; // ✅ NEW
+        _id: string;
+        quantity: number;
+      }>
     ) => {
-      const item = state.items.find(i => i._id === action.payload._id);
-      if (item && action.payload.quantity >= 1) {
-        item.quantity = action.payload.quantity;
+      const { userId, _id, quantity } = action.payload;
+
+      const item = state.items.find(i => i._id === _id);
+      if (item && quantity >= 1) {
+        item.quantity = quantity;
       }
-      localStorage.setItem("cartList", JSON.stringify(state.items));
+
+      localStorage.setItem(
+        getCartKey(userId), // ✅ USER-SPECIFIC KEY
+        JSON.stringify(state.items)
+      );
     },
 
-    removeFromCartList: (state, action: PayloadAction<number>) => {
-      state.items.splice(action.payload, 1);
-      localStorage.setItem("cartList", JSON.stringify(state.items));
+    // ================= REMOVE =================
+    removeFromCartList: (
+      state,
+      action: PayloadAction<{
+        userId: string; // ✅ NEW
+        index: number;
+      }>
+    ) => {
+      const { userId, index } = action.payload;
+
+      state.items.splice(index, 1);
+
+      localStorage.setItem(
+        getCartKey(userId), // ✅ USER-SPECIFIC KEY
+        JSON.stringify(state.items)
+      );
     },
 
-
-    clearCartList: (state) => {
+    // ================= CLEAR =================
+    clearCartList: (
+      state,
+      action: PayloadAction<{ userId: string }> // ✅ NEW
+    ) => {
+      localStorage.removeItem(getCartKey(action.payload.userId));
       state.items = [];
-      localStorage.removeItem("cartList");
+    },
+
+    // ================= LOAD AFTER LOGIN =================
+    loadCartList: (state, action: PayloadAction<CartItem[]>) => {
+      state.items = action.payload;
     },
   },
 });
@@ -80,6 +126,7 @@ export const {
   updateCartQuantity,
   removeFromCartList,
   clearCartList,
+  loadCartList, // ✅ NEW
 } = cartListSlice.actions;
 
 export default cartListSlice.reducer;

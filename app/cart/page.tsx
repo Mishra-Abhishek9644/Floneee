@@ -1,7 +1,7 @@
 "use client";
 
 import Breadcrumb from "@/components/Breadcrumb";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   updateCartQuantity,
@@ -10,12 +10,28 @@ import {
 } from "@/Store/Slices/cartSlice";
 import { Heart, ShoppingCart, X } from "lucide-react";
 import Link from "next/link";
+import { loadCartList } from "@/Store/Slices/cartSlice";
 
 const Page = () => {
+
+
+
   const dispatch = useDispatch();
+  const currentUser = useSelector((state: any) => state.login.currentUser);
+
   const cartListItems = useSelector(
     (state: any) => state.cartList.items
   );
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const savedCart = JSON.parse(
+      localStorage.getItem(`cart_${currentUser._id}`) || "[]"
+    );
+
+    dispatch(loadCartList(savedCart));
+  }, [currentUser, dispatch]);
+
 
   return (
     <div className="">
@@ -55,7 +71,7 @@ const Page = () => {
             </div>
 
             {cartListItems.map((item: any, index: number) => (
-              <div key={item.id ?? `cart-${index}`}
+              <div key={item._id ?? `cart-${index}`}
                 className="grid grid-cols-1  md:grid-cols-8 place-content-center items-center px-6 py-6 border-y border-gray-200 relative gap-3 md:gap-0"
               >
                 <div className="flex justify-center bg-gray-100 h-30  items-center">
@@ -77,7 +93,8 @@ const Page = () => {
                   <button onClick={() =>
                     dispatch(
                       updateCartQuantity({
-                        _id: item.id,
+                        userId: currentUser._id,
+                        _id: item._id,
                         quantity: item.quantity > 1 ? item.quantity - 1 : 1,
                       })
                     )
@@ -86,14 +103,21 @@ const Page = () => {
                   <button onClick={() =>
                     dispatch(
                       updateCartQuantity({
-                        _id: item.id,
+                        userId: currentUser._id,
+                        _id: item._id,
                         quantity: item.quantity + 1,
                       })
                     )
                   } className="text-xl md:px-2 cursor-pointer">+</button>
                 </div>
                 <button
-                  onClick={() => dispatch(removeFromCartList(index))}
+                  onClick={() => dispatch(
+                    removeFromCartList({
+                      userId: currentUser._id,
+                      index,
+                    })
+                  )
+                  }
                   className="hidden md:flex justify-center text-black rounded-xl px-1 hover:scale-110 hover:text-purple-500"
                 >
                   <X />
@@ -114,7 +138,7 @@ const Page = () => {
 
 
             <button
-              onClick={() => dispatch(clearCartList())}
+              onClick={() => dispatch(clearCartList({ userId: currentUser._id }))}
               className="px-10 py-4 rounded-full flex justify-center  bg-gray-100 text-sm font-semibold my-2 hover:bg-purple-600 hover:text-white hover:scale-110 transition-all duration-300"
             >
               CLEAR CartList
@@ -129,8 +153,9 @@ const Page = () => {
             </button>
           </Link>
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 };
 
