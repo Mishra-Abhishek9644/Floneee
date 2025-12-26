@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { loginUser } from "@/lib/auth";
 import { setUser } from "@/Store/Slices/loginSlice";
 import { RootState } from "@/Store";
+import { loadCartList } from "@/Store/Slices/cartSlice";
 
 interface LoginForm {
   email: string;
@@ -35,6 +36,13 @@ const page = () => {
       const res = await loginUser(data);
 
       dispatch(setUser(res.user)); // ✅ Redux update
+      dispatch(
+        loadCartList(
+          JSON.parse(
+            localStorage.getItem(`cart_${res.user._id}`) || "[]"
+          )
+        )
+      );
       toast.success("Logged in successfully");
     } catch (error: any) {
       toast.error(error.message || "Invalid email or password");
@@ -71,9 +79,8 @@ const page = () => {
               <div className="grid grid-cols-1 gap-4">
                 <input
                   type="email"
-                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${
-                    errors.email ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${errors.email ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Email"
                   {...register("email", {
                     required: "Email is required",
@@ -91,9 +98,8 @@ const page = () => {
 
                 <input
                   type="password"
-                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${
-                    errors.password ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${errors.password ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Password"
                   {...register("password", {
                     required: "Password is required",

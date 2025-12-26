@@ -149,11 +149,19 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
     /* ================= CART ================= */
     const handleAddToCart = () => {
         if (debounceRef.current) return;
-        if (!isLoggedIn) {
-            toast.error("Login To Continue");
+
+        if (!currentUser) {
+            toast.error("Login to continue");
             router.push("/login");
             return;
         }
+
+        // 2️⃣ Logged in but auth still hydrating
+        if (!currentUser._id) {
+            toast.loading("Please wait…");
+            return;
+        }
+
 
         if (!selectedColor || !selectedSize) {
             toast.error("Please select size and color");
@@ -164,6 +172,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
 
         dispatch(
             addToCartList({
+                userId: currentUser._id,
                 product,
                 quantity: qty,
                 color: selectedColor,

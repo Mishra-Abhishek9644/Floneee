@@ -7,6 +7,8 @@ import { RootState } from "@/Store";
 import { logout } from "@/Store/Slices/loginSlice";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { loadCartList } from "@/Store/Slices/cartSlice";
+
 
 const UserDashboard = () => {
   const router = useRouter();
@@ -46,6 +48,7 @@ const UserDashboard = () => {
 
       dispatch(logout());          // Redux clear
       toast.success("Logged out");
+      dispatch(loadCartList([]));
       router.replace("/login");    // Redirect
     } catch {
       toast.error("Logout failed");

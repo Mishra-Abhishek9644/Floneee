@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 const Page = () => {
     const dispatch = useDispatch();
     const router = useRouter();
+    const currentUser = useSelector((state: any) => state.login.currentUser);
+    
 
     const cartCount = useSelector((state: any) => state.cartList.items);
     const user = useSelector((state: any) => state.login.currentUser);
@@ -82,7 +84,7 @@ const Page = () => {
         };
 
         dispatch(placeOrder(order));
-        dispatch(clearCartList());
+         dispatch(clearCartList({ userId: currentUser._id }))
         router.push("/account");
     };
 
@@ -255,7 +257,7 @@ const Page = () => {
 
                             {cartCount.map((item: any) => (
                                 <div
-                                    key={item.id}
+                                    key={item._id}
                                     className="flex justify-between border-b border-gray-300 pb-4 w-full"
                                 >
                                     <p className="w-2/3">

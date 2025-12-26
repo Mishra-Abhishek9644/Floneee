@@ -13,7 +13,7 @@ export async function GET() {
 
     return NextResponse.json({
       user: {
-        id: user.userId,
+        _id: user.userId,
         email: user.email,
         role: user.role,
       },
