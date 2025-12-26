@@ -7,12 +7,14 @@ import Breadcrumb from "@/components/Breadcrumb";
 import { RootState } from "@/Store";
 import { logout } from "@/Store/Slices/loginSlice";
 import toast from "react-hot-toast";
+import AdminProducts from "./products/page";
 
 const AdminDashboard = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.login.currentUser);
 
+  const [addingProduct, setAddingProduct] = useState(false);
   const [addOption, setAddOption] = useState("product");
   const [storeCat, setStoreCat] = useState<any[]>([]);
 
@@ -36,7 +38,7 @@ const AdminDashboard = () => {
     sizes: "",
     colors: "",
   });
-  
+
   useEffect(() => {
     const loadCat = async () => {
       const res = await fetch("/api/admin/category", {
@@ -49,9 +51,9 @@ const AdminDashboard = () => {
     };
     loadCat();
   }, [])
-  
 
-  
+
+  console.log(user?.name);
   if (!user) return null;
   /* ---------------- LOGOUT ---------------- */
   const handleLogout = async () => {
@@ -89,33 +91,76 @@ const AdminDashboard = () => {
 
   /* ---------------- ADD PRODUCT ---------------- */
   const addProduct = async () => {
-    if (!product.image) {
-      toast.error("Please select an image");
-      return;
-    }
 
-    const formData = new FormData();
-    formData.append("title", product.title);
-    formData.append("price", product.price);
-    formData.append("stock", product.stock);
-    formData.append("description", product.description);
-    formData.append("categoryId", product.categoryId);
-    formData.append("sizes", product.sizes);
-    formData.append("colors", product.colors);
-    formData.append("image", product.image);
+    if (addingProduct) return;
+    setAddingProduct(true);
 
-    const res = await fetch("/api/admin/product", {
-      method: "POST",
-      credentials: "include",
-      body: formData,
-    });
+    try {
 
-    if (!res.ok) {
+      if (!product.title.trim()) {
+        toast.error("Title requierd");
+        return;
+      }
+
+      if (!product.image) {
+        toast.error("Please select an image");
+        return;
+      }
+
+      if (!product.categoryId) {
+        toast.error("Select Category");
+        return;
+      }
+
+      if (Number(product.price) <= 0) {
+        toast.error("Invalid Price");
+        return;
+      }
+
+      if (Number(product.stock) < 0) {
+        toast.error("Invalid stock");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("title", product.title);
+      formData.append("price", product.price);
+      formData.append("stock", product.stock);
+      formData.append("description", product.description);
+      formData.append("categoryId", product.categoryId);
+      formData.append("sizes", product.sizes);
+      formData.append("colors", product.colors);
+      formData.append("image", product.image);
+
+      const res = await fetch("/api/admin/product", {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        toast.error("Failed to add product");
+        return;
+      }
+
+      toast.success("Product added");
+
+      setProduct({
+        title: "",
+        price: "",
+        image: null,
+        description: "",
+        categoryId: "",
+        stock: "",
+        sizes: "",
+        colors: "",
+      });
+
+    } catch (error) {
       toast.error("Failed to add product");
-      return;
+    } finally {
+      setAddingProduct(false);
     }
-
-    toast.success("Product added");
   };
 
 
@@ -207,11 +252,14 @@ const AdminDashboard = () => {
               </div>
               <button
                 onClick={addProduct}
-                className="bg-purple-600 text-white px-4 py-2"
+                disabled={addingProduct}
+                className="bg-purple-600 text-white px-4 py-2 disabled:opacity-50"
               >
-                Add Product
+                {addingProduct ? "Adding..." : "Add Product"}
               </button>
+
             </div>
+            <AdminProducts />
           </>
         )}
       </div>
