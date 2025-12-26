@@ -16,7 +16,7 @@ const page = () => {
                         <div className='flex justify-center items-center'>
                             <hr className='w-20 border-2 mt-5' />
                         </div>
-                        <p className='md:w-[800px] w-full md:text-center text-justify'>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt labor et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commo consequat irure</p>
+                        <p className='md:w-200 w-full md:text-center text-justify'>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt labor et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commo consequat irure</p>
                     </div>
                 </div>
 

@@ -69,6 +69,7 @@ const DailyDeals = () => {
                             onClose={() => setModal(false)}
                         />
                     )}
+
                 </div>
             )}
             <div className='m-1 md:mx-auto md:px-10 '>

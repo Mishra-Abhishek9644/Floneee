@@ -89,13 +89,14 @@ const ShopClient = () => {
 
       <div className="m-1 md:mx-auto p-2 md:p-10">
         {/* ================= MODAL ================= */}
-        {modal && (
+        {modal && selectedProduct && (
           <Modal
             product={selectedProduct}
             open={modal}
             onClose={() => setModal(false)}
           />
         )}
+
 
         <div className="grid grid-cols-1 md:grid-cols-[20%_70%] gap-4">
           {/* ================= LEFT SIDEBAR ================= */}
@@ -126,9 +127,8 @@ const ShopClient = () => {
 
               <div className="flex gap-3 my-2 text-lg">
                 <button
-                  className={`border px-3 py-2 rounded-md ${
-                    activeCategory === null ? "bg-purple-600" : ""
-                  }`}
+                  className={`border px-3 py-2 rounded-md ${activeCategory === null ? "bg-purple-600" : ""
+                    }`}
                   onClick={() => {
                     setActiveCategory(null);
                     setCurrentPage(0);
@@ -140,9 +140,8 @@ const ShopClient = () => {
               {categories.map((cat) => (
                 <div key={cat.slug} className="flex gap-3 my-2 text-lg">
                   <button
-                    className={`border px-3 py-2 rounded-md ${
-                      activeCategory === cat.slug ? "bg-purple-600" : ""
-                    }`}
+                    className={`border px-3 py-2 rounded-md ${activeCategory === cat.slug ? "bg-purple-600" : ""
+                      }`}
                     onClick={() => {
                       setActiveCategory(cat.slug);
                       setCurrentPage(0);
