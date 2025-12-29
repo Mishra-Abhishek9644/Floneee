@@ -1,7 +1,14 @@
 import Branding from '@/components/Branding'
 import Breadcrumb from '@/components/Breadcrumb'
 import { BriefcaseBusiness, CircleStar, CupSoda, Smile } from 'lucide-react'
-import React from 'react'
+import React, { ReactNode } from 'react'
+import img1 from '../../assets/developer.png';
+
+type StatProps = {
+  icon: ReactNode;
+  count: string;
+  text: string;
+};
 
 const page = () => {
 
@@ -52,36 +59,40 @@ const page = () => {
                     </div>
                 </div>
 
-                <div className="bg-[#f7f7f7] md:py-20 py-10 w-full overflow-hidden">
-                    <div className="marquee flex gap-16 items-center">
+                <div className="bg-[#f7f7f7] md:py-20 py-12 w-full overflow-hidden relative">
+                    {/* fade edges */}
+                    <div className="pointer-events-none absolute left-0 top-0 h-full w-24  from-[#f7f7f7] to-transparent z-10" />
+                    <div className="pointer-events-none absolute right-0 top-0 h-full w-24  from-[#f7f7f7] to-transparent z-10" />
 
-                        {/* FIRST SET */}
-                        <div className="flex gap-16 items-center">
-                            <Stat icon={<BriefcaseBusiness size={50} />} count="15" text="project done" />
-                            <Stat icon={<CupSoda size={50} />} count="350" text="cups of chai" />
-                            <Stat icon={<CircleStar size={50} />} count="2" text="branding" />
-                            <Stat icon={<Smile size={50} />} count="1" text="happy client" />
-                        </div>
+                    <div className="marquee flex gap-20 items-center hover:[animation-play-state:paused]">
 
-                        {/* DUPLICATE SET (for infinite loop) */}
-                        <div className="flex gap-16 items-center">
-                            <Stat icon={<BriefcaseBusiness size={50} />} count="15" text="project done" />
-                            <Stat icon={<CupSoda size={50} />} count="350" text="cups of chai" />
-                            <Stat icon={<CircleStar size={50} />} count="2" text="branding" />
-                            <Stat icon={<Smile size={50} />} count="1" text="happy client" />
-                        </div>
-                        
-                        {/* DUPLICATE SET (for infinite loop) */}
-                        <div className="flex gap-16 items-center">
-                            <Stat icon={<BriefcaseBusiness size={50} />} count="15" text="project done" />
-                            <Stat icon={<CupSoda size={50} />} count="350" text="cups of chai" />
-                            <Stat icon={<CircleStar size={50} />} count="2" text="branding" />
-                            <Stat icon={<Smile size={50} />} count="1" text="happy client" />
-                        </div>
+                        {[1, 2, 3].map((_, i) => (
+                            <div key={i} className="flex gap-20 items-center">
+                                <Stat
+                                    icon={<BriefcaseBusiness size={46} />}
+                                    count="15"
+                                    text="Projects Done"
+                                />
+                                <Stat
+                                    icon={<CupSoda size={46} />}
+                                    count="350"
+                                    text="Cups of Chai"
+                                />
+                                <Stat
+                                    icon={<CircleStar size={46} />}
+                                    count="2"
+                                    text="Branding"
+                                />
+                                <Stat
+                                    icon={<Smile size={46} />}
+                                    count="1"
+                                    text="Happy Client"
+                                />
+                            </div>
+                        ))}
 
                     </div>
                 </div>
-
 
                 <div className='pt-20 md:px-36 px-5 flex justify-center items-center'>
                     <div className='text-center '>
@@ -94,7 +105,7 @@ const page = () => {
                         <div className='md:mt-20 mt-5'>
                             <div className='grid  md:grid-cols-2 grid-cols-1 gap-8'>
                                 <div className='bg-[#f7f7f7]'>
-                                    <img src="https://flone.jamstacktemplates.dev/assets/img/team/team-1.jpg" className='' alt="image" />
+                                    <img src={img1.src} className='' alt="image" />
                                     <div className='py-5'>
                                         <h1 className='text-xl font-bold '>Mishra Abhishek</h1>
                                         <p className='italic'>Web Developer</p>
@@ -102,29 +113,16 @@ const page = () => {
                                 </div>
 
                                 <div className='bg-[#f7f7f7]'>
-                                    <img src="https://flone.jamstacktemplates.dev/assets/img/team/team-1.jpg" className='' alt="image" />
+                                    <img src={img1.src} className='' alt="image" />
                                     <div className='py-5'>
                                         <h1 className='text-xl font-bold '>Yadav Avanish</h1>
                                         <p className='italic'>Web Developer</p>
                                     </div>
                                 </div>
 
-                                {/* <div className='bg-[#f7f7f7]'>
-                                    <img src="https://flone.jamstacktemplates.dev/assets/img/team/team-1.jpg" className='' alt="image" />
-                                    <div className='py-5'>
-                                        <h1 className='text-xl font-bold '>Mishra Abhishek</h1>
-                                        <p className='italic'>Web Developer</p>
-                                    </div>
-                                </div>
-                                
-                                <div className='bg-[#f7f7f7]'>
-                                    <img src="https://flone.jamstacktemplates.dev/assets/img/team/team-1.jpg" className='' alt="image" />
-                                    <div className='py-5'>
-                                        <h1 className='text-xl font-bold '>Yadav Avanish</h1>
-                                        <p className='italic'>Web Developer</p>
-                                    </div>
-                                </div> */}
-                            </div>
+</div>
+
+
                         </div>
                     </div>
                 </div>
@@ -152,10 +150,13 @@ const page = () => {
 
 export default page
 
-const Stat = ({ icon, count, text }: any) => (
-  <div className="flex flex-col items-center min-w-[200px]">
-    {icon}
-    <p className="text-4xl py-5 text-purple-600 font-bold">{count}</p>
-    <h3 className="text-2xl capitalize">{text}</h3>
-  </div>
+const Stat = ({ icon, count, text }:StatProps) => (
+    <div className="flex items-center gap-4 bg-white px-6 py-4 rounded-xl shadow-sm hover:shadow-md transition">
+        <div className="text-gray-800">{icon}</div>
+        <div>
+            <h3 className="text-2xl font-semibold text-gray-900">{count}+</h3>
+            <p className="text-sm text-gray-500 uppercase tracking-wide">{text}</p>
+        </div>
+    </div>
 );
+
