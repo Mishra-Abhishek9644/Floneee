@@ -216,7 +216,20 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
 
                     <div className="lg:px-20 md:px-12 px-5">
                         <h1 className="lg:text-2xl">{product.title}</h1>
-                        <p className="text-2xl text-red-500 py-2">${product.price}</p>
+                        <p className="text-gray-600">
+                            {product.discount > 0 ? (
+                                <>
+                                    <span className="line-through mr-2 text-gray-400">
+                                        ${product.price}
+                                    </span>
+                                    <span className="font-semibold text-purple-600">
+                                        ${product.finalPrice}
+                                    </span>
+                                </>
+                            ) : (
+                                <>${product.price}</>
+                            )}
+                        </p>
                         <p className="border-b pb-8">{product.description}</p>
 
                         {/* COLORS */}

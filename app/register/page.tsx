@@ -21,7 +21,7 @@ interface RegisterForm {
 
 const page = () => {
   const dispatch = useDispatch()
-  const { register, reset, handleSubmit, formState: { errors } } = useForm<RegisterForm>()
+  const { register, reset, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterForm>()
   const route = useRouter()
 
   const { users } = useSelector(
@@ -128,11 +128,17 @@ const page = () => {
 
               <div className="mt-10">
                 <button
-                  className="bg-gray-200 hover:bg-purple-600 hover:text-white px-8 py-2 uppercase text-sm duration-700"
-                  type='submit'
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`px-8 py-2 uppercase text-sm duration-700
+    ${isSubmitting
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-gray-200 hover:bg-purple-600 hover:text-white"}
+  `}
                 >
-                  Register
+                  {isSubmitting ? "Registering..." : "Register"}
                 </button>
+
 
               </div>
             </form>

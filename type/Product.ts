@@ -10,16 +10,19 @@ export interface Product {
   price: number;
   image: string;
   description: string;
+
   categoryId: {
     _id: string;
     name: string;
     slug: string;
   };
-  colors?: string[];   // ✅ optional
-  sizes?: string[];    // ✅ optional
+
+  colors?: string[];
+  sizes?: string[];
+
   createdAt?: string;
   rating?: number;
-  discount?: number;
 
+  discount: number;     // ✅ REQUIRED
+  finalPrice: number;   // ✅ REQUIRED
 }
-
