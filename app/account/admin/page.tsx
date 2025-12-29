@@ -1,7 +1,7 @@
 "use client";
 
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Breadcrumb from "@/components/Breadcrumb";
 import { RootState } from "@/Store";
@@ -10,9 +10,11 @@ import toast from "react-hot-toast";
 import AdminProducts from "./products/page";
 import AdminContacts from "./contacts/page";
 import AdminCategories from "./categories/page";
-import { useRef } from "react";
 
-
+/* ---------------- SKELETON BOX ---------------- */
+const Skeleton = ({ className = "" }: { className?: string }) => (
+  <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
+);
 
 const generateDescription = (product: {
   title: string;
@@ -24,57 +26,50 @@ const generateDescription = (product: {
   Perfect for casual wear, daily use, and all-day comfort.`;
 };
 
-
 const AdminDashboard = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.login.currentUser);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
+  const [loading, setLoading] = useState(true); // 🔹 SKELETON
   const [addingProduct, setAddingProduct] = useState(false);
   const [addOption, setAddOption] = useState("product");
   const [storeCat, setStoreCat] = useState<any[]>([]);
 
   const [category, setCategory] = useState({ name: "" });
-  const [product, setProduct] = useState<{
-    title: string;
-    price: string;
-    image: File | null;
-    description: string;
-    categoryId: string;
-    stock: string;
-    sizes: string;
-    colors: string;
-    discount: number | "",
-  }>({
+  const [product, setProduct] = useState({
     title: "",
     price: "",
-    image: null,
+    image: null as File | null,
     description: "",
     categoryId: "",
     stock: "",
     sizes: "",
     colors: "",
-    discount: "",
-
+    discount: "" as number | "",
   });
 
+  /* ---------------- LOAD CATEGORY ---------------- */
   useEffect(() => {
     const loadCat = async () => {
-      const res = await fetch("/api/admin/category", {
-        credentials: "include",
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setStoreCat(data.storeCat || data);
+      try {
+        const res = await fetch("/api/admin/category", {
+          credentials: "include",
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setStoreCat(data.storeCat || data);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false); // 🔹 SKELETON END
       }
     };
     loadCat();
-  }, [])
+  }, []);
 
-
-  // console.log(user?.name);
-  if (!user) return null;
   /* ---------------- LOGOUT ---------------- */
   const handleLogout = async () => {
     try {
@@ -93,15 +88,13 @@ const AdminDashboard = () => {
 
   /* ---------------- ADD CATEGORY ---------------- */
   const addCategory = async () => {
-
     try {
-      const res = await fetch("/api/admin/category", {
+      await fetch("/api/admin/category", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify(category),
       });
-      // console.log(res);
       toast.success("Category added");
       setCategory({ name: "" });
     } catch {
@@ -111,60 +104,32 @@ const AdminDashboard = () => {
 
   /* ---------------- ADD PRODUCT ---------------- */
   const addProduct = async () => {
-
     if (addingProduct) return;
     setAddingProduct(true);
 
     try {
+      if (!product.title.trim()) return toast.error("Title required");
+      if (!product.image) return toast.error("Select image");
+      if (!product.categoryId) return toast.error("Select category");
 
-      if (!product.title.trim()) {
-        toast.error("Title requierd");
-        return;
-      }
-
-      if (!product.image) {
-        toast.error("Please select an image");
-        return;
-      }
-
-      if (!product.categoryId) {
-        toast.error("Select Category");
-        return;
-      }
-
-      if (Number(product.price) <= 0) {
-        toast.error("Invalid Price");
-        return;
-      }
-
-      if (Number(product.stock) < 0) {
-        toast.error("Invalid stock");
-        return;
-      }
       const discountValue = product.discount === "" ? 0 : product.discount;
 
-      if (
-        isNaN(discountValue) ||
-        discountValue < 0 ||
-        discountValue > 100
-      ) {
-        toast.error("Invalid Discount");
-        return;
-      }
-
-
-      const finalDescription = product.description.trim() || generateDescription(product);
+      const finalDescription =
+        product.description.trim() || generateDescription(product);
 
       const formData = new FormData();
-      formData.append("title", product.title);
-      formData.append("price", product.price);
-      formData.append("stock", product.stock);
-      formData.append("description", product.description || finalDescription);
-      formData.append("categoryId", product.categoryId);
-      formData.append("sizes", product.sizes);
-      formData.append("colors", product.colors);
+      Object.entries({
+        title: product.title,
+        price: product.price,
+        stock: product.stock,
+        description: finalDescription,
+        categoryId: product.categoryId,
+        sizes: product.sizes,
+        colors: product.colors,
+        discount: String(discountValue),
+      }).forEach(([k, v]) => formData.append(k, v));
+
       formData.append("image", product.image);
-      formData.append("discount", String(discountValue));
 
       const res = await fetch("/api/admin/product", {
         method: "POST",
@@ -172,16 +137,10 @@ const AdminDashboard = () => {
         body: formData,
       });
 
-      if (!res.ok) {
-        toast.error("Failed to add product");
-        return;
-      }
+      if (!res.ok) return toast.error("Failed to add product");
 
       toast.success("Product added");
-
-      if (fileRef.current) {
-        fileRef.current.value = "";
-      }
+      if (fileRef.current) fileRef.current.value = "";
 
       setProduct({
         title: "",
@@ -194,15 +153,41 @@ const AdminDashboard = () => {
         colors: "",
         discount: 0,
       });
-
-    } catch (error) {
+    } catch {
       toast.error("Failed to add product");
     } finally {
       setAddingProduct(false);
     }
   };
 
+  /* ---------------- SKELETON SCREEN ---------------- */
+  if (!user || loading) {
+    return (
+      <div className="max-w-6xl mx-auto md:px-20 px-5 py-20 space-y-8">
+        <Skeleton className="h-8 w-40" />
+        <div className="bg-gray-100 p-6 rounded space-y-3">
+          <Skeleton className="h-4 w-1/3" />
+          <Skeleton className="h-4 w-1/2" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+        <div className="flex gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-5 w-28" />
+          ))}
+        </div>
+        <div className="bg-white p-6 shadow rounded space-y-4">
+          <Skeleton className="h-6 w-40" />
+          <div className="grid grid-cols-2 gap-6">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
+      </div>
+    );
+  }
 
+  /* ---------------- MAIN UI ---------------- */
   return (
     <>
       <Breadcrumb />
@@ -210,8 +195,6 @@ const AdminDashboard = () => {
       <div className="max-w-6xl mx-auto md:px-20 px-5 py-20">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Admin Panel</h1>
-
-          {/* LOGOUT BUTTON */}
           <button
             onClick={handleLogout}
             className="bg-gray-200 hover:bg-red-600 hover:text-white px-4 py-2 text-sm uppercase duration-500"
@@ -220,34 +203,38 @@ const AdminDashboard = () => {
           </button>
         </div>
 
-        {/* ADMIN INFO */}
         <div className="bg-gray-100 p-6 rounded-md mb-8">
           <p><strong>Name:</strong> {user.name}</p>
           <p><strong>Email:</strong> {user.email}</p>
           <p className="text-purple-600 font-semibold">Role: {user.role}</p>
         </div>
 
-        <div className="my-5">
-          <div className="flex gap-4 border-b border-gray-500 w-fit">
-            <button className={`${addOption === "product" ? "border-b font-bold text-purple-600" : "border-none"}  pb-2 cursor-pointer`} onClick={() => setAddOption("product")}>Add Products</button>
-            <button className={`${addOption === "category" ? "border-b font-bold text-purple-600" : "border-none"} pb-2 cursor-pointer`} onClick={() => setAddOption("category")}>Add Categories</button>
-            <button className={`${addOption === "contact" ? "border-b font-bold text-purple-600" : "border-none"} pb-2 cursor-pointer`} onClick={() => setAddOption("contact")}>See Contacts</button>
-            <button className={`${addOption === "order" ? "border-b font-bold text-purple-600" : "border-none"} pb-2 cursor-pointer`} onClick={() => setAddOption("order")}>See Orders</button>
-          </div>
+        <div className="flex gap-4 border-b border-gray-500 w-fit mb-6">
+          {["product", "category", "contact", "order"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setAddOption(tab)}
+              className={`pb-2 ${addOption === tab
+                  ? "border-b font-bold text-purple-600"
+                  : ""
+                }`}
+            >
+              {tab.toUpperCase()}
+            </button>
+          ))}
         </div>
 
         {addOption === "category" && (
           <>
             <div className="bg-white p-6 shadow rounded mb-10">
-              <h2 className="font-semibold mb-4">Add Category</h2>
               <input
+                className="border p-2 w-full mb-2"
                 placeholder="Category Name"
-                className="border border-gray-300 outline-hidden p-2 w-full mb-2"
                 value={category.name}
-                onChange={(e) => setCategory({ ...category, name: e.target.value })}
-                required
+                onChange={(e) =>
+                  setCategory({ name: e.target.value })
+                }
               />
-
               <button
                 onClick={addCategory}
                 className="bg-purple-600 text-white px-4 py-2"
@@ -326,24 +313,11 @@ const AdminDashboard = () => {
           </>
         )}
 
-        {addOption === "contact" && (
-          <>
-            <AdminContacts />
-          </>
-        )}
-
-        {addOption === "order" && (
-          <>
-            <div>All orders here....</div>
-          </>
-        )}
-
-
-
+        {addOption === "contact" && <AdminContacts />}
+        {addOption === "order" && <div>All orders here...</div>}
       </div>
     </>
   );
 };
 
 export default AdminDashboard;
-
