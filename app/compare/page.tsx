@@ -77,7 +77,7 @@ const page = () => {
 
                 {CompareList.map((product: any) => (
                   <td key={product._id} className="p-6 bg-white text-center relative min-w-70">
-                    ₹{product.price}
+                    ₹{product.finalPrice}
                   </td>
                 ))}
               </tr>

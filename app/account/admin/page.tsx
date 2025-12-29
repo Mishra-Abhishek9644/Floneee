@@ -45,6 +45,7 @@ const AdminDashboard = () => {
     stock: string;
     sizes: string;
     colors: string;
+    discount: number | "",
   }>({
     title: "",
     price: "",
@@ -54,6 +55,8 @@ const AdminDashboard = () => {
     stock: "",
     sizes: "",
     colors: "",
+    discount: "",
+
   });
 
   useEffect(() => {
@@ -138,6 +141,17 @@ const AdminDashboard = () => {
         toast.error("Invalid stock");
         return;
       }
+      const discountValue = product.discount === "" ? 0 : product.discount;
+
+      if (
+        isNaN(discountValue) ||
+        discountValue < 0 ||
+        discountValue > 100
+      ) {
+        toast.error("Invalid Discount");
+        return;
+      }
+
 
       const finalDescription = product.description.trim() || generateDescription(product);
 
@@ -150,6 +164,7 @@ const AdminDashboard = () => {
       formData.append("sizes", product.sizes);
       formData.append("colors", product.colors);
       formData.append("image", product.image);
+      formData.append("discount", String(discountValue));
 
       const res = await fetch("/api/admin/product", {
         method: "POST",
@@ -177,6 +192,7 @@ const AdminDashboard = () => {
         stock: "",
         sizes: "",
         colors: "",
+        discount: 0,
       });
 
     } catch (error) {
@@ -284,6 +300,19 @@ const AdminDashboard = () => {
                 <input className="border border-gray-400 outline-hidden p-2 w-full mb-2" placeholder="Colors (Red,Blue)" onChange={(e) => setProduct({ ...product, colors: e.target.value })} />
                 <textarea className="border border-gray-400 outline-hidden p-2 w-full mb-2" placeholder="Description" onChange={(e) => setProduct({ ...product, description: e.target.value })} />
               </div>
+              <input
+                type="number"
+                className="border border-gray-400 outline-hidden p-2 w-full mb-2"
+                placeholder="Discount (%)"
+                value={product.discount}
+                onChange={(e) =>
+                  setProduct({
+                    ...product,
+                    discount: e.target.value === "" ? "" : Number(e.target.value),
+                  })
+                }
+              />
+
               <button
                 onClick={() => addProduct()}
                 disabled={addingProduct}

@@ -63,11 +63,22 @@ const LongCard: React.FC<CardProps> = ({ product, onOpen }) => {
         </div>
 
         <div className="flex flex-col gap-2">
-          <div className="text-2xl truncate">{product.title}</div>
-          <div className="text-red-600 text-2xl">${product.price}</div>
-          <div className="text-gray-500 my-4 truncate">
-            {product.description}
-          </div>
+          <div className="text-2xl truncate ">{product.title}</div>
+          <p className="text-gray-600">
+            {product.discount > 0 ? (
+              <>
+                <span className="line-through mr-2 text-gray-400">
+                  ${product.price}
+                </span>
+                <span className="font-semibold text-purple-600">
+                  ${product.finalPrice}
+                </span>
+              </>
+            ) : (
+              <>${product.price}</>
+            )}
+          </p>
+          <div className="text-gray-500 my-4 truncate">{product.description}</div>
 
           <div className="flex items-center gap-2">
             <Link href={`/shop/product/${product._id}`}>

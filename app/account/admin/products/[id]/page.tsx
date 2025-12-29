@@ -25,6 +25,7 @@ export default function EditProduct() {
         stock: string;
         sizes: string;
         colors: string;
+        discount: number | "",
     }>({
         title: "",
         price: "",
@@ -34,6 +35,7 @@ export default function EditProduct() {
         stock: "",
         sizes: "",
         colors: "",
+        discount: "",
     });
 
     /* ---------- LOAD PRODUCT + CATEGORIES ---------- */
@@ -65,6 +67,7 @@ export default function EditProduct() {
                     stock: String(prod.stock),
                     sizes: prod.sizes.join(","),
                     colors: prod.colors.join(","),
+                    discount: Number(prod.discount),
                 });
 
             } catch {
@@ -90,6 +93,17 @@ export default function EditProduct() {
             toast.error("Select category");
             return;
         }
+        const discountValue = product.discount === "" ? 0 : product.discount;
+        if (
+            isNaN(discountValue) ||
+            discountValue < 0 ||
+            discountValue > 100
+        ) {
+            toast.error("Invalid Discount");
+            return;
+        }
+
+
 
         setUpdating(true);
 
@@ -102,6 +116,7 @@ export default function EditProduct() {
             formData.append("categoryId", product.categoryId);
             formData.append("sizes", product.sizes);
             formData.append("colors", product.colors);
+            formData.append("discount", String(discountValue));
 
             // image is OPTIONAL on edit
             if (product.image) {
@@ -224,6 +239,18 @@ export default function EditProduct() {
                         value={product.description}
                         onChange={(e) =>
                             setProduct({ ...product, description: e.target.value })
+                        }
+                    />
+                    <input
+                        type="number"
+                        className="border border-gray-400 outline-hidden p-2 w-full mb-2"
+                        placeholder="Discount (%)"
+                        value={product.discount}
+                        onChange={(e) =>
+                            setProduct({
+                                ...product,
+                                discount: e.target.value === "" ? "" : Number(e.target.value),
+                            })
                         }
                     />
 

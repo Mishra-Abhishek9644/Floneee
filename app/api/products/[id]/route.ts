@@ -13,8 +13,6 @@ export async function GET(
     // ✅ MUST await params
     const { id } = await context.params;
 
-    console.log("RAW PARAM ID:", id);
-
     if (!Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { message: "Invalid product ID" },
@@ -34,7 +32,22 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(product, { status: 200 });
+    // 🔹 APPLY DISCOUNT (BACKEND SOURCE OF TRUTH)
+    const productObj = product.toObject();
+
+    const discount = productObj.discount ?? 0;
+    const finalPrice =
+      discount > 0
+        ? productObj.price - (productObj.price * discount) / 100
+        : productObj.price;
+
+    return NextResponse.json(
+      {
+        ...productObj,
+        finalPrice: Math.round(finalPrice),
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("GET /products/[id] error:", error);
     return NextResponse.json(

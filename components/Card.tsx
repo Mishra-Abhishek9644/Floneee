@@ -67,7 +67,21 @@ const Card = ({ product, onOpen }: CardProps) => {
       </div>
 
       <h2 className="font-semibold mt-2 truncate">{product.title}</h2>
-      <p className="text-gray-600">${product.price}</p>
+      <p className="text-gray-600">
+        {product.discount > 0 ? (
+          <>
+            <span className="line-through mr-2 text-gray-400">
+              ${product.price}
+            </span>
+            <span className="font-semibold text-purple-600">
+              ${product.finalPrice}
+            </span>
+          </>
+        ) : (
+          <>${product.price}</>
+        )}
+      </p>
+
 
       <div className="absolute inset-x-0 bottom-18 h-12 mx-4 hidden items-center bg-purple-500 opacity-0 group-hover:opacity-100 translate-y-3 group-hover:translate-y-0 transition-all duration-700 ease-out md:flex z-10">
         {/* HEART (ADD / REMOVE) */}

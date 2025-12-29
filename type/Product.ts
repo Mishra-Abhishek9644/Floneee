@@ -10,6 +10,7 @@ export interface Product {
   price: number;
   image: string;
   description: string;
+
   categoryId: {
     _id: string;
     name: string;
@@ -19,7 +20,7 @@ export interface Product {
   sizes?: string[] | string;  
   createdAt?: string;
   rating?: number;
-  discount?: number;
 
+  discount: number;     
+  finalPrice: number;   
 }
-

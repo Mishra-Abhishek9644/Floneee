@@ -86,7 +86,7 @@ const Page = () => {
                   {item.title}
                 </div>
 
-                <div className="flex justify-center">${item.price}</div>
+                <div className="flex justify-center">${item.finalPrice}</div>
                 <div className="flex justify-center">{item.color}</div>
                 <div className="flex justify-center">{item.size}</div>
                 <div className="flex justify-center items-center border border-gray-300 px-1 py-3 ">

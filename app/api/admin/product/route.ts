@@ -27,6 +27,19 @@ export async function POST(req: Request) {
   const sizes = (formData.get("sizes") as string).split(",");
   const colors = (formData.get("colors") as string).split(",");
   const image = formData.get("image") as File;
+  const rawDiscount = formData.get("discount");
+
+  const discount =
+    rawDiscount === null || rawDiscount === ""
+      ? 0
+      : Number(rawDiscount);
+
+  if (Number.isNaN(discount) || discount < 0 || discount > 100) {
+    return NextResponse.json(
+      { message: "Invalid discount" },
+      { status: 400 }
+    );
+  }
 
   const bytes = await image.arrayBuffer();
   const buffer = Buffer.from(bytes);
@@ -43,6 +56,7 @@ export async function POST(req: Request) {
 
   const imageUrl = uploadResult.secure_url;
 
+
   const product = await Product.create({
     title,
     price,
@@ -52,6 +66,7 @@ export async function POST(req: Request) {
     stock,
     sizes,
     colors,
+    discount,
     rating: 0,
   });
 
@@ -73,13 +88,13 @@ export async function DELETE(req: Request) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
 
-  if(!id){
-    return NextResponse.json({message:"Product id requierd"},{status:400});
+  if (!id) {
+    return NextResponse.json({ message: "Product id requierd" }, { status: 400 });
   }
 
   await Product.findByIdAndDelete(id);
 
-  return NextResponse.json({message:"Product deleted"},{status:200});
+  return NextResponse.json({ message: "Product deleted" }, { status: 200 });
 
 }
 
@@ -117,6 +132,20 @@ export async function PUT(req: Request) {
   const sizes = (formData.get("sizes") as string).split(",");
   const colors = (formData.get("colors") as string).split(",");
   const image = formData.get("image") as File | null;
+  const rawDiscount = formData.get("discount");
+
+  const discount =
+    rawDiscount === null || rawDiscount === ""
+      ? 0
+      : Number(rawDiscount);
+
+  if (Number.isNaN(discount) || discount < 0 || discount > 100) {
+    return NextResponse.json(
+      { message: "Invalid discount" },
+      { status: 400 }
+    );
+  }
+
 
   const updateData: any = {
     title,
@@ -126,6 +155,7 @@ export async function PUT(req: Request) {
     categoryId,
     sizes,
     colors,
+    discount,
   };
 
   // IMAGE IS OPTIONAL IN EDIT

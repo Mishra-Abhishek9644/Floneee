@@ -185,7 +185,20 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
                     {/* DETAILS */}
                     <div className="flex flex-col gap-4">
                         <h2 className="text-2xl">{product.title}</h2>
-                        <p className="text-2xl text-red-600">${product.price}</p>
+                        <p className="text-gray-600">
+                            {product.discount > 0 ? (
+                                <>
+                                    <span className="line-through mr-2 text-gray-400">
+                                        ${product.price}
+                                    </span>
+                                    <span className="font-semibold text-purple-600">
+                                        ${product.finalPrice}
+                                    </span>
+                                </>
+                            ) : (
+                                <>${product.price}</>
+                            )}
+                        </p>
                         <p className="text-gray-500">{product.description}</p>
 
                         {/* COLORS */}
