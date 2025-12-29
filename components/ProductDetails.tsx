@@ -3,19 +3,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import Card from "./Card";
 import { Product } from "../type/Product";
-import {
-  Circle,
-  GitCompareArrows,
-  Heart,
-  MoveLeft,
-} from "lucide-react";
+import { Circle, GitCompareArrows, Heart, MoveLeft } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addToCompareList,
-  removeFromCompareList,
-} from "@/Store/Slices/compareSlice";
 import { addToCartList } from "@/Store/Slices/cartSlice";
 import { toggleWishlistDebounced } from "@/Store/Slices/wishlistSlice";
+import { toggleCompareDebounced } from "@/Store/Slices/compareSlice";
 import toast from "react-hot-toast";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -55,7 +47,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
     (i) => i._id === product?._id
   );
 
-  /* ================= FETCH PRODUCT ================= */
+  /* FETCH PRODUCT */
   useEffect(() => {
     if (!id) return;
 
@@ -65,24 +57,20 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
       .catch(() => setProduct(null));
   }, [id]);
 
-  /* ================= DEFAULT VARIANTS ================= */
+  /* DEFAULT VARIANTS */
   useEffect(() => {
     if (!product) return;
 
     if (Array.isArray(product.colors)) {
       setSelectedColor(product.colors[0] ?? null);
-    } else {
-      setSelectedColor(null);
     }
 
     if (Array.isArray(product.sizes)) {
       setSelectedSize(product.sizes[0] ?? null);
-    } else {
-      setSelectedSize(null);
     }
   }, [product]);
 
-  /* ================= RELATED PRODUCTS ================= */
+  /* RELATED PRODUCTS */
   useEffect(() => {
     if (
       !product ||
@@ -108,7 +96,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
   const increase = () => qty < 9 && setQty(qty + 1);
   const decrease = () => qty > 1 && setQty(qty - 1);
 
-  /* ================= WISHLIST ================= */
+  /* WISHLIST */
   const handleWishlistToggle = () => {
     if (debounceRef.current) return;
 
@@ -124,7 +112,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
     setTimeout(() => (debounceRef.current = false), 300);
   };
 
-  /* ================= COMPARE ================= */
+  /* COMPARE */
   const handleCompareToggle = () => {
     if (debounceRef.current) return;
 
@@ -135,22 +123,12 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
     }
 
     debounceRef.current = true;
-
-    if (isInCompare) {
-      dispatch(
-        removeFromCompareList({
-          userId: currentUser._id,
-          _id: product._id,
-        })
-      );
-    } else {
-      dispatch(addToCompareList({ userId: currentUser._id, product }));
-    }
+    dispatch(toggleCompareDebounced(currentUser._id, product));
 
     setTimeout(() => (debounceRef.current = false), 300);
   };
 
-  /* ================= CART ================= */
+  /* CART */
   const handleAddToCart = () => {
     if (debounceRef.current) return;
 
@@ -207,7 +185,6 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
           <p className="text-2xl text-red-500 py-2">${product.price}</p>
           <p className="border-b pb-8">{product.description}</p>
 
-          {/* COLORS */}
           {Array.isArray(product.colors) && (
             <div className="mt-6">
               <h3 className="font-semibold mb-2">Color</h3>
@@ -229,7 +206,6 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
             </div>
           )}
 
-          {/* SIZES */}
           {Array.isArray(product.sizes) && (
             <div className="mt-4">
               <h3 className="font-semibold mb-2">Size</h3>
