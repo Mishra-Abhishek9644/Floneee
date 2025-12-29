@@ -10,8 +10,8 @@ import { useForm } from "react-hook-form";
 import { loginUser } from "@/lib/auth";
 import { setUser } from "@/Store/Slices/loginSlice";
 import { AppDispatch, RootState } from "@/Store";
-import { loadCartList } from "@/Store/Slices/cartSlice";
-import { loadCompareList } from "@/Store/Slices/compareSlice";
+import { fetchCart } from "@/Store/Slices/cartSlice";
+import { fetchCompare } from "@/Store/Slices/compareSlice";
 import { fetchWishlist } from "@/Store/Slices/wishlistSlice";
 
 interface LoginForm {
@@ -32,26 +32,13 @@ const page = () => {
     formState: { errors },
   } = useForm<LoginForm>();
 
-  // 🔹 LOGIN ONLY (NO REDIRECT HERE)
   const onSubmit = async (data: LoginForm) => {
     try {
       const res = await loginUser(data);
 
-      dispatch(setUser(res.user)); // ✅ Redux update
-      dispatch(
-        loadCartList(
-          JSON.parse(
-            localStorage.getItem(`cart_${res.user._id}`) || "[]"
-          )
-        )
-      );
-      dispatch(
-        loadCompareList(
-          JSON.parse(
-            localStorage.getItem(`compare_${res.user._id}`) || "[]"
-          )
-        )
-      );
+      dispatch(setUser(res.user));
+      dispatch(fetchCart());
+      dispatch(fetchCompare());
 
       dispatch(fetchWishlist());
       toast.success("Logged in successfully");

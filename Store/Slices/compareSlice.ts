@@ -1,85 +1,109 @@
+// Store/Slices/compareSlice.ts
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Product } from "@/type/Product";
+import toast from "react-hot-toast";
 
 interface CompareState {
   items: Product[];
 }
 
-const getCompareKey = (userId: string) => `compare_${userId}`;
-
 const initialState: CompareState = {
   items: [],
 };
 
-const compareListSlice = createSlice({
+const compareSlice = createSlice({
   name: "compareList",
   initialState,
   reducers: {
-    // ================= ADD =================
-    addToCompareList: (
-      state,
-      action: PayloadAction<{
-        userId: string;
-        product: Product;
-      }>
-    ) => {
-      const { userId, product } = action.payload;
+    setCompare: (state, action: PayloadAction<Product[]>) => {
+      state.items = action.payload;
+    },
 
-      if (!userId) {
-        console.error("❌ addToCompareList called WITHOUT userId", action.payload);
-        return;
-      }
+    // optimistic toggle (UI instant update)
+    toggleCompareLocal: (state, action: PayloadAction<Product>) => {
+      const product = action.payload;
+      const exists = state.items.some((p) => p._id === product._id);
 
-      const exists = state.items.some(item => item._id === product._id);
-      if (!exists) {
+      if (exists) {
+        state.items = state.items.filter((p) => p._id !== product._id);
+      } else {
         state.items.push(product);
       }
-
-      localStorage.setItem(
-        getCompareKey(userId),
-        JSON.stringify(state.items)
-      );
     },
 
-    // ================= REMOVE =================
-    removeFromCompareList: (
-      state,
-      action: PayloadAction<{
-        userId: string;
-        _id: string;
-      }>
-    ) => {
-      const { userId, _id } = action.payload;
-
-      state.items = state.items.filter(item => item._id !== _id);
-
-      localStorage.setItem(
-        getCompareKey(userId),
-        JSON.stringify(state.items)
-      );
-    },
-
-    // ================= CLEAR =================
-    clearCompareList: (
-      state,
-      action: PayloadAction<{ userId: string }>
-    ) => {
-      localStorage.removeItem(getCompareKey(action.payload.userId));
+    clearCompareLocal: (state) => {
       state.items = [];
-    },
-
-    // ================= LOAD AFTER LOGIN =================
-    loadCompareList: (state, action: PayloadAction<Product[]>) => {
-      state.items = action.payload;
     },
   },
 });
 
 export const {
-  addToCompareList,
-  removeFromCompareList,
-  clearCompareList,
-  loadCompareList,
-} = compareListSlice.actions;
+  setCompare,
+  toggleCompareLocal,
+  clearCompareLocal,
+} = compareSlice.actions;
 
-export default compareListSlice.reducer;
+/* ================= GET ================= */
+export const fetchCompare =
+  () => async (dispatch: any) => {
+    try {
+      const res = await fetch("/api/compare", {
+        credentials: "include",
+      });
+
+      if (!res.ok) throw new Error("Fetch failed");
+
+      const data = await res.json(); // { products: [] }
+      dispatch(setCompare(data.products));
+    } catch {
+      toast.error("Failed to load compare");
+    }
+  };
+
+/* ================= TOGGLE ================= */
+export const toggleCompareDebounced =
+  (_userId: string, product: Product) =>
+    async (dispatch: any, getState: any) => {
+      // optimistic update
+      dispatch(toggleCompareLocal(product));
+
+      try {
+        const res = await fetch("/api/compare", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ productId: product._id }),
+        });
+
+        if (!res.ok) throw new Error("Toggle failed");
+
+        const data = await res.json(); // { products: [] }
+        dispatch(setCompare(data.products));
+      } catch {
+        // rollback
+        dispatch(setCompare(getState().compareList.items));
+        toast.error("Compare error");
+      }
+    };
+
+/* ================= CLEAR ================= */
+export const clearCompare =
+  () => async (dispatch: any) => {
+    try {
+      const res = await fetch("/api/compare", {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (!res.ok) throw new Error("Clear failed");
+
+      dispatch(clearCompareLocal());
+      toast.success("Compare cleared");
+    } catch {
+      toast.error("Clear failed");
+    }
+  };
+
+export const clearCompareList = clearCompare;
+export default compareSlice.reducer;

@@ -5,7 +5,7 @@ import Card from "./Card";
 import { Product } from "../type/Product";
 import { Circle, GitCompareArrows, Heart, MoveLeft } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCartList } from "@/Store/Slices/cartSlice";
+import { addToCart } from "@/Store/Slices/cartSlice";
 import { toggleWishlistDebounced } from "@/Store/Slices/wishlistSlice";
 import { toggleCompareDebounced } from "@/Store/Slices/compareSlice";
 import toast from "react-hot-toast";
@@ -128,7 +128,6 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
     setTimeout(() => (debounceRef.current = false), 300);
   };
 
-  /* CART */
   const handleAddToCart = () => {
     if (debounceRef.current) return;
 
@@ -146,20 +145,19 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
     debounceRef.current = true;
 
     dispatch(
-      addToCartList({
-        userId: currentUser._id,
-        product,
+      addToCart({
+        productId: product._id,
         quantity: qty,
         color: selectedColor,
         size: selectedSize,
       })
     );
 
-    toast.success("Added to Cart ❤️");
     router.push("/cart");
 
     setTimeout(() => (debounceRef.current = false), 300);
   };
+
 
   return (
     <section className="my-10 lg:mx-44 md:mx-28 sm:mx-10">
@@ -193,11 +191,10 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
                   <button
                     key={c}
                     onClick={() => setSelectedColor(c)}
-                    className={`border rounded-full p-1 ${
-                      selectedColor === c
+                    className={`border rounded-full p-1 ${selectedColor === c
                         ? "border-purple-600"
                         : "border-white"
-                    }`}
+                      }`}
                   >
                     <Circle size={16} fill={c} />
                   </button>
@@ -214,11 +211,10 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
                   <button
                     key={s}
                     onClick={() => setSelectedSize(s)}
-                    className={`px-3 py-2 text-xs border ${
-                      selectedSize === s
+                    className={`px-3 py-2 text-xs border ${selectedSize === s
                         ? "bg-purple-600 text-white"
                         : "bg-gray-200"
-                    }`}
+                      }`}
                   >
                     {s}
                   </button>
@@ -243,16 +239,14 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
 
             <Heart
               onClick={handleWishlistToggle}
-              className={`cursor-pointer hover:text-purple-600 ${
-                isInWishlist ? "fill-purple-600 text-purple-600" : ""
-              }`}
+              className={`cursor-pointer hover:text-purple-600 ${isInWishlist ? "fill-purple-600 text-purple-600" : ""
+                }`}
             />
 
             <GitCompareArrows
               onClick={handleCompareToggle}
-              className={`cursor-pointer hover:text-purple-600 ${
-                isInCompare ? "text-purple-600" : ""
-              }`}
+              className={`cursor-pointer hover:text-purple-600 ${isInCompare ? "text-purple-600" : ""
+                }`}
             />
           </div>
         </div>
@@ -265,7 +259,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
 
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {relatedProducts.map((item) => (
-            <Card key={item._id} product={item} onOpen={() => {}} />
+            <Card key={item._id} product={item} onOpen={() => { }} />
           ))}
         </div>
       </div>

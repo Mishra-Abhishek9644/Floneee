@@ -3,15 +3,14 @@ import Breadcrumb from "@/components/Breadcrumb";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { placeOrder } from "@/Store/Slices/orderSlice";
-import { clearCartList } from "@/Store/Slices/cartSlice";
+import { removeFromCart } from "@/Store/Slices/cartSlice";
 import { useRouter } from "next/navigation";
+import { AppDispatch } from "@/Store";
 
 const Page = () => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const router = useRouter();
     const currentUser = useSelector((state: any) => state.login.currentUser);
-    
-
     const cartCount = useSelector((state: any) => state.cartList.items);
     const user = useSelector((state: any) => state.login.currentUser);
     type ErrorState = Record<string, string>;
@@ -23,7 +22,7 @@ const Page = () => {
     );
 
     const [billing, setBilling] = useState({
-        username: "",
+        name: "",
         company: "",
         country: "",
         address1: "",
@@ -37,8 +36,8 @@ const Page = () => {
     });
 
     useEffect(() => {
-        if (user?.email || user?.username) {
-            setBilling((prev) => ({ ...prev, email: user.email, username: user.username }));
+        if (user?.email || user?.name) {
+            setBilling((prev) => ({ ...prev, email: user.email, name: user.name }));
         }
     }, [user]);
 
@@ -52,7 +51,7 @@ const Page = () => {
 
     const validate = () => {
         const newErrors: any = {};
-        if (!billing.username) newErrors.username = "Full name is required";
+        if (!billing.name) newErrors.name = "Full name is required";
         if (!billing.company) newErrors.company = "Company is required";
         if (!billing.country) newErrors.country = "Country is required";
         if (!billing.address1) newErrors.address1 = "Address is required";
@@ -84,12 +83,12 @@ const Page = () => {
         };
 
         dispatch(placeOrder(order));
-         dispatch(clearCartList({ userId: currentUser._id }))
+        dispatch(removeFromCart(currentUser._id));
         router.push("/account");
     };
 
     const inputClass = (field: string) =>
-        `border py-2 px-4 w-full ${errors[field] ? "border-red-500" : "border-gray-300"}`;
+        `border py-2 px-4 w-full capitalize ${errors[field] ? "border-red-500" : "border-gray-300"}`;
 
     return (
         <>
@@ -106,12 +105,12 @@ const Page = () => {
                             <input
                                 name="username"
                                 readOnly
-                                value={billing.username}
+                                value={billing.name}
                                 onChange={handleChange}
                                 className={inputClass("username")}
                             />
                             {errors.username && (
-                                <span className="text-red-500 text-xs">{errors.username}</span>
+                                <span className="text-red-500 text-xs">{errors.name}</span>
                             )}
                         </label>
 
