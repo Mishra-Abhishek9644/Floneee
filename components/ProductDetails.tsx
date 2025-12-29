@@ -210,7 +210,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
                         <img
                             src={product.image}
                             className="bg-[#f6f6f6] w-full p-28"
-                            alt="product"
+                            alt="product" 
                         />
                     </div>
 
