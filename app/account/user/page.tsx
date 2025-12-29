@@ -11,17 +11,15 @@ import { fetchCart } from "@/Store/Slices/cartSlice";
 import { clearCompareList } from "@/Store/Slices/compareSlice";
 import { clearWishlist } from "@/Store/Slices/wishlistSlice";
 
-
 const UserDashboard = () => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const user:any = useSelector((state: RootState) => state.login.currentUser);
+  const user: any = useSelector(
+    (state: RootState) => state.login.currentUser
+  );
 
   const [loading, setLoading] = useState(true);
   const [dashboard, setDashboard] = useState<any>(null);
-   const currentUser = useSelector(
-            (state: any) => state.login.currentUser
-        );
 
   useEffect(() => {
     if (!user) return;
@@ -50,7 +48,7 @@ const UserDashboard = () => {
         credentials: "include",
       });
 
-      dispatch(logout());        
+      dispatch(logout());
       toast.success("Logged out");
       dispatch(fetchCart());
       dispatch(clearCompareList());
@@ -62,7 +60,57 @@ const UserDashboard = () => {
     }
   };
 
-  if (!user || loading || !dashboard) return null;
+  /* ================= SKELETON ================= */
+  if (loading) {
+    return (
+      <>
+        <Breadcrumb />
+
+        <div className="max-w-6xl mx-auto py-20 animate-pulse">
+          <div className="flex justify-between items-center mb-6">
+            <div className="h-6 w-40 bg-gray-300 rounded" />
+            <div className="h-9 w-24 bg-gray-300 rounded" />
+          </div>
+
+          <div className="bg-gray-100 p-6 rounded-md mb-8 space-y-3">
+            <div className="h-4 w-1/3 bg-gray-300 rounded" />
+            <div className="h-4 w-1/2 bg-gray-300 rounded" />
+            <div className="h-4 w-1/4 bg-gray-300 rounded" />
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="bg-gray-100 p-5 rounded-md text-center"
+              >
+                <div className="h-4 w-20 bg-gray-300 rounded mx-auto mb-3" />
+                <div className="h-6 w-12 bg-gray-300 rounded mx-auto" />
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-white shadow p-6 rounded-md">
+            <div className="h-5 w-40 bg-gray-300 rounded mb-4" />
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="border-b py-3 flex justify-between"
+              >
+                <div className="space-y-2">
+                  <div className="h-4 w-24 bg-gray-300 rounded" />
+                  <div className="h-3 w-16 bg-gray-300 rounded" />
+                </div>
+                <div className="h-4 w-20 bg-gray-300 rounded" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (!user || !dashboard) return null;
 
   return (
     <>
@@ -72,7 +120,6 @@ const UserDashboard = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">My Account</h1>
 
-          {/* 🔥 LOGOUT BUTTON */}
           <button
             onClick={handleLogout}
             className="bg-gray-200 hover:bg-red-600 hover:text-white px-4 py-2 text-sm uppercase duration-500"
@@ -81,14 +128,18 @@ const UserDashboard = () => {
           </button>
         </div>
 
-        {/* PROFILE */}
         <div className="bg-gray-100 p-6 rounded-md mb-8">
-          <p><strong>Name:</strong> {user.name}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          <p className="text-purple-600 font-semibold">Role: {user.role}</p>
+          <p>
+            <strong>Name:</strong> {user.name}
+          </p>
+          <p>
+            <strong>Email:</strong> {user.email}
+          </p>
+          <p className="text-purple-600 font-semibold">
+            Role: {user.role}
+          </p>
         </div>
 
-        {/* STATS */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
           <Stat title="Cart Items" value={dashboard.cartCount} />
           <Stat title="Wishlist" value={dashboard.wishlistCount} />
@@ -96,7 +147,6 @@ const UserDashboard = () => {
           <Stat title="Orders" value={dashboard.ordersCount} />
         </div>
 
-        {/* RECENT ORDERS */}
         <div className="bg-white shadow p-6 rounded-md">
           <h2 className="font-semibold mb-4">Recent Orders</h2>
 
@@ -109,7 +159,9 @@ const UserDashboard = () => {
                 className="border-b py-3 flex justify-between"
               >
                 <div>
-                  <p className="font-medium">₹{order.totalAmount}</p>
+                  <p className="font-medium">
+                    ₹{order.totalAmount}
+                  </p>
                   <p className="text-sm text-gray-500">
                     {order.items.length} item(s)
                   </p>

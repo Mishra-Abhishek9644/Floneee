@@ -2,7 +2,7 @@
 
 import Breadcrumb from "@/components/Breadcrumb";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -22,8 +22,9 @@ interface LoginForm {
 const page = () => {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-
   const user = useSelector((state: RootState) => state.login.currentUser);
+
+  const [loading, setLoading] = useState(true);
 
   const {
     register,
@@ -32,6 +33,11 @@ const page = () => {
     formState: { errors },
   } = useForm<LoginForm>();
 
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 700);
+    return () => clearTimeout(t);
+  }, []);
+
   const onSubmit = async (data: LoginForm) => {
     try {
       const res = await loginUser(data);
@@ -39,17 +45,15 @@ const page = () => {
       dispatch(setUser(res.user));
       dispatch(fetchCart());
       dispatch(fetchCompare());
-
       dispatch(fetchWishlist());
-      toast.success("Logged in successfully");
 
+      toast.success("Logged in successfully");
     } catch (error: any) {
       toast.error(error.message || "Invalid email or password");
       reset();
     }
   };
 
-  // REDIRECT AFTER REDUX UPDATE (CORRECT WAY)
   useEffect(() => {
     if (!user) return;
 
@@ -60,13 +64,43 @@ const page = () => {
     }
   }, [user, router]);
 
+  /* ================= SKELETON ================= */
+  if (loading) {
+    return (
+      <>
+        <Breadcrumb />
+
+        <div className="flex justify-center items-center animate-pulse">
+          <div className="w-full md:w-fit p-5 sm:p-20">
+            <div className="h-8 w-40 bg-gray-300 mx-auto rounded mb-10" />
+
+            <div className="shadow-xl border border-gray-300 p-5 w-full sm:p-20 my-10 rounded-md">
+              <div className="grid gap-4">
+                <div className="h-10 w-full bg-gray-300 rounded" />
+                <div className="h-10 w-full bg-gray-300 rounded" />
+              </div>
+
+              <div className="flex justify-between my-8">
+                <div className="h-4 w-24 bg-gray-300 rounded" />
+                <div className="h-4 w-28 bg-gray-300 rounded" />
+              </div>
+
+              <div className="h-10 w-32 bg-gray-300 rounded" />
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  /* ================= REAL FORM (UNCHANGED) ================= */
   return (
     <>
       <Breadcrumb />
 
       <div className="flex justify-center items-center">
-        <div className="w-full md:w-fit p-5 sm:p-20 ">
-          <div className="text-center text-2xl font-bold text-purple-600 ">
+        <div className="w-full md:w-fit p-5 sm:p-20">
+          <div className="text-center text-2xl font-bold text-purple-600">
             <span className="pr-2">Login</span>
             <Link href={`/register`} className="border-l text-black pl-2">
               Register
@@ -78,8 +112,9 @@ const page = () => {
               <div className="grid grid-cols-1 gap-4">
                 <input
                   type="email"
-                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${errors.email ? "border-red-500" : "border-gray-300"
-                    }`}
+                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  }`}
                   placeholder="Email"
                   {...register("email", {
                     required: "Email is required",
@@ -97,8 +132,9 @@ const page = () => {
 
                 <input
                   type="password"
-                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${errors.password ? "border-red-500" : "border-gray-300"
-                    }`}
+                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${
+                    errors.password ? "border-red-500" : "border-gray-300"
+                  }`}
                   placeholder="Password"
                   {...register("password", {
                     required: "Password is required",
@@ -111,7 +147,7 @@ const page = () => {
                 )}
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 justify-between items-start my-8 ">
+              <div className="flex flex-col sm:flex-row gap-3 justify-between items-start my-8">
                 <div>
                   <input type="checkbox" />&nbsp; Remember me
                 </div>

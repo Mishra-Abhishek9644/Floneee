@@ -16,6 +16,7 @@ const Page = () => {
   const [data, setData] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   /* ================= FETCH CATEGORIES ================= */
   useEffect(() => {
@@ -26,16 +27,76 @@ const Page = () => {
 
   /* ================= FETCH PRODUCTS (FILTERED) ================= */
   useEffect(() => {
-    const params = new URLSearchParams();
+    setLoading(true);
 
+    const params = new URLSearchParams();
     if (search) params.append("a", search);
     if (activeCategory) params.append("category", activeCategory);
 
     fetch(`/api/products?${params.toString()}`)
       .then((res) => res.json())
-      .then((res) => setData(res.products ?? []));
+      .then((res) => {
+        setData(res.products ?? []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setData([]);
+        setLoading(false);
+      });
   }, [search, activeCategory]);
 
+  /* ================= SKELETON ================= */
+  if (loading) {
+    return (
+      <>
+        <Breadcrumb />
+
+        <div className="container md:px-20 px-5 w-full md:py-20 py-5 animate-pulse">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-6">
+            {/* LEFT SKELETON */}
+            <div className="space-y-6">
+              <div className="h-6 w-24 bg-gray-300 rounded" />
+              <div className="h-10 bg-gray-300 rounded" />
+
+              <div>
+                <div className="h-6 w-40 bg-gray-300 rounded mb-4" />
+                {[1, 2, 3, 4].map((_, i) => (
+                  <div key={i} className="flex gap-3 mb-3">
+                    <div className="h-10 w-10 bg-gray-300 rounded" />
+                    <div className="h-4 w-40 bg-gray-300 rounded" />
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <div className="h-6 w-32 bg-gray-300 rounded mb-4" />
+                {[1, 2, 3].map((_, i) => (
+                  <div key={i} className="flex gap-3 mb-3">
+                    <div className="h-8 w-8 bg-gray-300 rounded" />
+                    <div className="h-4 w-28 bg-gray-300 rounded" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* RIGHT SKELETON */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4, 5, 6].map((_, i) => (
+                <div key={i} className="shadow-md p-3 space-y-3">
+                  <div className="h-60 bg-gray-300 rounded" />
+                  <div className="h-5 bg-gray-300 rounded w-3/4" />
+                  <div className="h-4 bg-gray-300 rounded w-full" />
+                  <div className="h-4 bg-gray-300 rounded w-2/3" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  /* ================= REAL PAGE ================= */
   return (
     <>
       <Breadcrumb />
@@ -68,6 +129,7 @@ const Page = () => {
                     <img
                       src={item.image}
                       className="h-10 object-contain bg-gray-300 p-2"
+                      alt={item.title}
                     />
                     <h3 className="text-sm line-clamp-1">{item.title}</h3>
                   </div>
@@ -111,6 +173,7 @@ const Page = () => {
                   <img
                     src={item.image}
                     className="h-60 w-full object-contain bg-gray-300 p-2"
+                    alt={item.title}
                   />
                   <div className="p-3">
                     <h3 className="font-bold">{item.title}</h3>

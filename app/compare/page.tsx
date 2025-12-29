@@ -1,7 +1,7 @@
 "use client";
 
 import Breadcrumb from "@/components/Breadcrumb";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   toggleCompareDebounced,
@@ -21,8 +21,52 @@ const Page = () => {
   const currentUser = useSelector(
     (state: RootState) => state.login.currentUser
   );
-  
 
+  /* ===== skeleton loader ===== */
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 700);
+    return () => clearTimeout(t);
+  }, []);
+
+  /* ===== SKELETON UI (DESIGN SAME STRUCTURE) ===== */
+  if (loading) {
+    return (
+      <div className="lg:px-20 animate-pulse">
+        <Breadcrumb />
+
+        <div className="overflow-x-auto my-10">
+          <table className="w-full border border-gray-300">
+            <tbody>
+              {[1, 2, 3, 4].map((row) => (
+                <tr key={row} className="bg-gray-200">
+                  <th className="bg-gray-200 sm:flex justify-start p-4 text-left px-4 md:w-xs hidden">
+                    <div className="h-4 w-24 bg-gray-300 rounded" />
+                  </th>
+
+                  {[1, 2].map((col) => (
+                    <td
+                      key={col}
+                      className="p-6 bg-white text-center min-w-70"
+                    >
+                      <div className="h-40 bg-gray-300 mb-4 rounded" />
+                      <div className="h-4 w-32 bg-gray-300 mx-auto rounded mb-2" />
+                      <div className="h-10 w-36 bg-gray-300 mx-auto rounded-full" />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="h-12 bg-gray-300 rounded-full mt-4" />
+        </div>
+      </div>
+    );
+  }
+
+  /* ===== REAL PAGE (UNCHANGED) ===== */
   return (
     <div className="lg:px-20">
       <Breadcrumb />
@@ -132,7 +176,6 @@ const Page = () => {
                   </td>
                 ))}
               </tr>
-
             </tbody>
           </table>
 

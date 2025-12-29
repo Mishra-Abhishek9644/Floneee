@@ -1,7 +1,7 @@
 "use client";
 
 import Breadcrumb from "@/components/Breadcrumb";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchCart,
@@ -14,6 +14,7 @@ import type { AppDispatch, RootState } from "@/Store";
 
 const Page = () => {
   const dispatch = useDispatch<AppDispatch>();
+
   const currentUser = useSelector(
     (state: RootState) => state.login.currentUser
   );
@@ -22,11 +23,64 @@ const Page = () => {
     (state: RootState) => state.cartList.items
   );
 
+  /* ===== skeleton loader ===== */
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     if (!currentUser) return;
     dispatch(fetchCart());
+
+    const t = setTimeout(() => setLoading(false), 700);
+    return () => clearTimeout(t);
   }, [currentUser, dispatch]);
 
+  /* ===== SKELETON (DESIGN SAME) ===== */
+  if (loading) {
+    return (
+      <div>
+        <Breadcrumb />
+
+        <div className="max-w-6xl mx-auto my-20 animate-pulse">
+          <div className="h-6 w-40 bg-gray-300 rounded mb-6" />
+
+          <div className="border border-gray-200 rounded-md">
+            <div className="hidden md:grid grid-cols-8 bg-gray-100 px-6 py-6 gap-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-4 bg-gray-300 rounded"
+                />
+              ))}
+            </div>
+
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="grid grid-cols-1 md:grid-cols-8 px-6 py-6 border-y border-gray-200 gap-3 md:gap-4"
+              >
+                <div className="h-24 bg-gray-300 rounded" />
+                <div className="md:col-span-2 h-4 bg-gray-300 rounded" />
+                <div className="h-4 bg-gray-300 rounded" />
+                <div className="h-4 bg-gray-300 rounded" />
+                <div className="h-4 bg-gray-300 rounded" />
+                <div className="h-4 bg-gray-300 rounded" />
+                <div className="h-6 w-6 bg-gray-300 rounded-full mx-auto" />
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col md:flex-row justify-between mt-10 gap-4">
+            <div className="h-12 w-60 bg-gray-300 rounded-full" />
+            <div className="h-12 w-60 bg-gray-300 rounded-full" />
+          </div>
+
+          <div className="h-14 w-full bg-gray-300 rounded-full mt-4" />
+        </div>
+      </div>
+    );
+  }
+
+  /* ===== REAL PAGE (UNCHANGED) ===== */
   return (
     <div className="">
       <Breadcrumb />

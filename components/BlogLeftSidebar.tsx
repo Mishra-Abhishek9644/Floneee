@@ -1,6 +1,5 @@
 "use client";
 
-import Breadcrumb from "@/components/Breadcrumb";
 import { Product } from "@/type/Product";
 import { MoveLeft, Search } from "lucide-react";
 import Link from "next/link";
@@ -12,21 +11,26 @@ const BlogLeftSidebar = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const pathname = usePathname();
 
-  /* ================= FETCH CATEGORIES ================= */
+  /* ================= FETCH DATA ================= */
   useEffect(() => {
-    fetch("/api/categories")
-      .then((res) => res.json())
-      .then(setCategories);
-  }, []);
-
-  /* ================= FETCH PRODUCTS ================= */
-  useEffect(() => {
-    fetch("/api/products")
-      .then((res) => res.json())
-      .then((res) => setData(res.products ?? []));
+    Promise.all([
+      fetch("/api/categories").then((res) => res.json()),
+      fetch("/api/products").then((res) => res.json()),
+    ])
+      .then(([cats, prods]) => {
+        setCategories(cats || []);
+        setData(prods.products ?? []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setCategories([]);
+        setData([]);
+        setLoading(false);
+      });
   }, []);
 
   /* ================= FILTER ================= */
@@ -42,6 +46,8 @@ const BlogLeftSidebar = () => {
     return matchesCategory && matchesSearch;
   });
 
+
+  /* ================= REAL CONTENT ================= */
   return (
     <div>
       <div className="flex flex-col gap-4">
@@ -80,6 +86,7 @@ const BlogLeftSidebar = () => {
               <img
                 src={item.image}
                 className="h-10 object-contain bg-gray-300 p-2"
+                alt={item.title}
               />
               <h3 className="text-sm line-clamp-1">{item.title}</h3>
             </div>
@@ -90,12 +97,10 @@ const BlogLeftSidebar = () => {
         <div className="flex flex-col mt-8">
           <h1>Categories</h1>
 
-          {/* ALL */}
           <div className="flex gap-3 my-1 text-lg">
             <button
-              className={`border border-gray-400 px-3 py-2 rounded-md ${
-                activeCategory === null ? "bg-purple-600" : ""
-              }`}
+              className={`border border-gray-400 px-3 py-2 rounded-md ${activeCategory === null ? "bg-purple-600" : ""
+                }`}
               onClick={() => setActiveCategory(null)}
             />
             <span>All</span>
@@ -104,9 +109,8 @@ const BlogLeftSidebar = () => {
           {categories.map((cat) => (
             <div className="flex gap-3 my-2 text-lg" key={cat.slug}>
               <button
-                className={`border border-gray-400 px-3 py-2 rounded-md ${
-                  activeCategory === cat.slug ? "bg-purple-600" : ""
-                }`}
+                className={`border border-gray-400 px-3 py-2 rounded-md ${activeCategory === cat.slug ? "bg-purple-600" : ""
+                  }`}
                 onClick={() => setActiveCategory(cat.slug)}
               />
               <span>{cat.name}</span>
