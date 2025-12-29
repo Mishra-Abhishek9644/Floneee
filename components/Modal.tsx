@@ -4,239 +4,253 @@ import { Circle, GitCompareArrows, Heart, X } from "lucide-react";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-
-import { addToWishlist, removeFromWishlist } from "@/Store/Slices/wishlistSlice";
-import { addToCompareList, removeFromCompareList } from "@/Store/Slices/compareSlice";
-import { addToCartList, removeFromCartList } from "@/Store/Slices/cartSlice";
 import { useRouter } from "next/navigation";
+
+import type { AppDispatch, RootState } from "@/Store";
+import { toggleWishlistDebounced } from "@/Store/Slices/wishlistSlice";
+import { toggleCompareDebounced } from "@/Store/Slices/compareSlice";
+import { addToCart } from "@/Store/Slices/cartSlice";
 import { Product } from "../type/Product";
 
-
-
 interface ModalProps {
-    open: boolean;
-    onClose: (value: boolean) => void;
-    product: Product; // 🔥 simplest & safest (no TS issues)
+  open: boolean;
+  onClose: (value: boolean) => void;
+  product: Product;
 }
 
-const colors = ["white", "black", "red"];
-const sizes = ["X", "M", "XL", "XXL"];
-
 const Modal = ({ open, onClose, product }: ModalProps) => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
 
-    const [qty, setQty] = useState(1);
-    const [selectedColor, setSelectedColor] = useState(colors[0]);
-    const [selectedSize, setSelectedSize] = useState(sizes[0]);
+  const [qty, setQty] = useState(1);
 
-    const wishlistItems = useSelector((state: any) => state.wishlist.items || []);
-    const compareItems = useSelector((state: any) => state.compareList.items || []);
+  const colors = Array.isArray(product.colors)
+    ? product.colors
+    : typeof product.colors === "string"
+      ? product.colors.split(",")
+      : [];
 
-    const isInWishlist = wishlistItems.some((i: any) => i._id === product?._id);
-    const isInCompare = compareItems.some((i: any) => i._id === product?._id);
+  const sizes = Array.isArray(product.sizes)
+    ? product.sizes
+    : typeof product.sizes === "string"
+      ? product.sizes.split(",")
+      : [];
 
-    const debounceRef = useRef(false);
-    const currentUser = useSelector((state: any) => state.login.currentUser)
-    const isLoggedIn = Boolean(currentUser);
-    const router = useRouter();
+  const [selectedColor, setSelectedColor] = useState<string>(
+    colors[0] ?? "white"
+  );
+  const [selectedSize, setSelectedSize] = useState<string>(
+    sizes[0] ?? "M"
+  );
 
-    if (!open || !product) return null;
+  const wishlistItems = useSelector(
+    (state: RootState) => state.wishlist.items
+  );
+  const compareItems = useSelector(
+    (state: RootState) => state.compareList.items
+  );
+  const currentUser = useSelector(
+    (state: RootState) => state.login.currentUser
+  );
 
-    const increase = () => qty < 9 && setQty(qty + 1);
-    const decrease = () => qty > 1 && setQty(qty - 1);
+  const isInWishlist = wishlistItems.some(
+    (i) => i._id === product._id
+  );
+  const isInCompare = compareItems.some(
+    (i) => i._id === product._id
+  );
 
-    /* ---------------- WISHLIST ---------------- */
-    const handleWishlistToggle = () => {
-        if (debounceRef.current) return;
-        if (!isLoggedIn) {
-            toast.error("Login To Continue")
-            router.push("/login");
-            return;
-        }
+  const debounceRef = useRef(false);
 
-        debounceRef.current = true;
+  if (!open) return null;
 
-        if (isInWishlist) {
-            dispatch(removeFromWishlist({
-                userId: currentUser._id,
-                _id: product._id,
-            }));
-            toast.success("Removed from wishlist 💔");
-        } else {
-            dispatch(addToWishlist({
-                userId: currentUser._id,
-                product,
-            }));
-            toast.success("Added to wishlist ❤️");
-        }
+  const increase = () => qty < 9 && setQty(qty + 1);
+  const decrease = () => qty > 1 && setQty(qty - 1);
 
-        setTimeout(() => (debounceRef.current = false), 300);
-    };
+  /* ================= WISHLIST ================= */
+  const handleWishlistToggle = () => {
+    if (debounceRef.current) return;
 
-    /* ---------------- COMPARE ---------------- */
-    const handleCompareToggle = () => {
-        if (debounceRef.current) return;
+    if (!currentUser) {
+      toast.error("Login To Continue");
+      router.push("/login");
+      return;
+    }
 
-        if (!isLoggedIn) {
-            toast.error("Login To Continue")
-            router.push("/login");
-            return;
-        }
+    debounceRef.current = true;
+    dispatch(toggleWishlistDebounced(currentUser._id, product));
 
-        debounceRef.current = true;
-
-        if (isInCompare) {
-            dispatch(removeFromCompareList({ userId: currentUser._id, _id: product._id }));
-            toast.success("Removed from Compare 💔");
-        } else {
-            dispatch(addToCompareList({ userId: currentUser._id, product }));
-            toast.success("Added to Compare ❤️");
-        }
-
-        setTimeout(() => (debounceRef.current = false), 300);
-    };
-
-    /* ---------------- CART (WITH QTY + COLOR + SIZE) ---------------- */
-    const handleAddToCart = () => {
-        if (debounceRef.current) return;
-        if (!currentUser) {
-            toast.error("Login to continue");
-            router.push("/login");
-            return;
-        }
-
-        // 2️⃣ Logged in but auth still hydrating
-        if (!currentUser._id) {
-            toast.loading("Please wait…");
-            return;
-        }
-        debounceRef.current = true;
-
-        dispatch(
-            addToCartList({
-                userId: currentUser._id,
-                product,
-                quantity: qty,
-                color: selectedColor,
-                size: selectedSize,
-            })
-        );
-
-        toast.success("Added to Cart ❤️");
-        router.push("/cart");
-        setTimeout(() => (debounceRef.current = false), 300);
-    };
-
-    return (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-            <div className="bg-white w-[95vw] lg:w-[65vw] rounded-2xl p-4 max-h-[95vh] overflow-y-auto">
-                {/* Close */}
-                <div className="flex justify-end ">
-                    <button className="cursor-pointer" onClick={() => onClose(false)}>
-                        <X />
-                    </button>
-                </div>
-
-                <div className="grid lg:grid-cols-2 gap-6">
-                    {/* IMAGE */}
-                    <div className="bg-gray-100 rounded-xl flex items-center justify-center">
-                        <img src={product.image} className="h-[60%] object-contain" />
-                    </div>
-
-                    {/* DETAILS */}
-                    <div className="flex flex-col gap-4">
-                        <h2 className="text-2xl">{product.title}</h2>
-                        <p className="text-gray-600">
-                            {product.discount > 0 ? (
-                                <>
-                                    <span className="line-through mr-2 text-gray-400">
-                                        ${product.price}
-                                    </span>
-                                    <span className="font-semibold text-purple-600">
-                                        ${product.finalPrice}
-                                    </span>
-                                </>
-                            ) : (
-                                <>${product.price}</>
-                            )}
-                        </p>
-                        <p className="text-gray-500">{product.description}</p>
-
-
-                        {/* COLORS */}
-                        {product.colors && product.colors.length > 0 && (
-                            <div className="mt-6">
-                                <h3 className="font-semibold mb-2">Color</h3>
-                                <div className="flex gap-2">
-                                    {product.colors.map((c) => (
-                                        <button
-                                            key={c}
-                                            onClick={() => setSelectedColor(c)}
-                                            className={`cursor-pointer border rounded-full p-1 ${selectedColor === c ? "border-purple-600" : "border-white"
-                                                }`}
-                                        >
-                                            <Circle size={16} fill={c} />
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-
-                        {/* SIZES */}
-                        <div className="mt-4">
-                            {product.sizes && product.sizes.length > 0 && (
-                                <div>
-                                    <h3 className="font-semibold mb-2">Size</h3>
-                                    <div className="flex gap-2">
-                                        {product.sizes.map((s: any) => (
-                                            <button
-                                                key={s}
-                                                onClick={() => setSelectedSize(s)}
-                                                className={`px-3 py-2 text-xs border ${selectedSize === s
-                                                    ? "bg-purple-600 text-white"
-                                                    : "bg-gray-200"
-                                                    }`}
-                                            >
-                                                {s}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-
-                        {/* QTY + ACTIONS */}
-                        <div className="flex items-center gap-4 mt-4">
-                            <div className="flex border cursor-pointer px-3 py-2">
-                                <button onClick={decrease}>-</button>
-                                <span className="px-4">{qty}</span>
-                                <button onClick={increase}>+</button>
-                            </div>
-
-                            <button
-                                onClick={handleAddToCart}
-                                className="bg-gray-800 text-white px-6 py-3 hover:bg-purple-600 transition cursor-pointer"
-                            >
-                                Add To Cart
-                            </button>
-
-                            <button className="cursor-pointer" onClick={handleWishlistToggle}>
-                                <Heart className={isInWishlist ? "fill-purple-500" : ""} />
-                            </button>
-
-                            <button className="cursor-pointer" onClick={handleCompareToggle}>
-                                <GitCompareArrows
-                                    className={isInCompare ? "text-purple-500" : ""}
-                                />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    toast.success(
+      isInWishlist
+        ? "Removed from wishlist 💔"
+        : "Added to wishlist ❤️"
     );
+
+    setTimeout(() => (debounceRef.current = false), 300);
+  };
+
+  /* ================= COMPARE ================= */
+  const handleCompareToggle = () => {
+    if (debounceRef.current) return;
+
+    if (!currentUser) {
+      toast.error("Login To Continue");
+      router.push("/login");
+      return;
+    }
+
+    debounceRef.current = true;
+    dispatch(toggleCompareDebounced(currentUser._id, product));
+
+    toast.success(
+      isInCompare
+        ? "Removed from Compare 💔"
+        : "Added to Compare ❤️"
+    );
+
+    setTimeout(() => (debounceRef.current = false), 300);
+  };
+
+  const handleAddToCart = () => {
+    if (debounceRef.current) return;
+
+    if (!currentUser) {
+      toast.error("Login to continue");
+      router.push("/login");
+      return;
+    }
+
+    if (!selectedColor || !selectedSize) {
+      toast.error("Please select size and color");
+      return;
+    }
+
+    debounceRef.current = true;
+
+    dispatch(
+      addToCart({
+        productId: product._id,  
+        quantity: qty,
+        color: selectedColor,
+        size: selectedSize,
+      })
+    );
+
+    router.push("/cart");
+
+    setTimeout(() => (debounceRef.current = false), 300);
+  };
+
+
+  return (
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+      <div className="bg-white w-[95vw] lg:w-[65vw] rounded-2xl p-4 max-h-[95vh] overflow-y-auto">
+        <div className="flex justify-end">
+          <button onClick={() => onClose(false)}>
+            <X />
+          </button>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-6">
+          <div className="bg-gray-100 rounded-xl flex items-center justify-center">
+            <img
+              src={product.image}
+              className="h-[60%] object-contain"
+              alt={product.title}
+            />
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h2 className="text-2xl">{product.title}</h2>
+
+            <p className="text-gray-600">
+              {product.discount > 0 ? (
+                <>
+                  <span className="line-through mr-2 text-gray-400">
+                    ${product.price}
+                  </span>
+                  <span className="font-semibold text-purple-600">
+                    ${product.finalPrice}
+                  </span>
+                </>
+              ) : (
+                <>${product.price}</>
+              )}
+            </p>
+
+            <p className="text-gray-500">{product.description}</p>
+
+            {colors.length > 0 && (
+              <div>
+                <h3 className="font-semibold mb-2">Color</h3>
+                <div className="flex gap-2">
+                  {colors.map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => setSelectedColor(c)}
+                      className={`border rounded-full p-1 ${selectedColor === c
+                          ? "border-purple-600"
+                          : "border-white"
+                        }`}
+                    >
+                      <Circle size={16} fill={c} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {sizes.length > 0 && (
+              <div>
+                <h3 className="font-semibold mb-2">Size</h3>
+                <div className="flex gap-2">
+                  {sizes.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => setSelectedSize(s)}
+                      className={`px-3 py-2 text-xs border ${selectedSize === s
+                          ? "bg-purple-600 text-white"
+                          : "bg-gray-200"
+                        }`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-4 mt-4">
+              <div className="flex border px-3 py-2">
+                <button onClick={decrease}>-</button>
+                <span className="px-4">{qty}</span>
+                <button onClick={increase}>+</button>
+              </div>
+
+              <button
+                onClick={handleAddToCart}
+                className="bg-gray-800 text-white px-6 py-3 hover:bg-purple-600"
+              >
+                Add To Cart
+              </button>
+
+              <button onClick={handleWishlistToggle}>
+                <Heart
+                  className={isInWishlist ? "fill-purple-500 text-purple-500" : ""}
+                />
+              </button>
+
+              <button onClick={handleCompareToggle}>
+                <GitCompareArrows
+                  className={isInCompare ? "text-purple-500" : ""}
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Modal;

@@ -38,6 +38,7 @@ export async function POST(req: Request) {
     // 🔥 CREATE JWT TOKEN
     const token = signToken({
       userId: user._id.toString(),
+      name : user.name,
       email: user.email,
       role: user.role,
       name: user.name,
