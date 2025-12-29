@@ -3,21 +3,26 @@
 import Breadcrumb from "@/components/Breadcrumb";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  removeFromWishlist,
-  clearWishlist,
-} from "@/Store/Slices/wishlistSlice";
+import { toggleWishlistDebounced, clearWishlist } from "@/Store/Slices/wishlistSlice";
 import { Heart, X } from "lucide-react";
 import Link from "next/link";
+import type { AppDispatch, RootState } from "@/Store";
 
 const Page = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+
   const wishlistItems = useSelector(
-    (state:any) => state.wishlist.items
+    (state: RootState) => state.wishlist.items
   );
+
   const currentUser = useSelector(
-            (state: any) => state.login.currentUser
-        );
+    (state: RootState) => state.login.currentUser
+  );
+
+  const handleRemove = (item: any) => {
+    if (!currentUser) return;
+    dispatch(toggleWishlistDebounced(currentUser._id, item));
+  };
 
   return (
     <div className="">
@@ -43,7 +48,7 @@ const Page = () => {
           </h1>
 
           <div className="border border-gray-200 rounded-md">
-            <div className="hidden md:grid grid-cols-6 text-sm bg-gray-100 text-gray-800  px-6 py-6">
+            <div className="hidden md:grid grid-cols-6 text-sm bg-gray-100 text-gray-800 px-6 py-6">
               <div className="flex justify-center">IMAGE</div>
               <div className="col-span-2 flex justify-center">PRODUCT NAME</div>
               <div className="flex justify-center">UNIT PRICE</div>
@@ -51,44 +56,51 @@ const Page = () => {
               <div className="flex justify-center">ACTION</div>
             </div>
 
-            {wishlistItems.map((item:any) => (
+            {wishlistItems.map((item: any) => (
               <div
                 key={item._id}
-                className="grid grid-cols-1  md:grid-cols-6 items-center px-6 py-6 border-y border-gray-200 relative gap-3 md:gap-0"
+                className="grid grid-cols-1 md:grid-cols-6 items-center px-6 py-6 border-y border-gray-200 relative gap-3 md:gap-0"
               >
-                <div className="flex justify-center bg-gray-100 h-30  items-center">
+                <div className="flex justify-center bg-gray-100 h-30 items-center">
                   <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-20 h-24 object-contain "
-                />
+                    src={item.image}
+                    alt={item.title}
+                    className="w-20 h-24 object-contain"
+                  />
                 </div>
 
                 <div className="md:col-span-2 truncate flex justify-center">
                   {item.title}
                 </div>
 
-                <div  className="flex justify-center">${item.price}</div>
+                <div className="flex justify-center">${item.price}</div>
+
                 <Link href={`/shop/product/${item._id}`}>
-                <button className="bg-purple-600 flex justify-center rounded-2xl w-[90%] hover:bg-gray-800   text-white px-3 py-2 text-xs md:text-sm font-semibold">
-                  SELECT OPTION
-                </button>
+                  <button className="bg-purple-600 flex justify-center rounded-2xl w-[90%] hover:bg-gray-800 text-white px-3 py-2 text-xs md:text-sm font-semibold">
+                    SELECT OPTION
+                  </button>
                 </Link>
 
+                {/* Desktop remove */}
                 <button
-                  onClick={() =>
-                    dispatch(removeFromWishlist({userId:currentUser._id,_id:item._id}))
-                  }
-                  className="hidden  md:flex justify-center text-black rounded-xl px-1 hover:scale-110 hover:text-purple-500"
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemove(item);
+                  }}
+                  className="hidden md:flex justify-center text-black rounded-xl px-1 hover:scale-110 hover:text-purple-500"
                 >
                   <X />
                 </button>
 
+                {/* Mobile remove */}
                 <button
-                  onClick={() =>
-                    dispatch(removeFromWishlist(item._id))
-                  }
-                  className="absolute top-0 p-2 right-0  md:hidden text-black rounded-xl px-1 hover:scale-110 hover:text-purple-500"
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemove(item);
+                  }}
+                  className="absolute top-0 p-2 right-0 md:hidden text-black rounded-xl px-1 hover:scale-110 hover:text-purple-500"
                 >
                   <X />
                 </button>
@@ -99,14 +111,15 @@ const Page = () => {
           <div className="flex flex-col md:flex-row justify-between mt-10 text-gray-800">
             <Link
               href="/shop"
-              className="px-10 py-4 rounded-full flex justify-center  bg-gray-100 text-sm font-semibold my-2 hover:bg-purple-600 hover:text-white hover:scale-110 transition-all duration-300"
+              className="px-10 py-4 rounded-full flex justify-center bg-gray-100 text-sm font-semibold my-2 hover:bg-purple-600 hover:text-white hover:scale-110 transition-all duration-300"
             >
               CONTINUE SHOPPING
             </Link>
 
             <button
-              onClick={() => dispatch(clearWishlist({userId:currentUser._id}))}
-              className="px-10 py-4 rounded-full flex justify-center  bg-gray-100 text-sm font-semibold my-2 hover:bg-purple-600 hover:text-white hover:scale-110 transition-all duration-300"
+              type="button"
+              onClick={() => dispatch(clearWishlist())}
+              className="px-10 py-4 rounded-full flex justify-center bg-gray-100 text-sm font-semibold my-2 hover:bg-purple-600 hover:text-white hover:scale-110 transition-all duration-300"
             >
               CLEAR WISHLIST
             </button>

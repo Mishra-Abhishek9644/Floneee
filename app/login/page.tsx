@@ -9,10 +9,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { loginUser } from "@/lib/auth";
 import { setUser } from "@/Store/Slices/loginSlice";
-import { RootState } from "@/Store";
+import { AppDispatch, RootState } from "@/Store";
 import { loadCartList } from "@/Store/Slices/cartSlice";
 import { loadCompareList } from "@/Store/Slices/compareSlice";
-import { loadWishlist } from "@/Store/Slices/wishlistSlice";
+import { fetchWishlist } from "@/Store/Slices/wishlistSlice";
 
 interface LoginForm {
   email: string;
@@ -21,7 +21,7 @@ interface LoginForm {
 
 const page = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const user = useSelector((state: RootState) => state.login.currentUser);
 
@@ -52,23 +52,17 @@ const page = () => {
           )
         )
       );
-      dispatch(
-        loadWishlist(
-          JSON.parse(
-            localStorage.getItem(`wishlist_${res.user._id}`) || "[]"
-          )
-        )
-      );
 
-
+      dispatch(fetchWishlist());
       toast.success("Logged in successfully");
+
     } catch (error: any) {
       toast.error(error.message || "Invalid email or password");
       reset();
     }
   };
 
-  // 🔥 REDIRECT AFTER REDUX UPDATE (CORRECT WAY)
+  // REDIRECT AFTER REDUX UPDATE (CORRECT WAY)
   useEffect(() => {
     if (!user) return;
 

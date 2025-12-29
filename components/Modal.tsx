@@ -4,41 +4,54 @@ import { Circle, GitCompareArrows, Heart, X } from "lucide-react";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-
-import { addToWishlist, removeFromWishlist } from "@/Store/Slices/wishlistSlice";
-import { addToCompareList, removeFromCompareList } from "@/Store/Slices/compareSlice";
-import { addToCartList, removeFromCartList } from "@/Store/Slices/cartSlice";
 import { useRouter } from "next/navigation";
+
+import type { AppDispatch, RootState } from "@/Store";
+import { toggleWishlistDebounced } from "@/Store/Slices/wishlistSlice";
+import {
+    addToCompareList,
+    removeFromCompareList,
+} from "@/Store/Slices/compareSlice";
+import { addToCartList } from "@/Store/Slices/cartSlice";
 import { Product } from "../type/Product";
-
-
 
 interface ModalProps {
     open: boolean;
     onClose: (value: boolean) => void;
-    product: Product; // 🔥 simplest & safest (no TS issues)
+    product: Product;
 }
 
-const colors = ["white", "black", "red"];
-const sizes = ["X", "M", "XL", "XXL"];
-
 const Modal = ({ open, onClose, product }: ModalProps) => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
+    const router = useRouter();
 
     const [qty, setQty] = useState(1);
-    const [selectedColor, setSelectedColor] = useState(colors[0]);
-    const [selectedSize, setSelectedSize] = useState(sizes[0]);
+    const [selectedColor, setSelectedColor] = useState(
+        product?.colors?.[0] ?? "white"
+    );
+    const [selectedSize, setSelectedSize] = useState(
+        product?.sizes?.[0] ?? "M"
+    );
 
-    const wishlistItems = useSelector((state: any) => state.wishlist.items || []);
-    const compareItems = useSelector((state: any) => state.compareList.items || []);
+    const wishlistItems = useSelector(
+        (state: RootState) => state.wishlist.items
+    );
+    const compareItems = useSelector(
+        (state: RootState) => state.compareList.items
+    );
+    const currentUser = useSelector(
+        (state: RootState) => state.login.currentUser
+    );
 
-    const isInWishlist = wishlistItems.some((i: any) => i._id === product?._id);
-    const isInCompare = compareItems.some((i: any) => i._id === product?._id);
+    const isInWishlist = wishlistItems.some(
+        (i) => i._id === product?._id
+    );
+    const isInCompare = compareItems.some(
+        (i) => i._id === product?._id
+    );
 
     const debounceRef = useRef(false);
-    const currentUser = useSelector((state: any) => state.login.currentUser)
     const isLoggedIn = Boolean(currentUser);
-    const router = useRouter();
 
     if (!open || !product) return null;
 
@@ -48,29 +61,27 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
     /* ---------------- WISHLIST ---------------- */
     const handleWishlistToggle = () => {
         if (debounceRef.current) return;
+
         if (!isLoggedIn) {
-            toast.error("Login To Continue")
+            toast.error("Login To Continue");
             router.push("/login");
             return;
         }
 
         debounceRef.current = true;
 
-        if (isInWishlist) {
-            dispatch(removeFromWishlist({
-                userId: currentUser._id,
-                _id: product._id,
-            }));
-            toast.success("Removed from wishlist 💔");
-        } else {
-            dispatch(addToWishlist({
-                userId: currentUser._id,
-                product,
-            }));
-            toast.success("Added to wishlist ❤️");
-        }
+        // ✅ API-based toggle (no TS error)
+        dispatch(toggleWishlistDebounced(currentUser!._id, product));
 
-        setTimeout(() => (debounceRef.current = false), 300);
+        toast.success(
+            isInWishlist
+                ? "Removed from wishlist 💔"
+                : "Added to wishlist ❤️"
+        );
+
+        setTimeout(() => {
+            debounceRef.current = false;
+        }, 300);
     };
 
     /* ---------------- COMPARE ---------------- */
@@ -78,7 +89,7 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
         if (debounceRef.current) return;
 
         if (!isLoggedIn) {
-            toast.error("Login To Continue")
+            toast.error("Login To Continue");
             router.push("/login");
             return;
         }
@@ -86,30 +97,38 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
         debounceRef.current = true;
 
         if (isInCompare) {
-            dispatch(removeFromCompareList({ userId: currentUser._id, _id: product._id }));
+            dispatch(
+                removeFromCompareList({
+                    userId: currentUser!._id,
+                    _id: product._id,
+                })
+            );
             toast.success("Removed from Compare 💔");
         } else {
-            dispatch(addToCompareList({ userId: currentUser._id, product }));
+            dispatch(
+                addToCompareList({
+                    userId: currentUser!._id,
+                    product,
+                })
+            );
             toast.success("Added to Compare ❤️");
         }
 
-        setTimeout(() => (debounceRef.current = false), 300);
+        setTimeout(() => {
+            debounceRef.current = false;
+        }, 300);
     };
 
-    /* ---------------- CART (WITH QTY + COLOR + SIZE) ---------------- */
+    /* ---------------- CART ---------------- */
     const handleAddToCart = () => {
         if (debounceRef.current) return;
+
         if (!currentUser) {
             toast.error("Login to continue");
             router.push("/login");
             return;
         }
 
-        // 2️⃣ Logged in but auth still hydrating
-        if (!currentUser._id) {
-            toast.loading("Please wait…");
-            return;
-        }
         debounceRef.current = true;
 
         dispatch(
@@ -121,18 +140,34 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
                 size: selectedSize,
             })
         );
-
         toast.success("Added to Cart ❤️");
         router.push("/cart");
-        setTimeout(() => (debounceRef.current = false), 300);
+
+        setTimeout(() => {
+            debounceRef.current = false;
+        }, 300);
     };
+
+    // normalize colors & sizes (SAFE)
+    const colors = Array.isArray(product?.colors)
+        ? product.colors
+        : typeof product?.colors === "string"
+            ? product.colors.split(",")
+            : [];
+
+    const sizes = Array.isArray(product?.sizes)
+        ? product.sizes
+        : typeof product?.sizes === "string"
+            ? product.sizes.split(",")
+            : [];
+
 
     return (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
             <div className="bg-white w-[95vw] lg:w-[65vw] rounded-2xl p-4 max-h-[95vh] overflow-y-auto">
                 {/* Close */}
-                <div className="flex justify-end ">
-                    <button className="cursor-pointer" onClick={() => onClose(false)}>
+                <div className="flex justify-end">
+                    <button onClick={() => onClose(false)}>
                         <X />
                     </button>
                 </div>
@@ -140,7 +175,11 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
                 <div className="grid lg:grid-cols-2 gap-6">
                     {/* IMAGE */}
                     <div className="bg-gray-100 rounded-xl flex items-center justify-center">
-                        <img src={product.image} className="h-[60%] object-contain" />
+                        <img
+                            src={product.image}
+                            className="h-[60%] object-contain"
+                            alt={product.title}
+                        />
                     </div>
 
                     {/* DETAILS */}
@@ -149,17 +188,18 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
                         <p className="text-2xl text-red-600">${product.price}</p>
                         <p className="text-gray-500">{product.description}</p>
 
-
                         {/* COLORS */}
-                        {product.colors && product.colors.length > 0 && (
-                            <div className="mt-6">
+                        {colors.length > 0 && (
+                            <div>
                                 <h3 className="font-semibold mb-2">Color</h3>
                                 <div className="flex gap-2">
-                                    {product.colors.map((c) => (
+                                    {colors.map((c: string) => (
                                         <button
                                             key={c}
                                             onClick={() => setSelectedColor(c)}
-                                            className={`cursor-pointer border rounded-full p-1 ${selectedColor === c ? "border-purple-600" : "border-white"
+                                            className={`border rounded-full p-1 ${selectedColor === c
+                                                ? "border-purple-600"
+                                                : "border-white"
                                                 }`}
                                         >
                                             <Circle size={16} fill={c} />
@@ -171,32 +211,30 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
 
 
                         {/* SIZES */}
-                        <div className="mt-4">
-                            {product.sizes && product.sizes.length > 0 && (
-                                <div>
-                                    <h3 className="font-semibold mb-2">Size</h3>
-                                    <div className="flex gap-2">
-                                        {product.sizes.map((s: any) => (
-                                            <button
-                                                key={s}
-                                                onClick={() => setSelectedSize(s)}
-                                                className={`px-3 py-2 text-xs border ${selectedSize === s
+                        {sizes.length > 0 && (
+                            <div>
+                                <h3 className="font-semibold mb-2">Size</h3>
+                                <div className="flex gap-2">
+                                    {sizes.map((s: string) => (
+                                        <button
+                                            key={s}
+                                            onClick={() => setSelectedSize(s)}
+                                            className={`px-3 py-2 text-xs border ${selectedSize === s
                                                     ? "bg-purple-600 text-white"
                                                     : "bg-gray-200"
-                                                    }`}
-                                            >
-                                                {s}
-                                            </button>
-                                        ))}
-                                    </div>
+                                                }`}
+                                        >
+                                            {s}
+                                        </button>
+                                    ))}
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
 
 
-                        {/* QTY + ACTIONS */}
+                        {/* ACTIONS */}
                         <div className="flex items-center gap-4 mt-4">
-                            <div className="flex border cursor-pointer px-3 py-2">
+                            <div className="flex border px-3 py-2">
                                 <button onClick={decrease}>-</button>
                                 <span className="px-4">{qty}</span>
                                 <button onClick={increase}>+</button>
@@ -204,16 +242,18 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
 
                             <button
                                 onClick={handleAddToCart}
-                                className="bg-gray-800 text-white px-6 py-3 hover:bg-purple-600 transition cursor-pointer"
+                                className="bg-gray-800 text-white px-6 py-3 hover:bg-purple-600"
                             >
                                 Add To Cart
                             </button>
 
-                            <button className="cursor-pointer" onClick={handleWishlistToggle}>
-                                <Heart className={isInWishlist ? "fill-purple-500" : ""} />
+                            <button onClick={handleWishlistToggle}>
+                                <Heart
+                                    className={isInWishlist ? "fill-purple-500" : ""}
+                                />
                             </button>
 
-                            <button className="cursor-pointer" onClick={handleCompareToggle}>
+                            <button onClick={handleCompareToggle}>
                                 <GitCompareArrows
                                     className={isInCompare ? "text-purple-500" : ""}
                                 />

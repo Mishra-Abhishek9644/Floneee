@@ -1,24 +1,28 @@
 "use client";
-import { GitCompareArrows, Heart, Menu, Search, ShoppingBag, UserRoundPen, X } from "lucide-react"
-import Link from 'next/link'
-import React, { useEffect, useRef, useState } from 'react'
+import {
+  GitCompareArrows,
+  Heart,
+  Menu,
+  Search,
+  ShoppingBag,
+  UserRoundPen,
+  X,
+} from "lucide-react";
+import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from '@/Store/Slices/loginSlice'
+import { logout } from "@/Store/Slices/loginSlice";
 import { usePathname, useRouter } from "next/navigation";
-import { Fascinate } from "next/font/google";
 import toast from "react-hot-toast";
-
-
-
-
-
+import type { AppDispatch, RootState } from "@/Store";
+import { fetchWishlist, clearWishlist } from "@/Store/Slices/wishlistSlice";
 
 const Navbar = () => {
-  const [loginBtn, setLoginBtn] = useState(false)
-  const [menuBtn, setMenuBtn] = useState(false)
-  const [seearch, setSeearch] = useState(false)
+  const [loginBtn, setLoginBtn] = useState(false);
+  const [menuBtn, setMenuBtn] = useState(false);
+  const [seearch, setSeearch] = useState(false);
   const [search, setSearch] = useState("");
-  const [isClient, setIsClient] = useState(false)
+  const [isClient, setIsClient] = useState(false);
 
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const searchRef = useRef<HTMLDivElement | null>(null);
@@ -26,48 +30,48 @@ const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
 
+  const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((state: RootState) => state.login.currentUser);
 
+  const wishlistCount = useSelector(
+    (state: RootState) => state.wishlist.items.length
+  );
+
+  const compareCount = useSelector(
+    (state: RootState) => state.compareList.items.length
+  );
+
+  const cartCount = useSelector(
+    (state: RootState) =>
+      state.cartList.items.reduce(
+        (total, item) => total + item.quantity,
+        0
+      )
+  );
+
+  /* ---------- client check ---------- */
   useEffect(() => {
-    setIsClient(true)
-  }, [])
+    setIsClient(true);
+  }, []);
 
-  const dispatch = useDispatch();
-
+  /* ---------- LOAD WISHLIST (LOGIC ONLY) ---------- */
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchWishlist());
+    }
+  }, [user, dispatch]);
 
   useEffect(() => {
     setMenuBtn(false);
     document.body.style.overflow = "auto";
   }, [pathname]);
 
-  const user = useSelector(
-    (state: any) => state.login.currentUser
-  );
-
-  const wishlistCount = useSelector(
-    (state: any) => state.wishlist?.items.length
-  );
-
-  const compareCount = useSelector(
-    (state: any) => state.compareList?.items.length
-  );
-
-  // if you have cart slice
-  const cartCount = useSelector(
-    (state: any) => state.cartList.items.reduce(
-      (total: number, item: any) => total + item.quantity,
-      0
-    )
-
-  );
-
   useEffect(() => {
     if (menuBtn) {
-      document.body.style.overflow = "hidden"; // disable scroll
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "auto"; // enable scroll back
+      document.body.style.overflow = "auto";
     }
-
-    // cleanup (optional but best practice)
     return () => {
       document.body.style.overflow = "auto";
     };
@@ -82,20 +86,11 @@ const Navbar = () => {
         setLoginBtn(false);
       }
     };
-
     document.addEventListener("click", handleClickOutside);
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
-
-  const handleSearch = () => {
-    if (!search.trim()) return;
-
-    router.push(`/shop?search=${encodeURIComponent(search)}`)
-    setSearch("");
-    setSeearch(false)
-  }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -105,13 +100,21 @@ const Navbar = () => {
       ) {
         setSeearch(false);
       }
-    }
-    document.addEventListener("click", handleClickOutside)
+    };
+    document.addEventListener("click", handleClickOutside);
     return () => {
-      document.removeEventListener("click", handleClickOutside)
-    }
-  }, [])
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
+  const handleSearch = () => {
+    if (!search.trim()) return;
+    router.push(`/shop?search=${encodeURIComponent(search)}`);
+    setSearch("");
+    setSeearch(false);
+  };
+
+  /* ---------- LOGOUT (LOGIC ONLY) ---------- */
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", {
@@ -119,18 +122,16 @@ const Navbar = () => {
         credentials: "include",
       });
 
-      dispatch(logout());          // Redux clear
+      dispatch(logout());
+      dispatch(clearWishlist()); // 🔥 logic only
       toast.success("Logged out");
-      router.replace("/login");    // Redirect
+      router.replace("/login");
     } catch {
       toast.error("Logout failed");
     }
   };
 
-
-  if (!isClient) {
-    return null
-  }
+  if (!isClient) return null;
   return (
     <>
 

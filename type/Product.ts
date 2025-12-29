@@ -15,8 +15,8 @@ export interface Product {
     name: string;
     slug: string;
   };
-  colors?: string[];   // ✅ optional
-  sizes?: string[];    // ✅ optional
+  colors?: string[] | string; 
+  sizes?: string[] | string;  
   createdAt?: string;
   rating?: number;
   discount?: number;
