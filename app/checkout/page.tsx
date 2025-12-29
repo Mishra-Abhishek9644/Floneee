@@ -84,7 +84,7 @@ const Page = () => {
 
         dispatch(placeOrder(order));
         dispatch(removeFromCart(currentUser._id));
-        router.push("/account");
+        router.push("/account/user/");
     };
 
     const inputClass = (field: string) =>
