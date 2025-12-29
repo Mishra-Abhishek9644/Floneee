@@ -18,7 +18,7 @@ const Page = () => {
     const [errors, setErrors] = useState<ErrorState>({});
 
     const total = cartCount.reduce(
-        (sum: number, item: any) => sum + item.price * item.quantity,
+        (sum: number, item: any) => sum + item.finalPrice * item.quantity,
         0
     );
 
@@ -263,7 +263,7 @@ const Page = () => {
                                     <p className="w-2/3">
                                         {item.title} × {item.quantity}
                                     </p>
-                                    <p>${item.price * item.quantity}</p>
+                                    <p>${item.finalPrice * item.quantity}</p>
                                 </div>
                             ))}
 
