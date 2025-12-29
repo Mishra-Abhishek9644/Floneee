@@ -46,6 +46,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
   const isInCompare = compareItems.some(
     (i) => i._id === product?._id
   );
+  
 
   /* FETCH PRODUCT */
   useEffect(() => {
@@ -56,6 +57,9 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
       .then(setProduct)
       .catch(() => setProduct(null));
   }, [id]);
+
+const displayPrice =
+  product?.finalPrice ?? product?.price ?? 0;
 
   /* DEFAULT VARIANTS */
   useEffect(() => {
@@ -180,7 +184,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
 
         <div className="lg:px-20 md:px-12 px-5">
           <h1 className="lg:text-2xl">{product.title}</h1>
-          <p className="text-2xl text-red-500 py-2">${product.price}</p>
+          <p className="text-2xl text-red-500 py-2">₹{displayPrice}</p>
           <p className="border-b pb-8">{product.description}</p>
 
           {Array.isArray(product.colors) && (

@@ -21,6 +21,7 @@ const Page = () => {
   const currentUser = useSelector(
     (state: RootState) => state.login.currentUser
   );
+  
 
   return (
     <div className="lg:px-20">
@@ -95,7 +96,7 @@ const Page = () => {
                     key={product._id}
                     className="p-6 bg-white text-center min-w-70"
                   >
-                    ₹{product.finalPrice ?? product.price}
+                    ₹{product.price}
                   </td>
                 ))}
               </tr>

@@ -19,6 +19,8 @@ const LongCard: React.FC<CardProps> = ({ product, onOpen }) => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const debounceRef = useRef(false);
+  const displayPrice = product.finalPrice ?? product.price;
+
 
   const wishlistItems = useSelector(
     (state: RootState) => state.wishlist.items
@@ -65,18 +67,11 @@ const LongCard: React.FC<CardProps> = ({ product, onOpen }) => {
         <div className="flex flex-col gap-2">
           <div className="text-2xl truncate ">{product.title}</div>
           <p className="text-gray-600">
-            {product.discount > 0 ? (
-              <>
-                <span className="line-through mr-2 text-gray-400">
-                  ${product.price}
-                </span>
+           
                 <span className="font-semibold text-purple-600">
-                  ${product.finalPrice}
+                  ₹{displayPrice}
                 </span>
-              </>
-            ) : (
-              <>${product.price}</>
-            )}
+
           </p>
           <div className="text-gray-500 my-4 truncate">{product.description}</div>
 

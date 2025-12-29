@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import { Types } from "mongoose";
+import { calculateFinalPrice } from "@/lib/price";
+
 
 export async function GET(
   request: Request,
@@ -35,11 +37,10 @@ export async function GET(
     // 🔹 APPLY DISCOUNT (BACKEND SOURCE OF TRUTH)
     const productObj = product.toObject();
 
-    const discount = productObj.discount ?? 0;
-    const finalPrice =
-      discount > 0
-        ? productObj.price - (productObj.price * discount) / 100
-        : productObj.price;
+    const finalPrice = calculateFinalPrice(
+      productObj.price,
+      productObj.discount
+    );
 
     return NextResponse.json(
       {

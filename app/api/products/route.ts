@@ -1,3 +1,4 @@
+import { calculateFinalPrice } from "@/lib/price";
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
@@ -51,19 +52,12 @@ export async function GET(request: Request) {
       .lean();
 
     // 🔹 APPLY DISCOUNT HERE
-    const productsWithFinalPrice = products.map((product: any) => {
-      const discount = product.discount ?? 0;
 
-      const finalPrice =
-        discount > 0
-          ? product.price - (product.price * discount) / 100
-          : product.price;
+    const productsWithFinalPrice = products.map((product: any) => ({
+      ...product,
+      finalPrice: calculateFinalPrice(product.price, product.discount),
+    }));
 
-      return {
-        ...product,
-        finalPrice: Math.round(finalPrice), // optional rounding
-      };
-    });
 
     return NextResponse.json(
       {

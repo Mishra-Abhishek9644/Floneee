@@ -1,8 +1,10 @@
 import { authMiddleware } from "@/lib/authMiddleware";
 import { connectDB } from "@/lib/db";
 import Wishlist from "@/models/Wishlist";
+import { calculateFinalPrice } from "@/lib/price";
 
-export async function GET(req: Request) {
+/* ================= GET ================= */
+export async function GET() {
   await connectDB();
 
   const user = await authMiddleware();
@@ -14,13 +16,16 @@ export async function GET(req: Request) {
     .findOne({ userId: user.userId })
     .populate("products");
 
-  return Response.json({
-    products: wishlist?.products || [],
-  });
+  const productsWithFinalPrice =
+    wishlist?.products.map((p: any) => ({
+      ...p.toObject(),
+price: calculateFinalPrice(p.price, p.discount),
+    })) ?? [];
+
+  return Response.json({ products: productsWithFinalPrice });
 }
 
-
-//post - add wishlist
+/* ================= POST (TOGGLE) ================= */
 export async function POST(req: Request) {
   await connectDB();
 
@@ -54,14 +59,17 @@ export async function POST(req: Request) {
 
   await wishlist.populate("products");
 
-  return Response.json({
-    products: wishlist.products,
-  });
+  const productsWithFinalPrice =
+    wishlist.products.map((p: any) => ({
+      ...p.toObject(),
+      price: calculateFinalPrice(p.price, p.discount),
+    }));
+
+  return Response.json({ products: productsWithFinalPrice });
 }
 
-
-//delete 
-export async function DELETE(req: Request) {
+/* ================= DELETE (CLEAR) ================= */
+export async function DELETE() {
   await connectDB();
 
   const user = await authMiddleware();
@@ -74,5 +82,6 @@ export async function DELETE(req: Request) {
     { products: [] }
   );
 
+  // ✅ No products → no price calculation needed
   return Response.json({ products: [] });
 }
