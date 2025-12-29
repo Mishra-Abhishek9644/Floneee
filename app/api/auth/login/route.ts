@@ -41,7 +41,6 @@ export async function POST(req: Request) {
       name : user.name,
       email: user.email,
       role: user.role,
-      name: user.name,
     });
 
     // 🔥 RESPONSE + COOKIE
