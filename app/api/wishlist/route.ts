@@ -11,7 +11,7 @@ export async function GET(req: Request) {
   }
 
   const wishlist = await Wishlist
-    .findOne({ userId: user._id })
+    .findOne({ userId: user.userId })
     .populate("products");
 
   return Response.json({
@@ -31,11 +31,11 @@ export async function POST(req: Request) {
 
   const { productId } = await req.json();
 
-  let wishlist = await Wishlist.findOne({ userId: user._id });
+  let wishlist = await Wishlist.findOne({ userId: user.userId });
 
   if (!wishlist) {
     wishlist = await Wishlist.create({
-      userId: user._id,
+      userId: user.userId,
       products: [productId],
     });
   } else {
@@ -70,7 +70,7 @@ export async function DELETE(req: Request) {
   }
 
   await Wishlist.findOneAndUpdate(
-    { userId: user._id },
+    { userId: user.userId },
     { products: [] }
   );
 

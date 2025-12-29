@@ -161,99 +161,135 @@ export default function EditProduct() {
                 <h1 className="text-xl font-bold mb-6">Edit Product</h1>
 
                 <div className="bg-white shadow p-6 rounded space-y-4">
-                    <input
-                        className="border p-2 w-full"
-                        placeholder="Title"
-                        value={product.title}
-                        onChange={(e) =>
-                            setProduct({ ...product, title: e.target.value })
-                        }
-                    />
 
-                    <input
-                        className="border p-2 w-full"
-                        placeholder="Price"
-                        value={product.price}
-                        onChange={(e) =>
-                            setProduct({ ...product, price: e.target.value })
-                        }
-                    />
+                    <div className="grid grid-cols-2 gap-4">
+                        <label htmlFor="">Title
+                            <input
+                                className="border p-2 w-full"
+                                placeholder="Title"
+                                value={product.title}
+                                onChange={(e) =>
+                                    setProduct({ ...product, title: e.target.value })
+                                }
+                            />
+                        </label>
 
-                    <input
-                        type="file"
-                        accept="image/*"
-                        className="border p-2 w-full"
-                        onChange={(e) =>
-                            setProduct({
-                                ...product,
-                                image: e.target.files?.[0] || null,
-                            })
-                        }
-                    />
+                        <label htmlFor="">Price
+                            <input
+                                className="border p-2 w-full"
+                                placeholder="Price"
+                                value={product.price}
+                                onChange={(e) =>
+                                    setProduct({ ...product, price: e.target.value })
+                                }
+                            />
+                        </label>
+                    </div>
 
-                    <select
-                        className="border p-2 w-full"
-                        value={product.categoryId}
-                        onChange={(e) =>
-                            setProduct({ ...product, categoryId: e.target.value })
-                        }
-                    >
-                        <option value="">Select category</option>
-                        {categories.map((c) => (
-                            <option key={c._id} value={c._id}>
-                                {c.name}
-                            </option>
-                        ))}
-                    </select>
+                    <div className="grid grid-cols-2 gap-4">
 
-                    <input
-                        className="border p-2 w-full"
-                        placeholder="Stock"
-                        value={product.stock}
-                        onChange={(e) =>
-                            setProduct({ ...product, stock: e.target.value })
-                        }
-                    />
+                        <label htmlFor="">Image
 
-                    <input
-                        className="border p-2 w-full"
-                        placeholder="Sizes (S,M,L)"
-                        value={product.sizes}
-                        onChange={(e) =>
-                            setProduct({ ...product, sizes: e.target.value })
-                        }
-                    />
+                            <input
+                                type="file"
+                                accept="image/*"
+                                className="border p-2 w-full"
+                                onChange={(e) =>
+                                    setProduct({
+                                        ...product,
+                                        image: e.target.files?.[0] || null,
+                                    })
+                                }
+                            />
+                        </label>
 
-                    <input
-                        className="border p-2 w-full"
-                        placeholder="Colors (Red,Blue)"
-                        value={product.colors}
-                        onChange={(e) =>
-                            setProduct({ ...product, colors: e.target.value })
-                        }
-                    />
+                        <label htmlFor="">Category
 
-                    <textarea
-                        className="border p-2 w-full"
-                        placeholder="Description"
-                        value={product.description}
-                        onChange={(e) =>
-                            setProduct({ ...product, description: e.target.value })
-                        }
-                    />
-                    <input
-                        type="number"
-                        className="border border-gray-400 outline-hidden p-2 w-full mb-2"
-                        placeholder="Discount (%)"
-                        value={product.discount}
-                        onChange={(e) =>
-                            setProduct({
-                                ...product,
-                                discount: e.target.value === "" ? "" : Number(e.target.value),
-                            })
-                        }
-                    />
+                            <select
+                                className="border p-2 w-full"
+                                value={product.categoryId}
+                                onChange={(e) =>
+                                    setProduct({ ...product, categoryId: e.target.value })
+                                }
+                            >
+                                <option value="">Select category</option>
+                                {categories.map((c) => (
+                                    <option key={c._id} value={c._id}>
+                                        {c.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>
 
+                    <div className="grid grid-cols-2 gap-4">
+
+                        <label htmlFor="">Stock
+
+                            <input
+                                className="border p-2 w-full"
+                                placeholder="Stock"
+                                value={product.stock}
+                                onChange={(e) =>
+                                    setProduct({ ...product, stock: e.target.value })
+                                }
+                            />
+                        </label>
+
+                        <label htmlFor="">Size
+
+                            <input
+                                className="border p-2 w-full"
+                                placeholder="Sizes (S,M,L)"
+                                value={product.sizes}
+                                onChange={(e) =>
+                                    setProduct({ ...product, sizes: e.target.value })
+                                }
+                            />
+                        </label>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+
+                        <label htmlFor="">Color
+
+                            <input
+                                className="border p-2 w-full"
+                                placeholder="Colors (Red,Blue)"
+                                value={product.colors}
+                                onChange={(e) =>
+                                    setProduct({ ...product, colors: e.target.value })
+                                }
+                            />
+                        </label>
+                        <label htmlFor="">Descount
+                            <input
+                                type="number"
+                                className="border border-gray-400 outline-hidden p-2 w-full mb-2"
+                                placeholder="Discount (%)"
+                                value={product.discount}
+                                onChange={(e) =>
+                                    setProduct({
+                                        ...product,
+                                        discount: e.target.value === "" ? "" : Number(e.target.value),
+                                    })
+                                }
+                            />
+                        </label>
+
+                    </div>
+
+                    <label htmlFor="">Description
+
+                        <textarea
+                            className="border p-2 w-full h-36"
+                            placeholder="Description"
+                            value={product.description}
+                            onChange={(e) =>
+                                setProduct({ ...product, description: e.target.value })
+                            }
+                        />
+                    </label>
                     <button
                         onClick={updateProduct}
                         disabled={updating}
