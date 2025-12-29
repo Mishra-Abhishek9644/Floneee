@@ -7,6 +7,11 @@ import Breadcrumb from "@/components/Breadcrumb";
 import Link from "next/link";
 import { MoveLeft } from "lucide-react";
 
+/* ---------------- SKELETON BOX ---------------- */
+const Skeleton = ({ className = "" }: { className?: string }) => (
+    <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
+);
+
 export default function EditProduct() {
     const { id } = useParams();
     const pathname = usePathname();
@@ -25,7 +30,7 @@ export default function EditProduct() {
         stock: string;
         sizes: string;
         colors: string;
-        discount: number | "",
+        discount: number | "";
     }>({
         title: "",
         price: "",
@@ -61,7 +66,7 @@ export default function EditProduct() {
                 setProduct({
                     title: prod.title,
                     price: String(prod.price),
-                    image: null, // optional on edit
+                    image: null,
                     description: prod.description,
                     categoryId: prod.categoryId,
                     stock: String(prod.stock),
@@ -69,7 +74,6 @@ export default function EditProduct() {
                     colors: prod.colors.join(","),
                     discount: Number(prod.discount),
                 });
-
             } catch {
                 toast.error("Failed to load data");
             } finally {
@@ -93,17 +97,12 @@ export default function EditProduct() {
             toast.error("Select category");
             return;
         }
+
         const discountValue = product.discount === "" ? 0 : product.discount;
-        if (
-            isNaN(discountValue) ||
-            discountValue < 0 ||
-            discountValue > 100
-        ) {
+        if (isNaN(discountValue) || discountValue < 0 || discountValue > 100) {
             toast.error("Invalid Discount");
             return;
         }
-
-
 
         setUpdating(true);
 
@@ -118,7 +117,6 @@ export default function EditProduct() {
             formData.append("colors", product.colors);
             formData.append("discount", String(discountValue));
 
-            // image is OPTIONAL on edit
             if (product.image) {
                 formData.append("image", product.image);
             }
@@ -129,13 +127,10 @@ export default function EditProduct() {
                 body: formData,
             });
 
-            if (!res.ok) {
-                throw new Error();
-            }
+            if (!res.ok) throw new Error();
 
             toast.success("Product updated");
             router.push("/account/admin");
-
         } catch {
             toast.error("Update failed");
         } finally {
@@ -143,21 +138,53 @@ export default function EditProduct() {
         }
     };
 
-    if (loading) return <p className="text-center py-20">Loading...</p>;
+    /* ---------- SKELETON UI ---------- */
+    if (loading) {
+        return (
+            <div className="max-w-4xl mx-auto py-20 my-10 space-y-6">
+                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-8 w-48" />
 
+                <div className="bg-white shadow p-6 rounded space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-10 w-full" />
+                    </div>
+
+                    <Skeleton className="h-32 w-full" />
+                    <Skeleton className="h-10 w-40" />
+                </div>
+            </div>
+        );
+    }
+
+    /* ---------- MAIN UI (UNCHANGED) ---------- */
     return (
         <>
             <div className="max-w-4xl mx-auto py-20 my-10">
-
                 <div className="my-5">
                     {pathname.startsWith("/account/admin/products") && (
                         <div className="border w-fit py-1 px-3 hover:text-purple-600">
-                            <Link href="/account/admin" className="flex items-center gap-2">
+                            <Link
+                                href="/account/admin"
+                                className="flex items-center gap-2"
+                            >
                                 <MoveLeft size={18} /> Back
                             </Link>
                         </div>
                     )}
                 </div>
+
                 <h1 className="text-xl font-bold mb-6">Edit Product</h1>
 
                 <div className="bg-white shadow p-6 rounded space-y-4">
@@ -300,6 +327,5 @@ export default function EditProduct() {
                 </div>
             </div>
         </>
-
     );
 }
