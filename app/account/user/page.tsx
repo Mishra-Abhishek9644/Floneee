@@ -3,18 +3,18 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Breadcrumb from "@/components/Breadcrumb";
-import { RootState } from "@/Store";
+import { AppDispatch, RootState } from "@/Store";
 import { logout } from "@/Store/Slices/loginSlice";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { loadCartList } from "@/Store/Slices/cartSlice";
+import { fetchCart } from "@/Store/Slices/cartSlice";
 import { clearCompareList } from "@/Store/Slices/compareSlice";
 import { clearWishlist } from "@/Store/Slices/wishlistSlice";
 
 
 const UserDashboard = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const user:any = useSelector((state: RootState) => state.login.currentUser);
 
   const [loading, setLoading] = useState(true);
@@ -43,7 +43,6 @@ const UserDashboard = () => {
     loadDashboard();
   }, [user]);
 
-  // 🔥 LOGOUT HANDLER
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", {
@@ -51,13 +50,13 @@ const UserDashboard = () => {
         credentials: "include",
       });
 
-      dispatch(logout());          // Redux clear
+      dispatch(logout());        
       toast.success("Logged out");
-      dispatch(loadCartList([]));
-      dispatch(clearCompareList({ userId:user._id }));
-      dispatch(clearWishlist({ userId:currentUser._id }));
+      dispatch(fetchCart());
+      dispatch(clearCompareList());
+      dispatch(clearWishlist());
 
-      router.replace("/login");    // Redirect
+      router.replace("/login");
     } catch {
       toast.error("Logout failed");
     }

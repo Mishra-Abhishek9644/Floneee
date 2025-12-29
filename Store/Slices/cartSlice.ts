@@ -1,132 +1,113 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Product } from "@/type/Product";
+// Store/Slices/cartSlice.ts
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import toast from "react-hot-toast";
 
-export interface CartItem extends Product {
+interface CartItem {
+  productId: string;
+  title: string;
+  image: string;
+  price: number;
   quantity: number;
   color: string;
   size: string;
+  stock: number;
+  subtotal: number;
 }
 
-interface cartListState {
+interface CartState {
   items: CartItem[];
+  loading: boolean;
 }
 
-const getCartKey = (userId: string) => `cart_${userId}`; // ✅ NEW
-
-const initialState: cartListState = {
-  items: [], // ❌ REMOVED localStorage from here
+const initialState: CartState = {
+  items: [],
+  loading: false,
 };
 
-const cartListSlice = createSlice({
+/* ================= GET ================= */
+export const fetchCart = createAsyncThunk("cart/fetch", async () => {
+  const res = await fetch("/api/cart", { credentials: "include" });
+  if (!res.ok) throw new Error("Fetch cart failed");
+  return res.json(); // { items }
+});
+
+/* ================= ADD ================= */
+export const addToCart = createAsyncThunk(
+  "cart/add",
+  async (data: {
+    productId: string;
+    quantity: number;
+    color: string;
+    size: string;
+  }) => {
+    const res = await fetch("/api/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) throw new Error("Add failed");
+    return res.json(); // { items }
+  }
+);
+
+/* ================= REMOVE ================= */
+export const removeFromCart = createAsyncThunk(
+  "cart/remove",
+  async (index: number) => {
+    const res = await fetch("/api/cart", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ index }),
+    });
+
+    if (!res.ok) throw new Error("Remove failed");
+    return res.json(); // { items }
+  }
+);
+
+const cartSlice = createSlice({
   name: "cartList",
   initialState,
   reducers: {
-    // ================= ADD =================
-    addToCartList: (
-      state,
-      action: PayloadAction<{
-        userId: string; // ✅ NEW
-        product: Product;
-        quantity: number;
-        color: string;
-        size: string;
-      }>
-    ) => {
-
-      const { userId, product, quantity, color, size } = action.payload;
-      if (!userId) {
-        console.error(
-          "❌ addToCartList called WITHOUT userId",
-          action.payload
-        );
-        return;
-      }
-      const existingItem = state.items.find(
-        item =>
-          item._id === product._id &&
-          item.color === color &&
-          item.size === size
-      );
-
-      if (existingItem) {
-        existingItem.quantity += quantity;
-      } else {
-        state.items.push({
-          ...product,
-          quantity,
-          color,
-          size,
-        });
-      }
-
-      localStorage.setItem(
-        getCartKey(userId), // ✅ USER-SPECIFIC KEY
-        JSON.stringify(state.items)
-      );
-    },
-
-    // ================= UPDATE =================
-    updateCartQuantity: (
-      state,
-      action: PayloadAction<{
-        userId: string; // ✅ NEW
-        _id: string;
-        quantity: number;
-      }>
-    ) => {
-      const { userId, _id, quantity } = action.payload;
-
-      const item = state.items.find(i => i._id === _id);
-      if (item && quantity >= 1) {
-        item.quantity = quantity;
-      }
-
-      localStorage.setItem(
-        getCartKey(userId), // ✅ USER-SPECIFIC KEY
-        JSON.stringify(state.items)
-      );
-    },
-
-    // ================= REMOVE =================
-    removeFromCartList: (
-      state,
-      action: PayloadAction<{
-        userId: string; // ✅ NEW
-        index: number;
-      }>
-    ) => {
-      const { userId, index } = action.payload;
-
-      state.items.splice(index, 1);
-
-      localStorage.setItem(
-        getCartKey(userId), // ✅ USER-SPECIFIC KEY
-        JSON.stringify(state.items)
-      );
-    },
-
-    // ================= CLEAR =================
-    clearCartList: (
-      state,
-      action: PayloadAction<{ userId: string }> // ✅ NEW
-    ) => {
-      localStorage.removeItem(getCartKey(action.payload.userId));
-      state.items = [];
-    },
-
-    // ================= LOAD AFTER LOGIN =================
     loadCartList: (state, action: PayloadAction<CartItem[]>) => {
       state.items = action.payload;
     },
+    clearCartList: (state) => {
+      state.items = [];
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCart.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchCart.fulfilled, (state, action) => {
+        state.items = action.payload.items;
+        state.loading = false;
+      })
+      .addCase(fetchCart.rejected, (state) => {
+        state.loading = false;
+        toast.error("Failed to load cart");
+      })
+      .addCase(addToCart.fulfilled, (state, action) => {
+        state.items = action.payload.items;
+        toast.success("Added to cart");
+      })
+      .addCase(addToCart.rejected, () => {
+        toast.error("Add to cart failed");
+      })
+      .addCase(removeFromCart.fulfilled, (state, action) => {
+        state.items = action.payload.items;
+        toast.success("Removed from cart");
+      })
+      .addCase(removeFromCart.rejected, () => {
+        toast.error("Remove failed");
+      });
   },
 });
 
-export const {
-  addToCartList,
-  updateCartQuantity,
-  removeFromCartList,
-  clearCartList,
-  loadCartList, // ✅ NEW
-} = cartListSlice.actions;
-
-export default cartListSlice.reducer;
+export const { clearCartList, loadCartList } = cartSlice.actions;
+export default cartSlice.reducer;

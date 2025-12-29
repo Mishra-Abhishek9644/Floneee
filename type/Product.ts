@@ -16,13 +16,11 @@ export interface Product {
     name: string;
     slug: string;
   };
-
-  colors?: string[];
-  sizes?: string[];
-
+  colors?: string[] | string; 
+  sizes?: string[] | string;  
   createdAt?: string;
   rating?: number;
 
-  discount: number;     // ✅ REQUIRED
-  finalPrice: number;   // ✅ REQUIRED
+  discount: number;     
+  finalPrice: number;   
 }

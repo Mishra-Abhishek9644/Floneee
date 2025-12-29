@@ -9,10 +9,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { loginUser } from "@/lib/auth";
 import { setUser } from "@/Store/Slices/loginSlice";
-import { RootState } from "@/Store";
-import { loadCartList } from "@/Store/Slices/cartSlice";
-import { loadCompareList } from "@/Store/Slices/compareSlice";
-import { loadWishlist } from "@/Store/Slices/wishlistSlice";
+import { AppDispatch, RootState } from "@/Store";
+import { fetchCart } from "@/Store/Slices/cartSlice";
+import { fetchCompare } from "@/Store/Slices/compareSlice";
+import { fetchWishlist } from "@/Store/Slices/wishlistSlice";
 
 interface LoginForm {
   email: string;
@@ -21,7 +21,7 @@ interface LoginForm {
 
 const page = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const user = useSelector((state: RootState) => state.login.currentUser);
 
@@ -32,43 +32,24 @@ const page = () => {
     formState: { errors },
   } = useForm<LoginForm>();
 
-  // 🔹 LOGIN ONLY (NO REDIRECT HERE)
   const onSubmit = async (data: LoginForm) => {
     try {
       const res = await loginUser(data);
 
-      dispatch(setUser(res.user)); // ✅ Redux update
-      dispatch(
-        loadCartList(
-          JSON.parse(
-            localStorage.getItem(`cart_${res.user._id}`) || "[]"
-          )
-        )
-      );
-      dispatch(
-        loadCompareList(
-          JSON.parse(
-            localStorage.getItem(`compare_${res.user._id}`) || "[]"
-          )
-        )
-      );
-      dispatch(
-        loadWishlist(
-          JSON.parse(
-            localStorage.getItem(`wishlist_${res.user._id}`) || "[]"
-          )
-        )
-      );
+      dispatch(setUser(res.user));
+      dispatch(fetchCart());
+      dispatch(fetchCompare());
 
-
+      dispatch(fetchWishlist());
       toast.success("Logged in successfully");
+
     } catch (error: any) {
       toast.error(error.message || "Invalid email or password");
       reset();
     }
   };
 
-  // 🔥 REDIRECT AFTER REDUX UPDATE (CORRECT WAY)
+  // REDIRECT AFTER REDUX UPDATE (CORRECT WAY)
   useEffect(() => {
     if (!user) return;
 
