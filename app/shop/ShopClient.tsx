@@ -10,7 +10,7 @@ import LongCard from "@/components/LongCard";
 import { useRouter, useSearchParams } from "next/navigation";
 import ReactPaginate from "react-paginate";
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 6;
 
 interface Category {
   name: string;
