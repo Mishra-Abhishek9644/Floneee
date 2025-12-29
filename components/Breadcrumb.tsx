@@ -1,13 +1,32 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 const Breadcrumb = () => {
   const pathname = usePathname();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-10 bg-[#f7f7f7] mt-20 animate-pulse">
+        <div className="flex gap-3">
+          <div className="h-4 w-16 bg-gray-300 rounded" />
+          <div className="h-4 w-4 bg-gray-300 rounded" />
+          <div className="h-4 w-20 bg-gray-300 rounded" />
+        </div>
+      </div>
+    );
+  }
+
   const parts = pathname.split("/").filter(Boolean);
 
-  // Remove ID parts (MongoDB ObjectId)
+  // Remove MongoDB ObjectId parts
   const breadcrumbParts = parts.filter(
     (p) => !/^[a-f0-9]{24}$/i.test(p)
   );
