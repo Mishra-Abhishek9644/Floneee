@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/db";
 import Compare from "@/models/Compare";
 import { authMiddleware } from "@/lib/authMiddleware";
 import mongoose from "mongoose";
+import { calculateFinalPrice } from "@/lib/price";
 
 /* ================= GET ================= */
 export async function GET() {
@@ -17,9 +18,13 @@ export async function GET() {
     const compare = await Compare.findOne({ userId: user.userId })
       .populate("products");
 
-    return NextResponse.json({
-      products: compare?.products ?? [],
-    });
+    const productsWithFinalPrice =
+      compare?.products.map((p: any) => ({
+        ...p.toObject(),
+        price: calculateFinalPrice(p.price, p.discount),
+      })) ?? [];
+
+    return NextResponse.json({ products: productsWithFinalPrice });
   } catch (err) {
     console.error("COMPARE GET ERROR:", err);
     return NextResponse.json(
@@ -73,9 +78,13 @@ export async function POST(req: Request) {
     const populated = await Compare.findOne({ userId: user.userId })
       .populate("products");
 
-    return NextResponse.json({
-      products: populated?.products ?? [],
-    });
+    const productsWithFinalPrice =
+      populated?.products.map((p: any) => ({
+        ...p.toObject(),
+        price: calculateFinalPrice(p.price, p.discount),
+      })) ?? [];
+
+    return NextResponse.json({ products: productsWithFinalPrice });
   } catch (err) {
     console.error("COMPARE POST ERROR:", err);
     return NextResponse.json(

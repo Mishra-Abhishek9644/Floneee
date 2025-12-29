@@ -4,6 +4,7 @@ import Cart from "@/models/Cart";
 import Product from "@/models/Product";
 import { authMiddleware } from "@/lib/authMiddleware";
 import { Types } from "mongoose";
+import { calculateFinalPrice } from "@/lib/price";
 
 /* ================= GET CART ================= */
 export async function GET() {
@@ -78,7 +79,10 @@ export async function POST(req: Request) {
         i.size === size
     );
 
-    const price = product.finalPrice ?? product.price;
+    const price = calculateFinalPrice(
+      product.price,
+      product.discount
+    );
 
     if (index > -1) {
       cart.items[index].quantity += quantity;

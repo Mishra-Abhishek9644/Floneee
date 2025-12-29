@@ -164,18 +164,11 @@ const Modal = ({ open, onClose, product }: ModalProps) => {
             <h2 className="text-2xl">{product.title}</h2>
 
             <p className="text-gray-600">
-              {product.discount > 0 ? (
-                <>
-                  <span className="line-through mr-2 text-gray-400">
-                    ${product.price}
-                  </span>
+             
                   <span className="font-semibold text-purple-600">
-                    ${product.finalPrice}
+                    ₹{product.price}
                   </span>
-                </>
-              ) : (
-                <>${product.price}</>
-              )}
+               
             </p>
 
             <p className="text-gray-500">{product.description}</p>

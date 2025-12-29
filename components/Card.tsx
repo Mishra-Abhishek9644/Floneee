@@ -31,6 +31,7 @@ const Card = ({ product, onOpen }: CardProps) => {
 
   const router = useRouter();
   const debounceRef = useRef(false);
+const displayPrice = product.finalPrice ?? product.price;
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -68,18 +69,10 @@ const Card = ({ product, onOpen }: CardProps) => {
 
       <h2 className="font-semibold mt-2 truncate">{product.title}</h2>
       <p className="text-gray-600">
-        {product.discount > 0 ? (
-          <>
-            <span className="line-through mr-2 text-gray-400">
-              ${product.price}
-            </span>
-            <span className="font-semibold text-purple-600">
-              ${product.finalPrice}
-            </span>
-          </>
-        ) : (
-          <>${product.price}</>
-        )}
+
+        <span className="font-semibold text-purple-600">
+          ₹{displayPrice}
+        </span>
       </p>
 
 
@@ -88,9 +81,8 @@ const Card = ({ product, onOpen }: CardProps) => {
         <button
           type="button"
           onClick={handleWishlistToggle}
-          className={`w-12 h-full flex items-center justify-center text-white hover:bg-black z-20 ${
-            isInWishlist ? "bg-black" : ""
-          }`}
+          className={`w-12 h-full flex items-center justify-center text-white hover:bg-black z-20 ${isInWishlist ? "bg-black" : ""
+            }`}
         >
           <Heart
             size={18}
