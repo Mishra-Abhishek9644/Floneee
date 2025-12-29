@@ -27,7 +27,7 @@ export function verifyToken(token: string): AppJwtPayload {
 
   if (
     !decoded ||
-    typeof decoded !== "object" ||
+    typeof decoded !== "object" || 
     !decoded.userId ||
     !decoded.email ||
     !decoded.role
