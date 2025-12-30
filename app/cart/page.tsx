@@ -23,7 +23,7 @@ const Page = () => {
     (state: RootState) => state.cartList.items
   );
 
-  /* ===== skeleton loader ===== */
+  /*  skeleton loader  */
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const Page = () => {
     return () => clearTimeout(t);
   }, [currentUser, dispatch]);
 
-  /* ===== SKELETON (DESIGN SAME) ===== */
+  /*  SKELETON (DESIGN SAME)  */
   if (loading) {
     return (
       <div>
@@ -80,7 +80,7 @@ const Page = () => {
     );
   }
 
-  /* ===== REAL PAGE (UNCHANGED) ===== */
+  /*  REAL PAGE (UNCHANGED)  */
   return (
     <div className="">
       <Breadcrumb />
