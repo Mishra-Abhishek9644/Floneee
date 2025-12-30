@@ -111,7 +111,7 @@ const DailyDeals = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center items-center mx-auto xl:px-40 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-center items-center mx-auto xl:px-20 gap-6">
           {loading
             ? Array.from({ length: ITEMS_LIMIT }).map((_, i) => (
                 <div
