@@ -4,7 +4,6 @@ import "./globals.css";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import ReduxProvider from "./providers";
-import PageLoader from "@/components/PageLoader";
 import AuthHydrator from "./AuthHydrator";
 import CartHydrator from "@/components/CartHydrator";
 
