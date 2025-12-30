@@ -16,6 +16,7 @@ import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import type { AppDispatch, RootState } from "@/Store";
 import { fetchWishlist, clearWishlist } from "@/Store/Slices/wishlistSlice";
+import { fetchCompare } from "@/Store/Slices/compareSlice";
 
 const Navbar = () => {
   const [loginBtn, setLoginBtn] = useState(false);
@@ -60,6 +61,11 @@ const Navbar = () => {
       dispatch(fetchWishlist());
     }
   }, [user, dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchCompare());
+  }, [])
+  
 
   useEffect(() => {
     setMenuBtn(false);
