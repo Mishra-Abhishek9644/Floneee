@@ -8,7 +8,7 @@ import { logout } from "@/Store/Slices/loginSlice";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { fetchCart } from "@/Store/Slices/cartSlice";
-import { clearCompareList } from "@/Store/Slices/compareSlice";
+import { clearCompareList, fetchCompare } from "@/Store/Slices/compareSlice";
 import { clearWishlist } from "@/Store/Slices/wishlistSlice";
 
 const UserDashboard = () => {
@@ -40,6 +40,10 @@ const UserDashboard = () => {
 
     loadDashboard();
   }, [user]);
+
+  useEffect(() => {
+    dispatch(fetchCompare());
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -148,32 +152,87 @@ const UserDashboard = () => {
         </div>
 
         <div className="bg-white shadow p-6 rounded-md">
-          <h2 className="font-semibold mb-4">Recent Orders</h2>
+          <h2 className="font-semibold mb-6">Recent Orders</h2>
 
           {dashboard.recentOrders.length === 0 ? (
             <p className="text-gray-500">No orders yet</p>
           ) : (
-            dashboard.recentOrders.map((order: any) => (
-              <div
-                key={order._id}
-                className="border-b py-3 flex justify-between"
-              >
-                <div>
-                  <p className="font-medium">
-                    ₹{order.totalAmount}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {order.items.length} item(s)
-                  </p>
-                </div>
+            /* ===== ORDERS GRID ===== */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {dashboard.recentOrders.map((order: any) => (
+                <div
+                  key={order._id}
+                  className="border border-gray-300 rounded-lg p-5 bg-white hover:shadow-md transition"
+                >
+                  {/* ===== ORDER HEADER ===== */}
+                  <div className="grid grid-cols-1 gap-4 border-b border-gray-300 pb-4 mb-4">
+                    <div>
+                      <p className="text-xs text-gray-500">ORDER ID</p>
+                      <p className="font-semibold text-gray-800">
+                        #{order._id.slice(-6)}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        Placed on{" "}
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
 
-                <span className="text-sm text-purple-600">
-                  {order.status}
-                </span>
-              </div>
-            ))
+                    <div className="grid grid-cols-2 items-center">
+                      <p className="text-lg font-semibold text-gray-900">
+                        ₹{order.totalAmount}
+                      </p>
+
+                      <span
+                        className={`justify-self-end text-xs font-semibold px-3 py-1 rounded-full uppercase
+                  ${order.status === "PENDING" && "bg-yellow-100 text-yellow-700"}
+                  ${order.status === "PAID" && "bg-blue-100 text-blue-700"}
+                  ${order.status === "SHIPPED" && "bg-purple-100 text-purple-700"}
+                  ${order.status === "DELIVERED" && "bg-green-100 text-green-700"}
+                  ${order.status === "CANCELLED" && "bg-red-100 text-red-700"}
+                `}
+                      >
+                        {order.status}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* ===== ORDER ITEMS ===== */}
+                  <div className="space-y-4">
+                    {order.items.map((item: any) => (
+                      <div
+                        key={item.productId}
+                        className="grid grid-cols-[64px_1fr_auto] gap-4 items-center"
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-16 h-16 object-cover rounded border"
+                        />
+
+                        <div>
+                          <p className="font-medium text-gray-800 line-clamp-1">
+                            {item.title}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {item.color} • {item.size}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Qty: {item.quantity}
+                          </p>
+                        </div>
+
+                        <p className="font-semibold text-gray-900">
+                          ₹{item.subtotal}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
+
       </div>
     </>
   );

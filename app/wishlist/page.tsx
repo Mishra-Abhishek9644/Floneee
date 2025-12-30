@@ -35,7 +35,6 @@ const Page = () => {
     dispatch(toggleWishlistDebounced(currentUser._id, item));
   };
 
-  /* ===== SKELETON (DESIGN SAME) ===== */
   if (loading) {
     return (
       <div>
@@ -74,7 +73,6 @@ const Page = () => {
     );
   }
 
-  /* ===== REAL PAGE (UNCHANGED) ===== */
   return (
     <div className="">
       <Breadcrumb />
@@ -120,7 +118,7 @@ const Page = () => {
                   />
                 </div>
 
-                <div className="md:col-span-2 truncate flex justify-center">
+                <div className="md:col-span-2 truncate flex justify-center text-wrap text-center">
                   {item.title}
                 </div>
 

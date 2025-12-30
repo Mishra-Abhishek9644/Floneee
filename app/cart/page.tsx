@@ -128,7 +128,7 @@ const Page = () => {
                   />
                 </div>
 
-                <div className="md:col-span-2 truncate flex justify-center text-center">
+                <div className="md:col-span-2 truncate flex justify-center text-center text-wrap">
                   {item.title}
                 </div>
 

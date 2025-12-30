@@ -70,21 +70,30 @@ const Page = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handlePlaceOrder = () => {
+    const handlePlaceOrder = async () => {
         if (!validate()) return;
 
-        const order = {
-            id: Date.now().toString(),
-            items: cartCount,
-            total,
-            billing,
-            date: new Date().toLocaleString(),
-            status: "Pending",
+        const payload = {
+            items: cartCount.map((item: any) => ({
+                productId: item._id,
+                title: item.title,
+                image: item.image,
+                price: item.price,
+                quantity: item.quantity,
+                size: item.size,
+                color: item.color,
+                subtotal: item.price * item.quantity,
+            })),
+            totalAmount: total,
+            paymentMethod: "COD",
         };
 
-        dispatch(placeOrder(order));
-        dispatch(removeFromCart(currentUser._id));
-        router.push("/account/user/");
+        const res = await dispatch(placeOrder(payload));
+
+        if (placeOrder.fulfilled.match(res)) {
+            dispatch(removeFromCart(currentUser._id));
+            router.push("/account/user");
+        }
     };
 
     const inputClass = (field: string) =>

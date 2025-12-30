@@ -44,7 +44,7 @@ export const {
   clearCompareLocal,
 } = compareSlice.actions;
 
-/* ================= GET ================= */
+// GET
 export const fetchCompare =
   () => async (dispatch: any) => {
     try {
@@ -61,7 +61,7 @@ export const fetchCompare =
     }
   };
 
-/* ================= TOGGLE ================= */
+// TOGGLE
 export const toggleCompareDebounced =
   (_userId: string, product: Product) =>
     async (dispatch: any, getState: any) => {
@@ -87,7 +87,7 @@ export const toggleCompareDebounced =
       }
     };
 
-/* ================= CLEAR ================= */
+// CLEAR
 export const clearCompare =
   () => async (dispatch: any) => {
     try {
