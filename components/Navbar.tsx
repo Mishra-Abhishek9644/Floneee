@@ -50,12 +50,12 @@ const Navbar = () => {
       )
   );
 
-  /* ---------- client check ---------- */
+  /*  client check  */
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  /* ---------- LOAD WISHLIST (LOGIC ONLY) ---------- */
+  /*  LOAD WISHLIST (LOGIC ONLY)  */
   useEffect(() => {
     if (user) {
       dispatch(fetchWishlist());
@@ -63,9 +63,12 @@ const Navbar = () => {
   }, [user, dispatch]);
 
   useEffect(() => {
-    dispatch(fetchCompare());
-  }, [])
-  
+    if (user) {
+      dispatch(fetchCompare());
+    }
+  }, [user, dispatch]);
+
+
 
   useEffect(() => {
     setMenuBtn(false);
@@ -120,7 +123,7 @@ const Navbar = () => {
     setSeearch(false);
   };
 
-  /* ---------- LOGOUT (LOGIC ONLY) ---------- */
+  /*  LOGOUT (LOGIC ONLY)  */
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", {

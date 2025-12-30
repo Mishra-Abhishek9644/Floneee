@@ -13,7 +13,28 @@ import AdminContacts from "./contacts/page";
 import AdminCategories from "./categories/page";
 import AdminOrdersPage from "./orders/page";
 
-/*  SKELETON  */
+/* ================= AUTO DESCRIPTION HELPER ================= */
+const generateAutoDescription = (product: any) => {
+  const parts: string[] = [];
+
+  if (product.title)
+    parts.push(`${product.title} is a premium quality product`);
+
+  if (product.sizes)
+    parts.push(`Available in sizes ${product.sizes}`);
+
+  if (product.colors)
+    parts.push(`Colors include ${product.colors}`);
+
+  if (product.stock)
+    parts.push(`Stock available: ${product.stock} units`);
+
+  return parts.length
+    ? parts.join(". ") + "."
+    : "High quality product suitable for daily use.";
+};
+
+/* ================= SKELETON ================= */
 const Skeleton = ({ className = "" }: { className?: string }) => (
   <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
 );
@@ -42,7 +63,7 @@ const AdminDashboard = () => {
     discount: "" as number | "",
   });
 
-  /*  LOAD CATEGORY  */
+  /* ================= LOAD CATEGORY ================= */
   useEffect(() => {
     const loadCat = async () => {
       try {
@@ -60,7 +81,7 @@ const AdminDashboard = () => {
     loadCat();
   }, []);
 
-  /*  LOGOUT  */
+  /* ================= LOGOUT ================= */
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", {
@@ -75,7 +96,7 @@ const AdminDashboard = () => {
     }
   };
 
-  /*  ADD CATEGORY  */
+  /* ================= ADD CATEGORY ================= */
   const addCategory = async () => {
     try {
       await fetch("/api/admin/category", {
@@ -91,7 +112,7 @@ const AdminDashboard = () => {
     }
   };
 
-  /*  ADD PRODUCT  */
+  /* ================= ADD PRODUCT ================= */
   const addProduct = async () => {
     if (addingProduct) return;
     setAddingProduct(true);
@@ -100,10 +121,18 @@ const AdminDashboard = () => {
       if (!product.title || !product.image || !product.categoryId)
         return toast.error("Missing fields");
 
+      const finalDescription =
+        product.description.trim() ||
+        generateAutoDescription(product);
+
       const formData = new FormData();
-      Object.entries(product).forEach(([k, v]) => {
+      Object.entries({
+        ...product,
+        description: finalDescription,
+      }).forEach(([k, v]) => {
         if (k !== "image") formData.append(k, String(v));
       });
+
       formData.append("image", product.image);
 
       const res = await fetch("/api/admin/product", {
@@ -123,7 +152,7 @@ const AdminDashboard = () => {
     }
   };
 
-  /*  SKELETON  */
+  /* ================= SKELETON ================= */
   if (!user || loading) {
     return (
       <div className="max-w-6xl mx-auto px-6 py-20 space-y-6">
@@ -159,7 +188,6 @@ const AdminDashboard = () => {
           </p>
         </div>
 
-      
         {/* TABS */}
         <div className="flex gap-3 mb-8">
           {["product", "category", "contact", "order"].map((tab) => (
@@ -167,10 +195,9 @@ const AdminDashboard = () => {
               key={tab}
               onClick={() => setAddOption(tab)}
               className={`px-5 py-2 rounded-full text-sm font-medium transition
-                ${
-                  addOption === tab
-                    ? "bg-purple-600 text-white shadow"
-                    : "bg-gray-100 hover:bg-gray-200"
+                ${addOption === tab
+                  ? "bg-purple-600 text-white shadow"
+                  : "bg-gray-100 hover:bg-gray-200"
                 }
               `}
             >
@@ -204,47 +231,149 @@ const AdminDashboard = () => {
         {/* PRODUCT */}
         {addOption === "product" && (
           <>
-            <div className="bg-white p-6 shadow rounded mb-8">
-              <h2 className="font-semibold mb-4">Add Product</h2>
+            <div className="bg-white shadow p-6 rounded mb-8 space-y-4">
+              <h2 className="font-semibold text-lg">Add Product</h2>
 
-              <input
-                className="border p-2 w-full mb-2"
-                placeholder="Title"
-                onChange={(e) =>
-                  setProduct({ ...product, title: e.target.value })
-                }
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <label className="text-sm">
+                  Title
+                  <input
+                    className="border p-2 w-full"
+                    value={product.title}
+                    onChange={(e) =>
+                      setProduct({ ...product, title: e.target.value })
+                    }
+                  />
+                </label>
 
-              <input
-                type="file"
-                ref={fileRef}
-                className="border p-2 w-full mb-2"
-                onChange={(e) =>
-                  setProduct({
-                    ...product,
-                    image: e.target.files?.[0] || null,
-                  })
-                }
-              />
+                <label className="text-sm">
+                  Price
+                  <input
+                    className="border p-2 w-full"
+                    value={product.price}
+                    onChange={(e) =>
+                      setProduct({ ...product, price: e.target.value })
+                    }
+                  />
+                </label>
+              </div>
 
-              <select
-                className="border p-2 w-full mb-3"
-                onChange={(e) =>
-                  setProduct({ ...product, categoryId: e.target.value })
-                }
-              >
-                <option value="">Select Category</option>
-                {storeCat.map((c) => (
-                  <option key={c._id} value={c._id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+              <div className="grid grid-cols-2 gap-4">
+                <label className="text-sm">
+                  Image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    ref={fileRef}
+                    className="border p-2 w-full"
+                    onChange={(e) =>
+                      setProduct({
+                        ...product,
+                        image: e.target.files?.[0] || null,
+                      })
+                    }
+                  />
+                </label>
+
+                <label className="text-sm">
+                  Category
+                  <select
+                    className="border p-2 w-full"
+                    value={product.categoryId}
+                    onChange={(e) =>
+                      setProduct({ ...product, categoryId: e.target.value })
+                    }
+                  >
+                    <option value="">Select category</option>
+                    {storeCat.map((c) => (
+                      <option key={c._id} value={c._id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <label className="text-sm">
+                  Stock
+                  <input
+                    className="border p-2 w-full"
+                    value={product.stock}
+                    onChange={(e) =>
+                      setProduct({ ...product, stock: e.target.value })
+                    }
+                  />
+                </label>
+
+                <label className="text-sm">
+                  Sizes
+                  <input
+                    className="border p-2 w-full"
+                    value={product.sizes}
+                    onChange={(e) =>
+                      setProduct({ ...product, sizes: e.target.value })
+                    }
+                  />
+                </label>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <label className="text-sm">
+                  Colors
+                  <input
+                    className="border p-2 w-full"
+                    value={product.colors}
+                    onChange={(e) =>
+                      setProduct({ ...product, colors: e.target.value })
+                    }
+                  />
+                </label>
+
+                <label className="text-sm">
+                  Discount (%)
+                  <input
+                    type="number"
+                    className="border p-2 w-full"
+                    value={product.discount}
+                    onChange={(e) =>
+                      setProduct({
+                        ...product,
+                        discount:
+                          e.target.value === "" ? "" : Number(e.target.value),
+                      })
+                    }
+                  />
+                </label>
+              </div>
+
+              <label className="text-sm">
+                Description
+                <textarea
+                  className="border p-2 w-full h-20"
+                  value={product.description}
+                  onChange={(e) =>
+                    setProduct({ ...product, description: e.target.value })
+                  }
+                />
+              </label>
+
+              {/* AUTO DESCRIPTION PREVIEW */}
+              <div className="bg-gray-50 border rounded p-4">
+                <p className="text-xs text-gray-500 mb-2">
+                  Auto Description Preview
+                </p>
+                <p className="text-sm text-gray-700">
+                  {product.description.trim()
+                    ? product.description
+                    : generateAutoDescription(product)}
+                </p>
+              </div>
 
               <button
                 onClick={addProduct}
                 disabled={addingProduct}
-                className="bg-purple-600 text-white px-4 py-2 rounded disabled:opacity-50"
+                className="bg-purple-600 text-white px-6 py-2 rounded disabled:opacity-50"
               >
                 {addingProduct ? "Adding..." : "Add Product"}
               </button>
@@ -255,8 +384,6 @@ const AdminDashboard = () => {
         )}
 
         {addOption === "contact" && <AdminContacts />}
-
-        {/* ORDERS */}
         {addOption === "order" && <AdminOrdersPage />}
       </div>
     </>

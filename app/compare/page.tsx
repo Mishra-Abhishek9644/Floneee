@@ -24,8 +24,10 @@ const Page = () => {
   );
   
   useEffect(() => {
-    dispatch(fetchCompare());
-  }, [dispatch]);
+    if(currentUser){
+      dispatch(fetchCompare());
+    }
+  }, [currentUser,dispatch]);
 
 //  skeleton loader
   const [loading, setLoading] = useState(true);
