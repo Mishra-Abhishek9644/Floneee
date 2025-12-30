@@ -1,34 +1,43 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import toast from "react-hot-toast";
 
-interface Order {
-  id: string;
-  items: any[];
-  total: number;
-  billing: any;
-  date: string;
-}
+export const placeOrder = createAsyncThunk(
+  "order/place",
+  async (payload: any, { rejectWithValue }) => {
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
 
-interface OrderState {
-  orders: Order[];
-}
-
-const initialState: OrderState = {
-  orders:
-    typeof window !== "undefined"
-      ? JSON.parse(localStorage.getItem("orders") || "[]")
-      : [],
-};
+      if (!res.ok) throw new Error("Order failed");
+      return await res.json();
+    } catch (err) {
+      return rejectWithValue("Order failed");
+    }
+  }
+);
 
 const orderSlice = createSlice({
-  name: "orders",
-  initialState,
-  reducers: {
-    placeOrder: (state, action: PayloadAction<Order>) => {
-      state.orders.push(action.payload);
-      localStorage.setItem("orders", JSON.stringify(state.orders));
-    },
+  name: "order",
+  initialState: { loading: false },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(placeOrder.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(placeOrder.fulfilled, (state) => {
+        state.loading = false;
+        toast.success("Order placed successfully");
+      })
+      .addCase(placeOrder.rejected, (state) => {
+        state.loading = false;
+        toast.error("Order failed");
+      });
   },
 });
 
-export const { placeOrder } = orderSlice.actions;
 export default orderSlice.reducer;

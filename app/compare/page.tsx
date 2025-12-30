@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   toggleCompareDebounced,
   clearCompare,
+  fetchCompare,
 } from "@/Store/Slices/compareSlice";
 import { GitCompareArrows, X } from "lucide-react";
 import Link from "next/link";
@@ -21,8 +22,12 @@ const Page = () => {
   const currentUser = useSelector(
     (state: RootState) => state.login.currentUser
   );
+  
+  useEffect(() => {
+    dispatch(fetchCompare());
+  }, [dispatch]);
 
-  /* ===== skeleton loader ===== */
+//  skeleton loader
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,7 +35,8 @@ const Page = () => {
     return () => clearTimeout(t);
   }, []);
 
-  /* ===== SKELETON UI (DESIGN SAME STRUCTURE) ===== */
+
+//  SKELETON UI (DESIGN SAME STRUCTURE)
   if (loading) {
     return (
       <div className="lg:px-20 animate-pulse">
@@ -66,7 +72,7 @@ const Page = () => {
     );
   }
 
-  /* ===== REAL PAGE (UNCHANGED) ===== */
+//  REAL PAGE (UNCHANGED)
   return (
     <div className="lg:px-20">
       <Breadcrumb />

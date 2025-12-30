@@ -5,7 +5,7 @@ import { authMiddleware } from "@/lib/authMiddleware";
 import mongoose from "mongoose";
 import { calculateFinalPrice } from "@/lib/price";
 
-/* ================= GET ================= */
+// GET 
 export async function GET() {
   try {
     await connectDB();
@@ -34,7 +34,7 @@ export async function GET() {
   }
 }
 
-/* ================= TOGGLE ================= */
+// TOGGLE 
 export async function POST(req: Request) {
   try {
     await connectDB();
@@ -94,7 +94,7 @@ export async function POST(req: Request) {
   }
 }
 
-/* ================= CLEAR ================= */
+// CLEAR
 export async function DELETE() {
   try {
     await connectDB();
