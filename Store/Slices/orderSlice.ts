@@ -1,6 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
 
+interface OrderState {
+  loading: boolean;
+  orders: any[]; // replace with Order[] when ready
+}
+
 export const placeOrder = createAsyncThunk(
   "order/place",
   async (payload: any, { rejectWithValue }) => {
@@ -13,24 +18,31 @@ export const placeOrder = createAsyncThunk(
       });
 
       if (!res.ok) throw new Error("Order failed");
-      return await res.json();
+
+      return await res.json(); 
     } catch (err) {
       return rejectWithValue("Order failed");
     }
   }
 );
 
+const initialState: OrderState = {
+  loading: false,
+  orders: [],
+};
+
 const orderSlice = createSlice({
   name: "order",
-  initialState: { loading: false },
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(placeOrder.pending, (state) => {
         state.loading = true;
       })
-      .addCase(placeOrder.fulfilled, (state) => {
+      .addCase(placeOrder.fulfilled, (state, action) => {
         state.loading = false;
+        state.orders.push(action.payload); 
         toast.success("Order placed successfully");
       })
       .addCase(placeOrder.rejected, (state) => {
