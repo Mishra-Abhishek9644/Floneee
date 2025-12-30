@@ -62,7 +62,7 @@ const displayPrice = product.finalPrice ?? product.price;
           <img
             src={product.image}
             alt={product.title}
-            className="w-full h-70 p-8 object-contain scale-100 hover:scale-110 duration-700 transition"
+            className="w-full h-70 p-8 object-contain scale-125 hover:scale-140 duration-700 transition"
           />
         </Link>
       </div>
