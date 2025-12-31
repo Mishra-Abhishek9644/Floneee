@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const token = (await cookies()).get("token")?.value;
     if (!token) {
-      return NextResponse.json({ user: null }, { status: 401 });
+      return NextResponse.json({ user: null });
     }
 
     const user = verifyToken(token);
@@ -20,6 +20,7 @@ export async function GET() {
       },
     });
   } catch {
-    return NextResponse.json({ user: null }, { status: 401 });
+    return NextResponse.json({ user: null });
   }
 }
+
