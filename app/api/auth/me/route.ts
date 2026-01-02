@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/jwt";
+import { verifyToken } from "@/utils/jwt";
 import { NextResponse } from "next/server";
 
 export async function GET() {

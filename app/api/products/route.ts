@@ -1,6 +1,6 @@
-import { calculateFinalPrice } from "@/lib/price";
+import { calculateFinalPrice } from "@/utils/price";
 import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/db";
+import { connectDB } from "@/utils/db";
 import Product from "@/models/Product";
 import Category from "@/models/Category";
 

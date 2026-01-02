@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/jwt";
+import { verifyToken } from "@/utils/jwt";
 import { redirect } from "next/navigation";
 
 export default async function AccountLayout({

@@ -7,6 +7,8 @@ export interface IUser extends Document {
   email: string;
   password: string;
   role: "user" | "admin";
+  resetToken?: string;
+  resetTokenExpiry?: Date;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -29,12 +31,20 @@ const UserSchema = new Schema<IUser>(
       type: String,
       required: true,
       minlength: 6,
-      select: false, // don't return password by default
+      select: false,
     },
     role: {
       type: String,
       enum: ["user", "admin"],
       default: "user",
+    },
+
+    // ✅ FORGOT PASSWORD FIELDS
+    resetToken: {
+      type: String,
+    },
+    resetTokenExpiry: {
+      type: Date,
     },
   },
   { timestamps: true }
@@ -46,8 +56,10 @@ UserSchema.pre("save", async function () {
   this.password = await bcrypt.hash(this.password, 10);
 });
 
-// Add method to compare password
-UserSchema.methods.comparePassword = async function (candidatePassword: string) {
+// Compare password
+UserSchema.methods.comparePassword = async function (
+  candidatePassword: string
+) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 

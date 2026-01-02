@@ -1,9 +1,9 @@
 import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/jwt";
-import { connectDB } from "@/lib/db";
+import { verifyToken } from "@/utils/jwt";
+import { connectDB } from "@/utils/db";
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
-import cloudinary from "@/lib/cloudinary";
+import cloudinary from "@/utils/cloudinary";
 
 
 //Adding

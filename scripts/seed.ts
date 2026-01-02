@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { connectDB } from "../lib/db";
+import { connectDB } from "../utils/db";
 
 import User from "../models/User";
 import Category from "../models/Category";

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/db";
+import { connectDB } from "@/utils/db";
 import Order from "@/models/Order";
-import { authMiddleware } from "@/lib/authMiddleware";
+import { authMiddleware } from "@/utils/authMiddleware";
 
 export async function GET() {
   try {

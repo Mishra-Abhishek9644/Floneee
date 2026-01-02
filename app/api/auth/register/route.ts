@@ -1,6 +1,6 @@
 // app/api/auth/register/route.ts
 
-import { connectDB } from "@/lib/db";
+import { connectDB } from "@/utils/db";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
 
