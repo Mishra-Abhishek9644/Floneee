@@ -13,7 +13,6 @@ import AdminContacts from "./contacts/page";
 import AdminCategories from "./categories/page";
 import AdminOrdersPage from "./orders/page";
 
-/* ================= AUTO DESCRIPTION HELPER ================= */
 const generateAutoDescription = (product: any) => {
   const parts: string[] = [];
 
@@ -34,7 +33,6 @@ const generateAutoDescription = (product: any) => {
     : "High quality product suitable for daily use.";
 };
 
-/* ================= SKELETON ================= */
 const Skeleton = ({ className = "" }: { className?: string }) => (
   <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
 );
@@ -63,7 +61,6 @@ const AdminDashboard = () => {
     discount: "" as number | "",
   });
 
-  /* ================= LOAD CATEGORY ================= */
   useEffect(() => {
     const loadCat = async () => {
       try {
@@ -81,7 +78,6 @@ const AdminDashboard = () => {
     loadCat();
   }, []);
 
-  /* ================= LOGOUT ================= */
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", {
@@ -96,7 +92,6 @@ const AdminDashboard = () => {
     }
   };
 
-  /* ================= ADD CATEGORY ================= */
   const addCategory = async () => {
     try {
       await fetch("/api/admin/category", {
@@ -112,7 +107,6 @@ const AdminDashboard = () => {
     }
   };
 
-  /* ================= ADD PRODUCT ================= */
   const addProduct = async () => {
     if (addingProduct) return;
     setAddingProduct(true);
@@ -152,7 +146,6 @@ const AdminDashboard = () => {
     }
   };
 
-  /* ================= SKELETON ================= */
   if (!user || loading) {
     return (
       <div className="max-w-6xl mx-auto px-6 py-20 space-y-6">
@@ -189,7 +182,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* TABS */}
-        <div className="flex gap-3 mb-8">
+        <div className="grid md:grid-cols-4 grid-cols-1 gap-3 mb-8">
           {["product", "category", "contact", "order"].map((tab) => (
             <button
               key={tab}

@@ -74,11 +74,11 @@ const Blog = () => {
               />
             </div>
 
-            <div className="text-center bg-white absolute -bottom-14 px-14 left-1/2 -translate-x-2/4 py-5 w-[300px]">
+            <div className="text-center bg-gray-800 text-white absolute -bottom-10 px-14 left-1/2 -translate-x-2/4 py-5 w-[300px]">
               <h2 className="text-xl font-medium line-clamp-1">
                 {i?.title || "A guide to latest trends"}
               </h2>
-              <p className="italic text-gray-500 text-sm">By Admin</p>
+              <p className="italic text-sm">By Admin</p>
             </div>
           </div>
         ))}
