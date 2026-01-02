@@ -9,18 +9,24 @@ interface User {
 
 interface AuthState {
   currentUser: User | null;
+  hydrated: boolean;
 }
 
 const initialState: AuthState = {
   currentUser: null,
+  hydrated: false,
 };
+
 
 const loginSlice = createSlice({
   name: "login",
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<User>) => {
+    setUser: (state, action) => {
       state.currentUser = action.payload;
+    },
+    setHydrated: (state) => {
+      state.hydrated = true;
     },
     logout: (state) => {
       state.currentUser = null;
@@ -28,5 +34,5 @@ const loginSlice = createSlice({
   },
 });
 
-export const { setUser, logout } = loginSlice.actions;
+export const { setUser, logout, setHydrated } = loginSlice.actions;
 export default loginSlice.reducer;

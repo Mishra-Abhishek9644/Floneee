@@ -64,14 +64,14 @@ const page = () => {
     }
   }, [user, router]);
 
-  /* ================= SKELETON ================= */
+  /*  SKELETON  */
   if (loading) {
     return (
       <>
         <Breadcrumb />
 
         <div className="flex justify-center items-center animate-pulse">
-          <div className="w-full md:w-fit p-5 sm:p-20">
+          <div className="w-full md:w-3xl p-5 sm:p-20">
             <div className="h-8 w-40 bg-gray-300 mx-auto rounded mb-10" />
 
             <div className="shadow-xl border border-gray-300 p-5 w-full sm:p-20 my-10 rounded-md">
@@ -93,13 +93,12 @@ const page = () => {
     );
   }
 
-  /* ================= REAL FORM (UNCHANGED) ================= */
   return (
     <>
       <Breadcrumb />
 
       <div className="flex justify-center items-center">
-        <div className="w-full md:w-fit p-5 sm:p-20">
+        <div className="w-full md:w-3xl p-5 sm:p-20">
           <div className="text-center text-2xl font-bold text-purple-600">
             <span className="pr-2">Login</span>
             <Link href={`/register`} className="border-l text-black pl-2">

@@ -16,7 +16,9 @@ import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import type { AppDispatch, RootState } from "@/Store";
 import { fetchWishlist, clearWishlist } from "@/Store/Slices/wishlistSlice";
-import { fetchCompare } from "@/Store/Slices/compareSlice";
+import { clearCompareList, fetchCompare } from "@/Store/Slices/compareSlice";
+import logo from '../assets/F-logo.png';
+import { clearCartList, fetchCart } from "@/Store/Slices/cartSlice";
 
 const Navbar = () => {
   const [loginBtn, setLoginBtn] = useState(false);
@@ -24,6 +26,7 @@ const Navbar = () => {
   const [seearch, setSeearch] = useState(false);
   const [search, setSearch] = useState("");
   const [isClient, setIsClient] = useState(false);
+  const isActive = (path: string) => pathname === path;
 
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const searchRef = useRef<HTMLDivElement | null>(null);
@@ -50,24 +53,34 @@ const Navbar = () => {
       )
   );
 
-  /*  client check  */
+  const { currentUser, hydrated } = useSelector(
+    (state: RootState) => state.login
+  );
+
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  /*  LOAD WISHLIST (LOGIC ONLY)  */
   useEffect(() => {
-    if (user) {
+    if (!hydrated) return;
+    if (currentUser) {
       dispatch(fetchWishlist());
     }
-  }, [user, dispatch]);
-
+  }, [hydrated, currentUser]);
+  
   useEffect(() => {
-    if (user) {
+    if (!hydrated) return;
+    if (currentUser) {
       dispatch(fetchCompare());
     }
-  }, [user, dispatch]);
+  }, [hydrated, currentUser]);
 
+  useEffect(() => {
+    if (!hydrated) return;
+    if (currentUser) {
+      dispatch(fetchCart());
+    }
+  }, [hydrated, currentUser]);
 
 
   useEffect(() => {
@@ -123,7 +136,6 @@ const Navbar = () => {
     setSeearch(false);
   };
 
-  /*  LOGOUT (LOGIC ONLY)  */
   const handleLogout = async () => {
     try {
       await fetch("/api/auth/logout", {
@@ -132,7 +144,11 @@ const Navbar = () => {
       });
 
       dispatch(logout());
-      dispatch(clearWishlist()); // 🔥 logic only
+
+      dispatch(clearWishlist());
+      dispatch(clearCompareList());
+      dispatch(clearCartList());
+      
       toast.success("Logged out");
       router.replace("/login");
     } catch {
@@ -144,28 +160,59 @@ const Navbar = () => {
   return (
     <>
 
-      <div className='flex justify-between items-center md:px-20 px-5 py-5 text-gray-900 shadow-md  fixed bg-white top-0 left-0 right-0 z-10 ' >
-        <Link href='/'> <div className='text-4xl font-bold text-gray-900 hover:text-purple-500 hover:scale-105 '>
-          Flone.
-        </div>
+      <div className='flex justify-between items-center md:px-20 px-5 py-5 text-gray-900 shadow-md fixed bg-black top-0 left-0 right-0 z-20 ' >
+        <Link href='/'>
+          <img src={logo.src} className="h-10" alt="" />
         </Link>
 
-        <div className='hidden lg:flex lg:flex-row lg:gap-8 lg:text-[15px] '>
-          <Link className="text-[#555252] hover:text-purple-600" href='/'>Home</Link>
-          <Link className="text-[#555252] hover:text-purple-600" href='/shop'>Shop</Link>
-          <Link className="text-[#555252] hover:text-purple-600" href='/blog'>Blogs</Link>
-          <Link className="text-[#555252] hover:text-purple-600" href='/about'>About Us</Link>
-          <Link className="text-[#555252] hover:text-purple-600" href='/contact'>Contact Us</Link>
+        <div className='hidden lg:flex lg:flex-row lg:gap-8 lg:text-[15px]'>
+
+          <Link
+            href="/"
+            className={isActive("/") ? "text-purple-400" : "text-gray-300"}
+          >
+            Home
+          </Link>
+
+          <Link
+            href="/shop"
+            className={pathname.startsWith("/shop") ? "text-purple-400" : "text-gray-300"}
+          >
+            Shop
+          </Link>
+
+          <Link
+            href="/blog"
+            className={pathname.startsWith("/blog") ? "text-purple-400" : "text-gray-300"}
+          >
+            Blogs
+          </Link>
+
+          <Link
+            href="/about"
+            className={isActive("/about") ? "text-purple-400" : "text-gray-300"}
+          >
+            About Us
+          </Link>
+
+          <Link
+            href="/contact"
+            className={isActive("/contact") ? "text-purple-400" : "text-gray-300"}
+          >
+            Contact Us
+          </Link>
+
         </div>
+
 
         <div className='flex gap-3 '>
           <div className="hidden md:flex gap-7 px-4">
 
             <div ref={searchRef} className="relative">
-              <button className="flex items-center hover:text-purple-500 gap-2 hover:scale-105" onClick={(e) => {
+              <button className="flex items-center hover:text-purple-400 gap-2 hover:scale-105" onClick={(e) => {
                 e.stopPropagation();
                 setSeearch(true);
-              }}><Search /></button>
+              }}><Search className="text-gray-300" /></button>
               {seearch && (
                 <div className="absolute top-10 right-0 bg-white  rounded shadow p-3 mt-2  transition-all  overflow-hidden flex items-center  ">
                   <div className="flex items-center border">
@@ -191,10 +238,10 @@ const Navbar = () => {
 
             <div ref={userMenuRef} className="relative">
               <button
-                className="flex items-center hover:text-purple-500 gap-2 hover:scale-105"
+                className="flex items-center hover:text-purple-400 gap-2 hover:scale-105"
                 onClick={() => setLoginBtn(prev => !prev)}
               >
-                <UserRoundPen />
+                <UserRoundPen className={isActive("/login") || isActive("/register") || isActive("/account/user") ? "text-purple-400" : "text-gray-300"} />
               </button>
 
               {loginBtn && (
@@ -242,8 +289,8 @@ const Navbar = () => {
           </div>
           {user?.role !== "admin" && (
             <>
-              <Link href="/compare" className="relative hover:text-purple-500 hover:scale-105">
-                <GitCompareArrows />
+              <Link href="/compare" className="relative hover:text-purple-400 hover:scale-105">
+                <GitCompareArrows className={isActive("/compare") ? "text-purple-400" : "text-gray-300"} />
 
                 {compareCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
@@ -251,17 +298,16 @@ const Navbar = () => {
                   </span>
                 )}
               </Link>
-              <Link href="/wishlist" className="relative hover:text-purple-500 hover:scale-105">
-                <Heart />
-
+              <Link href="/wishlist" className="relative hover:text-purple-400 hover:scale-105">
+                <Heart className={isActive("/wishlist") ? "text-purple-400" : "text-gray-300"} />
                 {wishlistCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                     {wishlistCount}
                   </span>
                 )}
               </Link>
-              <Link href="/cart" className="relative hover:text-purple-500 hover:scale-105">
-                <ShoppingBag />
+              <Link href="/cart" className="relative hover:text-purple-400 hover:scale-105">
+                <ShoppingBag className={isActive("/cart") ? "text-purple-400" : "text-gray-300"} />
                 {cartCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
                     {cartCount}
@@ -271,7 +317,7 @@ const Navbar = () => {
             </>
           )}
 
-          <div className="lg:hidden hover:text-purple-500 hover:scale-105"><button onClick={() => (setMenuBtn(!menuBtn))}><Menu /></button></div>
+          <div className="lg:hidden hover:text-purple-400 hover:scale-105"><button onClick={() => (setMenuBtn(!menuBtn))}><Menu /></button></div>
 
         </div>
       </div>
@@ -290,20 +336,20 @@ const Navbar = () => {
                 e.stopPropagation();
                 setMenuBtn(!menuBtn);
               }}
-              className="text-black rounded-xl px-1 hover:scale-110 hover:text-purple-500"><X /></button>
+              className="text-black rounded-xl px-1 hover:scale-110 hover:text-purple-400"><X /></button>
             <div className="bg-gray-200 items-center p-2 rounded-xl flex ">
               <input type="text" className="grow min-w-0 outline-none bg-transparent" placeholder="Search..." />
-              <button className="hover:text-purple-500 hover:scale-105 p-1"><Search size={18} /></button></div>
+              <button className="hover:text-purple-400 hover:scale-105 p-1"><Search size={18} /></button></div>
           </div>
           <div className='flex flex-col mt-5 gap-3'>
-            <Link className="hover:text-purple-500 hover:scale-105" href='/'>Home</Link>
-            <Link className="hover:text-purple-500 hover:scale-105" href='/shop'>Shop</Link>
-            <Link className="hover:text-purple-500 hover:scale-105" href='/home'>Pages</Link>
-            <Link className="hover:text-purple-500 hover:scale-105" href='/shop'>Collection</Link>
-            <Link className="hover:text-purple-500 hover:scale-105" href='/blog'>Blogs</Link>
-            <Link className="hover:text-purple-500 hover:scale-105" href='/contact'>Contact Us</Link>
-            <Link className="hover:text-purple-500 hover:scale-105" href='/login'>Login</Link>
-            <Link className="hover:text-purple-500 hover:scale-105" href='/register'>Register</Link>
+            <Link className="hover:text-purple-400 hover:scale-105" href='/'>Home</Link>
+            <Link className="hover:text-purple-400 hover:scale-105" href='/shop'>Shop</Link>
+            <Link className="hover:text-purple-400 hover:scale-105" href='/home'>Pages</Link>
+            <Link className="hover:text-purple-400 hover:scale-105" href='/shop'>Collection</Link>
+            <Link className="hover:text-purple-400 hover:scale-105" href='/blog'>Blogs</Link>
+            <Link className="hover:text-purple-400 hover:scale-105" href='/contact'>Contact Us</Link>
+            <Link className="hover:text-purple-400 hover:scale-105" href='/login'>Login</Link>
+            <Link className="hover:text-purple-400 hover:scale-105" href='/register'>Register</Link>
           </div>
 
         </div>

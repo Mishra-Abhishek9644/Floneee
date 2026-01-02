@@ -2,7 +2,7 @@
 
 import Breadcrumb from "@/components/Breadcrumb";
 import { Grid2x2, Grid3x3, Logs } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Product } from "@/type/Product";
 import Card from "@/components/Card";
 import Modal from "@/components/Modal";
@@ -21,37 +21,33 @@ const ShopClient = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  /* ================= UI STATE ================= */
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modal, setModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<"small" | "mid" | "large">("mid");
+  const [activeTab, setActiveTab] =
+    useState<"small" | "mid" | "large">("mid");
 
-  /* ================= URL STATE ================= */
   const searchFromUrl = searchParams.get("search") || "";
   const pageFromUrl = Number(searchParams.get("page")) || 1;
 
   const [search, setSearch] = useState(searchFromUrl);
   const [currentPage, setCurrentPage] = useState(pageFromUrl - 1);
 
-  /* ================= DATA STATE ================= */
   const [products, setProducts] = useState<Product[]>([]);
   const [pagination, setPagination] = useState<any>(null);
 
-  /* ================= CATEGORY STATE ================= */
   const [categories, setCategories] = useState<Category[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(true);
 
+  const isFirstLoad = useRef(true);
 
-  /* ================= FETCH CATEGORIES ================= */
   useEffect(() => {
     fetch("/api/categories")
       .then((res) => res.json())
       .then(setCategories);
   }, []);
 
-  /* ================= FETCH PRODUCTS (BACKEND DRIVEN) ================= */
   useEffect(() => {
     const params = new URLSearchParams();
 
@@ -61,7 +57,9 @@ const ShopClient = () => {
     params.append("page", String(currentPage + 1));
     params.append("limit", String(ITEMS_PER_PAGE));
 
-    setLoading(true); // 🔥 START skeleton
+    if (isFirstLoad.current) {
+      setLoading(true);
+    }
 
     fetch(`/api/products?${params.toString()}`)
       .then((res) => res.json())
@@ -70,18 +68,18 @@ const ShopClient = () => {
         setPagination(res.pagination);
       })
       .finally(() => {
-        setLoading(false); // 🔥 STOP skeleton
+        if (isFirstLoad.current) {
+          setLoading(false);
+          isFirstLoad.current = false;
+        }
       });
   }, [search, currentPage, activeCategory]);
 
-
-  /* ================= URL → STATE SYNC ================= */
   useEffect(() => {
     setSearch(searchFromUrl);
     setCurrentPage(pageFromUrl - 1);
   }, [searchFromUrl, pageFromUrl]);
 
-  /* ================= PAGINATION ================= */
   const handlePageChange = (selectedItem: { selected: number }) => {
     const newPage = selectedItem.selected;
     setCurrentPage(newPage);
@@ -91,6 +89,7 @@ const ShopClient = () => {
       { scroll: false }
     );
   };
+
   const CardSkeleton = () => (
     <div className="border-4 border-gray-200 rounded-lg p-4 animate-pulse">
       <div className="bg-gray-200 h-40 rounded mb-4"></div>
@@ -98,6 +97,7 @@ const ShopClient = () => {
       <div className="h-4 bg-gray-200 rounded w-1/2"></div>
     </div>
   );
+
   const LongCardSkeleton = () => (
     <div className="border-2 border-red-500 rounded-lg p-4 animate-pulse">
       <div className="bg-gray-200 w-32 h-24 rounded"></div>
@@ -122,13 +122,11 @@ const ShopClient = () => {
     </div>
   );
 
-
   return (
     <>
       <Breadcrumb />
 
       <div className="m-1 md:mx-auto p-2 md:p-10">
-        {/* ================= MODAL ================= */}
         {modal && selectedProduct && (
           <Modal
             product={selectedProduct}
@@ -139,7 +137,6 @@ const ShopClient = () => {
 
 
         <div className="grid grid-cols-1 md:grid-cols-[20%_70%] gap-4">
-          {/* ================= LEFT SIDEBAR ================= */}
           <div className="flex flex-col gap-4">
             <h1 className="text-lg">Search</h1>
 
@@ -159,56 +156,68 @@ const ShopClient = () => {
 
             </div>
 
-            {/* ================= CATEGORIES ================= */}
             <div className="flex flex-col mt-8">
               <h1>Categories</h1>
 
-              {/* ================= ALL CATEGORY ================= */}
               {loading ? (
                 <AllCategorySkeleton />
               ) : (
-                <div className="flex gap-3 my-2 text-lg">
+                <div className="flex items-center gap-3 my-2 text-lg">
                   <button
                     disabled={loading}
-                    className={`border px-3 py-2 rounded-md transition
-        ${activeCategory === null ? "bg-purple-600 text-white" : ""}
-        disabled:opacity-50 disabled:cursor-not-allowed`}
                     onClick={() => {
                       setActiveCategory(null);
                       setCurrentPage(0);
                       router.push(`/shop?search=${encodeURIComponent(search)}&page=1`);
                     }}
-                  />
+                    className={`w-5 h-5 rounded border flex items-center justify-center
+      transition
+      ${activeCategory === null
+                        ? "bg-purple-600 border-purple-600"
+                        : "border-gray-400"
+                      }
+      disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    {activeCategory === null && (
+                      <span className="w-2.5 h-2.5 bg-white rounded-sm" />
+                    )}
+                  </button>
                   <span>All</span>
                 </div>
               )}
 
-
-              {categories.length === 0
-                ? Array.from({ length: 5 }).map((_, i) => (
-                  <CategorySkeleton key={i} />
-                ))
-                : categories.map((cat) => (
-                  <div key={cat.slug} className="flex gap-3 my-2 text-lg">
+              {loading ? (
+                categories.map((_, i) => <CategorySkeleton key={i} />)
+              ) : (
+                categories.map((cat) => (
+                  <div key={cat.slug} className="flex items-center gap-3 my-2 text-lg">
                     <button
-                      className={`border px-3 py-2 rounded-md ${activeCategory === cat.slug ? "bg-purple-600" : ""
-                        }`}
                       onClick={() => {
                         setActiveCategory(cat.slug);
                         setCurrentPage(0);
-                        router.push(
-                          `/shop?search=${encodeURIComponent(search)}&page=1`
-                        );
+                        router.push(`/shop?search=${encodeURIComponent(search)}&page=1`);
                       }}
-                    />
+                      className={`w-5 h-5 rounded border flex items-center justify-center transition
+        ${activeCategory === cat.slug
+                          ? "bg-purple-600 border-purple-600"
+                          : "border-gray-400"
+                        }`}
+                    >
+                      {activeCategory === cat.slug && (
+                        <span className="w-2.5 h-2.5 bg-white rounded-sm" />
+                      )}
+                    </button>
+
                     <span>{cat.name}</span>
                   </div>
-                ))}
+                ))
+              )}
+
 
             </div>
+
           </div>
 
-          {/* ================= PRODUCT SECTION ================= */}
           <div>
             <div className="flex justify-between items-center mb-6">
               <div className="flex gap-3">
@@ -233,7 +242,6 @@ const ShopClient = () => {
               </div>
             </div>
 
-            {/* ❌ SHOW NOTHING while loading */}
             {!loading && products.length === 0 && (
               <div className="text-center py-20 text-gray-500">
                 <h2 className="text-2xl font-semibold">Product not found</h2>
@@ -304,7 +312,6 @@ const ShopClient = () => {
           </div>
         </div>
 
-        {/* ================= PAGINATION ================= */}
         <div className="flex justify-center mt-12">
           <ReactPaginate
             previousLabel="←"

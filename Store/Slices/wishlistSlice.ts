@@ -14,7 +14,7 @@ const initialState: WishlistState = {
   loading: false,
 };
 
-/* ================= GET ================= */
+/* GET */
 export const fetchWishlist = createAsyncThunk(
   "wishlist/fetch",
   async () => {
@@ -30,12 +30,11 @@ const wishlistSlice = createSlice({
   name: "wishlist",
   initialState,
   reducers: {
-    // ✅ used by toggle wrapper
+
     setWishlist: (state, action) => {
       state.items = action.payload;
     },
 
-    // ✅ optimistic toggle (no refresh needed)
     toggleWishlistLocal: (state, action) => {
       const product: Product = action.payload;
       const exists = state.items.some((p) => p._id === product._id);
@@ -68,11 +67,9 @@ export const {
   clearWishlistLocal,
 } = wishlistSlice.actions;
 
-/* ================= TOGGLE (API + OPTIMISTIC) ================= */
 export const toggleWishlistDebounced =
   (_userId: string, product: Product) =>
   async (dispatch: any, getState: any) => {
-    // instant UI update
     dispatch(toggleWishlistLocal(product));
 
     try {
@@ -88,13 +85,12 @@ export const toggleWishlistDebounced =
       const data = await res.json();
       dispatch(setWishlist(data.products));
     } catch {
-      // rollback on error
       dispatch(setWishlist(getState().wishlist.items));
       toast.error("Wishlist error");
     }
   };
 
-/* ================= CLEAR (API) ================= */
+/* CLEAR (API) */
 export const clearWishlist =
   () => async (dispatch: any) => {
     const res = await fetch("/api/wishlist", {

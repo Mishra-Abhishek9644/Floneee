@@ -67,46 +67,26 @@ const DailyDeals = () => {
         />
       )}
 
-      <div className="m-1 md:mx-auto md:px-10">
+      <div className="m-1 md:mx-auto md:px-10 py-16">
+        
         <div className="flex justify-center gap-2 sm:gap-4 md:gap-6 text-lg md:text-3xl font-bold md:my-6 items-center">
           <div className="w-10 md:w-20">
             <hr className="border rounded-2xl" />
           </div>
-          <div>DAILY DEALS!</div>
+          <div className="text-3xl">DAILY DEALS</div>
           <div className="w-10 md:w-20">
             <hr className="border rounded-2xl" />
           </div>
         </div>
 
-        <div className="flex justify-center text-sm gap-2 md:w-xl mx-auto my-10 md:text-xl text-gray-500 md:gap-14">
-          <button
-            className={
-              activeTab === "new"
-                ? "text-black font-medium"
-                : "hover:text-black"
-            }
-            onClick={() => setActiveTab("new")}
-          >
+        <div className="flex justify-center text-md gap-2 md:w-xl mx-auto my-10 md:text-xl text-gray-500 md:gap-14">
+          <button className={activeTab === "new" ? "text-black font-medium border-b-2 pb-2 duration-1000" : "hover:text-black border-b-2 pb-2 cursor-pointer border-white" } onClick={() => setActiveTab("new")}>
             New Arrivals
           </button>
-          <button
-            className={
-              activeTab === "best"
-                ? "text-black font-medium"
-                : "hover:text-black"
-            }
-            onClick={() => setActiveTab("best")}
-          >
+          <button className={activeTab === "best" ? "text-black font-medium border-b-2 pb-2 duration-1000" : "hover:text-black border-b-2 pb-2 cursor-pointer border-white" } onClick={() => setActiveTab("best")}>
             Best Sellers
           </button>
-          <button
-            className={
-              activeTab === "sale"
-                ? "text-black font-medium"
-                : "hover:text-black"
-            }
-            onClick={() => setActiveTab("sale")}
-          >
+          <button className={activeTab === "sale" ? "text-black font-medium border-b-2 pb-2 duration-1000" : "hover:text-black border-b-2 pb-2 cursor-pointer border-white" } onClick={() => setActiveTab("sale")}>
             Sale Items
           </button>
         </div>

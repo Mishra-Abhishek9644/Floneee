@@ -60,7 +60,7 @@ const page = () => {
     }
   };
 
-  /* ================= SKELETON ================= */
+  /* SKELETON */
   if (loading) {
     return (
       <>
@@ -104,12 +104,13 @@ const page = () => {
     );
   }
 
-  /* ================= REAL PAGE ================= */
+  /* REAL PAGE */
   return (
     <>
       <Breadcrumb />
 
       <div className="max-w-7xl mx-auto md:px-20 px-5 w-full md:py-20 py-5">
+
         {/* MAP */}
         <div className="md:h-[70vh] h-[500px] border w-full">
           <iframe
@@ -119,8 +120,7 @@ const page = () => {
         </div>
 
         <div className="w-full flex md:flex-row flex-col gap-4 my-5">
-          {/* LEFT INFO */}
-          <div className="lg:w-[30%] md:w-[40%] w-full px-14 py-20 bg-[#f3f3f3] grid gap-4">
+          <div className="lg:w-[30%] md:w-[40%] w-full px-14 py-20 bg-gray-800 text-gray-100 grid gap-4">
             <div className="flex items-center gap-4">
               <Phone className="size-8 border p-2 rounded-full hover:bg-black hover:text-white" />
               <div>
@@ -132,8 +132,8 @@ const page = () => {
             <div className="flex items-center gap-4">
               <Mail className="size-8 border p-2 rounded-full hover:bg-black hover:text-white" />
               <div>
-                <p className="hover:text-purple-600">yourname@email.com</p>
-                <p className="hover:text-purple-600">yourwebsitename.com</p>
+                <p className="hover:text-purple-600">fashionera@email.com</p>
+                <p className="hover:text-purple-600">fashionera.vercel.app</p>
               </div>
             </div>
 
@@ -146,7 +146,7 @@ const page = () => {
             </div>
 
             <div className="grid place-content-center gap-4">
-              <div className="text-center text-xl font-semibold text-gray-600">
+              <div className="text-center text-xl font-semibold text-gray-200">
                 Follow Us
               </div>
               <p className="flex gap-4 flex-wrap">
@@ -157,14 +157,13 @@ const page = () => {
             </div>
           </div>
 
-          {/* RIGHT FORM */}
-          <div className="lg:w-[70%] md:w-[60%] w-full bg-[#f3f3f3] lg:px-28 md:px-10 px-5 md:py-10 py-5">
-            <p className="text-2xl font-semibold text-gray-700 py-5">
+          <div className="lg:w-[70%] md:w-[60%] w-full bg-gray-800 lg:px-28 md:px-10 px-5 md:py-10 py-5">
+            <p className="text-2xl font-semibold text-gray-200 py-5">
               Get In Touch
             </p>
 
             <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 gap-8 py-5 px-5 text-sm">
+              <div className="grid grid-cols-1 gap-8 py-5 px-5 text-sm text-gray-100">
                 <div className="grid md:grid-cols-2 grid-cols-1 gap-8">
                   <input
                     type="text"
@@ -172,7 +171,7 @@ const page = () => {
                     value={form.name}
                     onChange={handleChange}
                     placeholder="Name*"
-                    className="outline-hidden px-2 py-3 border border-gray-500"
+                    className="outline-hidden px-2 py-3 border border-gray-300"
                   />
 
                   <input
@@ -181,7 +180,7 @@ const page = () => {
                     value={form.email}
                     onChange={handleChange}
                     placeholder="Email*"
-                    className="outline-hidden px-2 py-3 border border-gray-500"
+                    className="outline-hidden px-2 py-3 border border-gray-300"
                   />
                 </div>
 
@@ -191,7 +190,7 @@ const page = () => {
                   value={form.subject}
                   onChange={handleChange}
                   placeholder="Subject*"
-                  className="outline-hidden px-2 py-3 border w-full border-gray-500"
+                  className="outline-hidden px-2 py-3 border w-full border-gray-300"
                 />
 
                 <textarea
@@ -199,7 +198,7 @@ const page = () => {
                   value={form.message}
                   onChange={handleChange}
                   placeholder="Your Message*"
-                  className="h-40 w-full border border-gray-500 px-3 py-4 outline-hidden"
+                  className="h-40 w-full border border-gray-300 px-3 py-4 outline-hidden"
                 />
 
                 <button
