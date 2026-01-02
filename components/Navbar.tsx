@@ -366,6 +366,7 @@ const Navbar = () => {
             <Link className={`text-gray-800 ${isActive("/") ? "text-purple-600" : "text-gray-300"}`} href='/'>Home</Link>
             <Link className={`text-gray-800 ${isActive("/shop") ? "text-purple-600" : "text-gray-300"}`} href='/shop'>Shop</Link>
             <Link className={`text-gray-800 ${isActive("/blog") ? "text-purple-600" : "text-gray-300"}`} href='/blog'>Blogs</Link>
+            <Link className={`text-gray-800 ${isActive("/about") ? "text-purple-600" : "text-gray-300"}`} href='/about'>About Us</Link>
             <Link className={`text-gray-800 ${isActive("/contact") ? "text-purple-600" : "text-gray-300"}`} href='/contact'>Contact Us</Link>
             {user ? (
               <>
