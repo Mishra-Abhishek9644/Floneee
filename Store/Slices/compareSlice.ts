@@ -105,5 +105,4 @@ export const clearCompare =
     }
   };
 
-export const clearCompareList = clearCompare;
 export default compareSlice.reducer;

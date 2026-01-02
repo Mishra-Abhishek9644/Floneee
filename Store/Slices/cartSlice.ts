@@ -64,9 +64,24 @@ export const removeFromCart = createAsyncThunk(
     });
 
     if (!res.ok) throw new Error("Remove failed");
-    return res.json(); // { items }
+    return res.json();
   }
 );
+
+export const clearCart = createAsyncThunk(
+  "cart/clear",
+  async () => {
+    const res = await fetch("/api/cart", {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (!res.ok) throw new Error("Clear failed");
+    return res.json();
+  }
+);
+
+
 
 const cartSlice = createSlice({
   name: "cartList",
@@ -105,7 +120,15 @@ const cartSlice = createSlice({
       })
       .addCase(removeFromCart.rejected, () => {
         toast.error("Remove failed");
-      });
+      })
+      .addCase(clearCart.fulfilled, (state, action) => {
+        state.items = action.payload.items;
+        toast.success("Cart cleared");
+      })
+      .addCase(clearCart.rejected, () => {
+        toast.error("Failed to clear cart");
+      })
+
   },
 });
 

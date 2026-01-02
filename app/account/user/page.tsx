@@ -7,9 +7,9 @@ import { AppDispatch, RootState } from "@/Store";
 import { logout } from "@/Store/Slices/loginSlice";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { fetchCart } from "@/Store/Slices/cartSlice";
-import { clearCompareList, fetchCompare } from "@/Store/Slices/compareSlice";
-import { clearWishlist } from "@/Store/Slices/wishlistSlice";
+import { clearCartList, fetchCart } from "@/Store/Slices/cartSlice";
+import { clearCompareLocal, fetchCompare } from "@/Store/Slices/compareSlice";
+import { clearWishlist, clearWishlistLocal } from "@/Store/Slices/wishlistSlice";
 import { ShoppingCart, Heart, GitCompare, Package } from "lucide-react";
 
 
@@ -50,6 +50,11 @@ const UserDashboard = () => {
 
   const handleLogout = async () => {
     try {
+      
+      dispatch(clearCartList());
+      dispatch(clearCompareLocal());
+      dispatch(clearWishlistLocal());
+
       await fetch("/api/auth/logout", {
         method: "POST",
         credentials: "include",
@@ -57,10 +62,7 @@ const UserDashboard = () => {
 
       dispatch(logout());
       toast.success("Logged out");
-      dispatch(fetchCart());
-      dispatch(clearCompareList());
-      dispatch(clearWishlist());
-
+      
       router.replace("/login");
     } catch {
       toast.error("Logout failed");

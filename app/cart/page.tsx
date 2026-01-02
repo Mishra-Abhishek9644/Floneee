@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchCart,
   removeFromCart,
-  clearCartList,
+  clearCart,
 } from "@/Store/Slices/cartSlice";
 import { ShoppingCart, X } from "lucide-react";
 import Link from "next/link";
@@ -160,7 +160,7 @@ const Page = () => {
             </Link>
 
             <button
-              onClick={() => dispatch(clearCartList())}
+              onClick={() => dispatch(clearCart())}
               className="px-10 py-4 rounded-full flex justify-center bg-gray-100 text-sm font-semibold my-2 hover:bg-purple-600 hover:text-white hover:scale-110 transition-all duration-300"
             >
               CLEAR CartList

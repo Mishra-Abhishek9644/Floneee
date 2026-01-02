@@ -73,6 +73,7 @@ const Navbar = () => {
     if (currentUser) {
       dispatch(fetchCompare());
     }
+    
   }, [hydrated, currentUser]);
 
   useEffect(() => {
