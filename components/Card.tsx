@@ -88,9 +88,8 @@ const Card = ({ product, onOpen }: CardProps) => {
       </div>
 
 
-      <h2 className="font-semibold mt-2 truncate">Title : <span className="">{product.title}</span></h2>
-      <p className="font-semibold">Price :<span className="font-semibold text-purple-600">₹{displayPrice}</span></p>
-      <p className="font-semibold">Description : <span className="text-gray-600 font-normal line-clamp-4">{product.description}</span></p>
+      <h2 className="font-semibold mt-2 truncate text-center"><span className="">{product.title}</span></h2>
+      <p className="font-semibold text-center"><span className="font-semibold text-purple-600">₹{displayPrice}</span></p>
 
     </div>
   );

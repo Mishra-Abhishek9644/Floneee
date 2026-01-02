@@ -109,7 +109,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
   
   /* WISHLIST */
   const handleWishlistToggle = () => {
-     if (!product) return; // ✅ REQUIRED
+     if (!product) return; 
     if (debounceRef.current) return;
 
     if (!currentUser) {
@@ -126,7 +126,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
   
   /* COMPARE */
   const handleCompareToggle = () => {
-     if (!product) return; // ✅ REQUIRED
+     if (!product) return; 
     if (debounceRef.current) return;
     
     if (!currentUser) {
@@ -142,7 +142,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
   };
   
   const handleAddToCart = () => {
-     if (!product) return; // ✅ REQUIRED
+     if (!product) return; 
     if (debounceRef.current) return;
     
     if (!currentUser) {
@@ -227,7 +227,7 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
         <div>
           <img
             src={product.image}
-            className="bg-[#f6f6f6] w-full p-28"
+            className="bg-[#f6f6f6] w-full md:p-28 p-10"
             alt="product"
           />
         </div>
@@ -278,14 +278,14 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
           )}
 
           <div className="flex gap-4 mt-6 items-center">
-            <div className="flex border px-2 py-3">
+            <div className="flex border px-2 md:py-3 py-1">
               <button onClick={decrease}>-</button>
               <span className="px-4">{qty}</span>
               <button onClick={increase}>+</button>
             </div>
 
             <button
-              className="bg-gray-800 text-white px-10 py-4 hover:bg-purple-600"
+              className="bg-gray-800 text-white md:px-10 px-5 md:py-4 py-2 hover:bg-purple-600"
               onClick={handleAddToCart}
             >
               Add To Cart
