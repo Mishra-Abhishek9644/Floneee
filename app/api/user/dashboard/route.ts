@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/jwt";
-import { connectDB } from "@/lib/db";
+import { verifyToken } from "@/utils/jwt";
+import { connectDB } from "@/utils/db";
 import Cart from "@/models/Cart";
 import Wishlist from "@/models/Wishlist";
 import Compare from "@/models/Compare";

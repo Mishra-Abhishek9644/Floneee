@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/jwt";
-import { connectDB } from "@/lib/db";
+import { verifyToken } from "@/utils/jwt";
+import { connectDB } from "@/utils/db";
 import User from "@/models/User";
 import Product from "@/models/Product";
 import Order from "@/models/Order";

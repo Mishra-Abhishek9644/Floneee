@@ -1,7 +1,7 @@
-import { authMiddleware } from "@/lib/authMiddleware";
-import { connectDB } from "@/lib/db";
+import { authMiddleware } from "@/utils/authMiddleware";
+import { connectDB } from "@/utils/db";
 import Wishlist from "@/models/Wishlist";
-import { calculateFinalPrice } from "@/lib/price";
+import { calculateFinalPrice } from "@/utils/price";
 
 /* ================= GET ================= */
 export async function GET() {

@@ -1,8 +1,8 @@
-import { connectDB } from "@/lib/db";
+import { connectDB } from "@/utils/db";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { signToken } from "@/lib/jwt";
+import { signToken } from "@/utils/jwt";
 
 export async function POST(req: Request) {
   try {

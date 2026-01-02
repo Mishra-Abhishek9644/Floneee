@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/db";
+import { connectDB } from "@/utils/db";
 import Compare from "@/models/Compare";
-import { authMiddleware } from "@/lib/authMiddleware";
+import { authMiddleware } from "@/utils/authMiddleware";
 import mongoose from "mongoose";
-import { calculateFinalPrice } from "@/lib/price";
+import { calculateFinalPrice } from "@/utils/price";
 
 // GET 
 export async function GET() {
