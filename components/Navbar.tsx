@@ -15,8 +15,8 @@ import { logout } from "@/Store/Slices/loginSlice";
 import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import type { AppDispatch, RootState } from "@/Store";
-import { fetchWishlist, clearWishlist } from "@/Store/Slices/wishlistSlice";
-import { clearCompareList, fetchCompare } from "@/Store/Slices/compareSlice";
+import { fetchWishlist, clearWishlist, clearWishlistLocal } from "@/Store/Slices/wishlistSlice";
+import {  clearCompareLocal, fetchCompare } from "@/Store/Slices/compareSlice";
 import logo from '../assets/F-logo.png';
 import { clearCartList, fetchCart } from "@/Store/Slices/cartSlice";
 
@@ -73,6 +73,7 @@ const Navbar = () => {
     if (currentUser) {
       dispatch(fetchCompare());
     }
+    
   }, [hydrated, currentUser]);
 
   useEffect(() => {
@@ -138,16 +139,17 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
+      
+      dispatch(clearWishlistLocal());
+      dispatch(clearCompareLocal());
+      dispatch(clearCartList());
+      
       await fetch("/api/auth/logout", {
         method: "POST",
         credentials: "include",
       });
 
       dispatch(logout());
-
-      dispatch(clearWishlist());
-      dispatch(clearCompareList());
-      dispatch(clearCartList());
 
       toast.success("Logged out");
       router.replace("/login");

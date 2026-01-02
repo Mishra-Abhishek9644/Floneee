@@ -17,6 +17,7 @@ export async function GET() {
     }
 
     const cart = await Cart.findOne({ userId: user.userId });
+    console.log("GET userId:", user.userId);
 
     return NextResponse.json({
       items: cart?.items || [],
@@ -114,6 +115,7 @@ export async function POST(req: Request) {
 }
 
 /* ================= REMOVE ITEM ================= */
+/* ================= REMOVE ITEM / CLEAR CART ================= */
 export async function DELETE(req: Request) {
   try {
     await connectDB();
@@ -123,19 +125,41 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { index }: { index: number } = await req.json();
+    // Body is optional
+    const body = await req.json().catch(() => ({}));
+    const { index } = body as { index?: number };
 
     const cart = await Cart.findOne({ userId: user.userId });
-    if (!cart) return NextResponse.json({ items: [] });
+    if (!cart) {
+      return NextResponse.json({ items: [] });
+    }
 
-    cart.items.splice(index, 1);
+    // ✅ CASE 1: CLEAR ENTIRE CART
+    if (index === undefined) {
+      cart.items = [];
+      console.log("DELETE userId:", user.userId);
+    }
+
+    // ✅ CASE 2: REMOVE SINGLE ITEM
+    else {
+      if (index < 0 || index >= cart.items.length) {
+        return NextResponse.json(
+          { message: "Invalid index" },
+          { status: 400 }
+        );
+      }
+      console.log("DELETE userId:", user.userId);
+
+      cart.items.splice(index, 1);
+    }
+
     await cart.save();
-
     return NextResponse.json({ items: cart.items });
   } catch {
     return NextResponse.json(
-      { message: "Remove failed" },
+      { message: "Cart update failed" },
       { status: 500 }
     );
   }
 }
+
