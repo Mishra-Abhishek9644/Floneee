@@ -102,20 +102,14 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
       .catch(() => setRelatedProducts([]));
   }, [product]);
 
-  if (!product) {
-    return (
-      <div className="text-center py-20 text-gray-500">
-        Product not found
-      </div>
-    );
-  }
-
-
+  
+  
   const increase = () => qty < 9 && setQty(qty + 1);
   const decrease = () => qty > 1 && setQty(qty - 1);
-
+  
   /* WISHLIST */
   const handleWishlistToggle = () => {
+     if (!product) return; // ✅ REQUIRED
     if (debounceRef.current) return;
 
     if (!currentUser) {
@@ -126,42 +120,44 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
 
     debounceRef.current = true;
     dispatch(toggleWishlistDebounced(currentUser._id, product));
-
+    
     setTimeout(() => (debounceRef.current = false), 300);
   };
-
+  
   /* COMPARE */
   const handleCompareToggle = () => {
+     if (!product) return; // ✅ REQUIRED
     if (debounceRef.current) return;
-
+    
     if (!currentUser) {
       toast.error("Login To Continue");
       router.push("/login");
       return;
     }
-
+    
     debounceRef.current = true;
     dispatch(toggleCompareDebounced(currentUser._id, product));
-
+    
     setTimeout(() => (debounceRef.current = false), 300);
   };
-
+  
   const handleAddToCart = () => {
+     if (!product) return; // ✅ REQUIRED
     if (debounceRef.current) return;
-
+    
     if (!currentUser) {
       toast.error("Login to continue");
       router.push("/login");
       return;
     }
-
+    
     if (!selectedColor || !selectedSize) {
       toast.error("Please select size and color");
       return;
     }
-
+    
     debounceRef.current = true;
-
+    
     dispatch(
       addToCart({
         productId: product._id,
@@ -170,12 +166,12 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
         size: selectedSize,
       })
     );
-
+    
     router.push("/cart");
-
+    
     setTimeout(() => (debounceRef.current = false), 300);
   };
-
+  
   if (productLoading) {
     return (
       <section className="my-10 lg:mx-44 md:mx-28 sm:mx-10 animate-pulse">
@@ -207,7 +203,14 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
       </section>
     );
   }
-
+  
+  if (!product) {
+    return (
+      <div className="text-center py-20 text-gray-500">
+        Product not found
+      </div>
+    );
+  }
 
 
   return (
