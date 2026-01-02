@@ -28,6 +28,9 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
+  const [productLoading, setProductLoading] = useState(true);
+
+
   const debounceRef = useRef(false);
 
   const wishlistItems = useSelector(
@@ -46,20 +49,24 @@ const ProductDetails = ({ id }: ProductDetailsProps) => {
   const isInCompare = compareItems.some(
     (i) => i._id === product?._id
   );
-  
+
 
   /* FETCH PRODUCT */
   useEffect(() => {
     if (!id) return;
 
+    setProductLoading(true);
+
     fetch(`/api/products/${id}`)
       .then((res) => res.json())
-      .then(setProduct)
-      .catch(() => setProduct(null));
+      .then((data) => setProduct(data))
+      .catch(() => setProduct(null))
+      .finally(() => setProductLoading(false));
   }, [id]);
 
-const displayPrice =
-  product?.finalPrice ?? product?.price ?? 0;
+
+  const displayPrice =
+    product?.finalPrice ?? product?.price ?? 0;
 
   /* DEFAULT VARIANTS */
   useEffect(() => {
@@ -95,7 +102,14 @@ const displayPrice =
       .catch(() => setRelatedProducts([]));
   }, [product]);
 
-  if (!product) return null;
+  if (!product) {
+    return (
+      <div className="text-center py-20 text-gray-500">
+        Product not found
+      </div>
+    );
+  }
+
 
   const increase = () => qty < 9 && setQty(qty + 1);
   const decrease = () => qty > 1 && setQty(qty - 1);
@@ -162,6 +176,39 @@ const displayPrice =
     setTimeout(() => (debounceRef.current = false), 300);
   };
 
+  if (productLoading) {
+    return (
+      <section className="my-10 lg:mx-44 md:mx-28 sm:mx-10 animate-pulse">
+        <div className="grid md:grid-cols-2 gap-4 py-16">
+          {/* Image skeleton */}
+          <div className="bg-gray-200 h-105 w-full rounded" />
+
+          {/* Content skeleton */}
+          <div className="lg:px-20 md:px-12 px-5 space-y-4">
+            <div className="h-6 w-3/4 bg-gray-300 rounded" />
+            <div className="h-8 w-32 bg-gray-300 rounded" />
+            <div className="h-20 w-full bg-gray-300 rounded" />
+
+            <div className="flex gap-2 mt-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-8 w-8 bg-gray-300 rounded-full" />
+              ))}
+            </div>
+
+            <div className="flex gap-2 mt-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-8 w-12 bg-gray-300 rounded" />
+              ))}
+            </div>
+
+            <div className="h-12 w-40 bg-gray-300 rounded mt-6" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+
 
   return (
     <section className="my-10 lg:mx-44 md:mx-28 sm:mx-10">
@@ -196,8 +243,8 @@ const displayPrice =
                     key={c}
                     onClick={() => setSelectedColor(c)}
                     className={`border rounded-full p-1 ${selectedColor === c
-                        ? "border-purple-600"
-                        : "border-white"
+                      ? "border-purple-600"
+                      : "border-white"
                       }`}
                   >
                     <Circle size={16} fill={c} />
@@ -216,8 +263,8 @@ const displayPrice =
                     key={s}
                     onClick={() => setSelectedSize(s)}
                     className={`px-3 py-2 text-xs border ${selectedSize === s
-                        ? "bg-purple-600 text-white"
-                        : "bg-gray-200"
+                      ? "bg-purple-600 text-white"
+                      : "bg-gray-200"
                       }`}
                   >
                     {s}
