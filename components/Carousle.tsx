@@ -53,7 +53,7 @@ const Carousle = () => {
   return (
     <div
       id="controls-carousel"
-      className="relative w-full bg-[#f0e0ff] overflow-hidden lg:h-[90vh] md:h-[70vh] h-[80vh] md:mt-16 pt-20"
+      className="relative w-full bg-[#f0e0ff] overflow-hidden lg:h-[80vh] md:h-[60vh] h-[80vh]  mt-20"
     >
       <div
         className="flex h-full transition-transform duration-700 ease-in-out"
@@ -62,7 +62,7 @@ const Carousle = () => {
         {slides.map((slide, index) => (
           <div
             key={index}
-            className="w-full h-full flex flex-col md:flex-row items-center justify-center shrink-0"
+            className="w-full h-full flex flex-col md:flex-row items-center justify-center shrink-0 lg:px-5 md:px-10 px-0 md:pt-0 pt-5"
           >
             <div className="md:w-[50%] w-full text-center md:text-start lg:pl-48 md:pl-20 px-5 lg:py-40 md:py-20 py-10">
               <p className="lg:text-3xl md:text-2xl text-lg py-3">
@@ -81,10 +81,10 @@ const Carousle = () => {
               </Link>
             </div>
 
-            <div className="md:w-[50%] w-full flex justify-center lg:p-10 md:p-6 px-8">
+            <div className="md:w-[50%] w-full flex justify-center lg:p-10 md:p-0 md:px-6 ">
               <img
                 src={slide.img}
-                className="w-full max-h-[450px] md:max-h-full object-contain"
+                className="w-full max-h-full object-contain"
                 alt="Slide"
               />
             </div>
@@ -94,14 +94,14 @@ const Carousle = () => {
 
       <button
         onClick={leftBtn}
-        className="absolute top-0 left-0 flex items-center justify-center h-full px-8 md:px-14 cursor-pointer"
+        className="absolute top-70 left-0 flex items-center justify-center h-fit px-8 md:px-14 cursor-pointer"
       >
         <ChevronLeft className="md:size-12 size-6 text-gray-600 hover:text-purple-500" />
       </button>
 
       <button
         onClick={rightBtn}
-        className="absolute top-0 right-0 flex items-center justify-center h-full px-8 md:px-14 cursor-pointer"
+        className="absolute top-70 right-0 flex items-center justify-center h-fit px-8 md:px-14 cursor-pointer"
       >
         <ChevronRight className="md:size-12 size-6 text-gray-600 hover:text-purple-500" />
       </button>
