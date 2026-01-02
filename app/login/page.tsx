@@ -25,6 +25,8 @@ const page = () => {
   const user = useSelector((state: RootState) => state.login.currentUser);
 
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   const {
     register,
@@ -40,6 +42,9 @@ const page = () => {
 
   const onSubmit = async (data: LoginForm) => {
     try {
+
+      setIsSubmitting(true); // 🔒 disable button
+
       const res = await loginUser(data);
 
       dispatch(setUser(res.user));
@@ -111,9 +116,8 @@ const page = () => {
               <div className="grid grid-cols-1 gap-4">
                 <input
                   type="email"
-                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${
-                    errors.email ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${errors.email ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Email"
                   {...register("email", {
                     required: "Email is required",
@@ -131,9 +135,8 @@ const page = () => {
 
                 <input
                   type="password"
-                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${
-                    errors.password ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`py-2 sm:w-md w-full px-3 outline-hidden border ${errors.password ? "border-red-500" : "border-gray-300"
+                    }`}
                   placeholder="Password"
                   {...register("password", {
                     required: "Password is required",
@@ -157,11 +160,25 @@ const page = () => {
 
               <div>
                 <button
-                  className="bg-gray-200 hover:bg-purple-600 hover:text-white px-8 py-2 uppercase text-sm duration-700"
                   type="submit"
+                  disabled={isSubmitting}
+                  className={`px-8 py-2 uppercase text-sm duration-300 flex items-center justify-center gap-2
+    ${isSubmitting
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-gray-200 hover:bg-purple-600 hover:text-white"
+                    }
+  `}
                 >
-                  Login
+                  {isSubmitting ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Logging in...
+                    </>
+                  ) : (
+                    "Login"
+                  )}
                 </button>
+
               </div>
             </form>
           </div>
