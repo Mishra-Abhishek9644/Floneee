@@ -66,7 +66,7 @@ const Blog = () => {
       <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-8 place-content-center md:px-28 mb-16">
         {data.slice(7, 10).map((i, index) => (
           <div key={i?._id || index} className="relative h-64 flex justify-center my-10">
-            <div className="overflow-hidden w-fit">
+            <div className="overflow-hidden w-fit bg-[#dcdfe4]">
               <img
                 src={i?.image}
                 className="scale-100 transition-all duration-1000 object-cover hover:scale-125"
