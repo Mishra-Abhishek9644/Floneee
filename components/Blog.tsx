@@ -2,6 +2,7 @@
 import { ArrowRight } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const Blog = () => {
   const [loading, setLoading] = useState(true);
@@ -64,14 +65,17 @@ const Blog = () => {
       </div>
 
       <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-8 place-content-center md:px-28 mb-16">
-        {data.slice(7, 10).map((i, index) => (
-          <div key={i?._id || index} className="relative h-64 flex justify-center my-10">
+        {data.slice(0, 3).map((i, index) => (
+          <div key={i?._id || index} className="relative h-64 flex justify-center my-10 cursor-pointer">
             <div className="overflow-hidden w-fit bg-[#dcdfe4]">
-              <img
-                src={i?.image}
-                className="scale-100 transition-all duration-1000 object-cover hover:scale-125"
-                alt={i?.title || "blog image"}
-              />
+              <Link href={`/blog/post/${i?._id}`}>
+                <img
+                  src={i?.image}
+                  className="scale-100 transition-all duration-1000 object-cover hover:scale-125"
+                  alt={i?.title || "blog image"}
+                />
+              </Link>
+
             </div>
 
             <div className="text-center bg-gray-800 text-white absolute -bottom-10 px-14 left-1/2 -translate-x-2/4 py-5 w-[300px]">
@@ -80,6 +84,7 @@ const Blog = () => {
               </h2>
               <p className="italic text-sm">By Admin</p>
             </div>
+
           </div>
         ))}
       </div>
