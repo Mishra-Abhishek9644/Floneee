@@ -17,11 +17,18 @@ export const placeOrder = createAsyncThunk(
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("Order failed");
+      const data = await res.json();
 
-      return await res.json(); 
+      if (!res.ok) {
+        throw new Error(data.message || "Order failed");
+      }
+
+      return data;
     } catch (err) {
-      return rejectWithValue("Order failed");
+      const message =
+        err instanceof Error ? err.message : "Order failed";
+
+      return rejectWithValue(message);
     }
   }
 );
@@ -45,9 +52,9 @@ const orderSlice = createSlice({
         state.orders.push(action.payload); 
         toast.success("Order placed successfully");
       })
-      .addCase(placeOrder.rejected, (state) => {
+      .addCase(placeOrder.rejected, (state, action) => {
         state.loading = false;
-        toast.error("Order failed");
+        toast.error((action.payload as string) || "Order failed");
       });
   },
 });

@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/utils/db";
 import Order from "@/models/Order";
+import Cart from "@/models/Cart";
 import { authMiddleware } from "@/utils/authMiddleware";
+import {
+  getCheckoutCart,
+  normalizeBillingDetails,
+  validateBillingDetails,
+} from "@/utils/checkout";
 
-// POST 
+// POST
 export async function POST(req: Request) {
   try {
     await connectDB();
@@ -12,24 +18,47 @@ export async function POST(req: Request) {
     if (!user?.userId)
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-    const { items, totalAmount, paymentMethod } = await req.json();
+    const body = (await req.json().catch(() => ({}))) as {
+      billingDetails?: unknown;
+      paymentMethod?: "COD" | "ONLINE";
+    };
 
-    if (!items?.length)
-      return NextResponse.json({ message: "No items" }, { status: 400 });
+    if (body.paymentMethod && body.paymentMethod !== "COD") {
+      return NextResponse.json(
+        { message: "Use the Razorpay payment route for online payments." },
+        { status: 400 }
+      );
+    }
+
+    const billingDetails = normalizeBillingDetails(body.billingDetails);
+    const billingError = validateBillingDetails(billingDetails);
+
+    if (billingError) {
+      return NextResponse.json({ message: billingError }, { status: 400 });
+    }
+
+    const { items, totalAmount } = await getCheckoutCart(user.userId);
 
     const order = await Order.create({
       userId: user.userId,
       items,
+      billingDetails,
       totalAmount,
-      paymentMethod,
+      paymentMethod: "COD",
     });
+
+    await Cart.findOneAndUpdate({ userId: user.userId }, { $set: { items: [] } });
 
     return NextResponse.json(order, { status: 201 });
   } catch (err) {
     console.error("ORDER CREATE ERROR:", err);
+
+    const message =
+      err instanceof Error ? err.message : "Order creation failed";
+
     return NextResponse.json(
-      { message: "Order creation failed" },
-      { status: 500 }
+      { message },
+      { status: message === "Cart is empty." ? 400 : 500 }
     );
   }
 }

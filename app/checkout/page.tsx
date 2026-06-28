@@ -1,48 +1,165 @@
 "use client";
 import Breadcrumb from "@/components/Breadcrumb";
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "@/Store";
+import { clearCartList } from "@/Store/Slices/cartSlice";
 import { placeOrder } from "@/Store/Slices/orderSlice";
-import { removeFromCart } from "@/Store/Slices/cartSlice";
 import { useRouter } from "next/navigation";
-import { AppDispatch } from "@/Store";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+
+type PaymentMethod = "COD" | "ONLINE";
+type ErrorState = Record<string, string>;
+
+type BillingState = {
+    name: string;
+    company: string;
+    country: string;
+    address1: string;
+    address2: string;
+    city: string;
+    state: string;
+    zip: string;
+    phone: string;
+    email: string;
+    notes: string;
+};
+
+type RazorpayOrderResponse = {
+    orderId: string;
+    amount: number;
+    currency: string;
+    razorpayOrderId: string;
+    razorpayKey: string;
+    customer: {
+        name: string;
+        email: string;
+        phone: string;
+    };
+};
+
+type RazorpaySuccessResponse = {
+    razorpay_order_id: string;
+    razorpay_payment_id: string;
+    razorpay_signature: string;
+};
+
+type RazorpayFailureResponse = {
+    error: {
+        description?: string;
+    };
+};
+
+type RazorpayOptions = {
+    key: string;
+    amount: number;
+    currency: string;
+    name: string;
+    description: string;
+    order_id: string;
+    prefill: {
+        name: string;
+        email: string;
+        contact: string;
+    };
+    notes: {
+        appOrderId: string;
+    };
+    theme: {
+        color: string;
+    };
+    modal: {
+        ondismiss: () => void;
+    };
+    handler: (response: RazorpaySuccessResponse) => void | Promise<void>;
+};
+
+type RazorpayInstance = {
+    open: () => void;
+    on: (
+        event: "payment.failed",
+        callback: (response: RazorpayFailureResponse) => void
+    ) => void;
+};
+
+declare global {
+    interface Window {
+        Razorpay?: new (options: RazorpayOptions) => RazorpayInstance;
+    }
+}
+
+const initialBillingState: BillingState = {
+    name: "",
+    company: "",
+    country: "",
+    address1: "",
+    address2: "",
+    city: "",
+    state: "",
+    zip: "",
+    phone: "",
+    email: "",
+    notes: "",
+};
+
+let razorpayScriptPromise: Promise<boolean> | null = null;
+
+function loadRazorpayScript() {
+    if (typeof window === "undefined") {
+        return Promise.resolve(false);
+    }
+
+    if (window.Razorpay) {
+        return Promise.resolve(true);
+    }
+
+    if (razorpayScriptPromise) {
+        return razorpayScriptPromise;
+    }
+
+    razorpayScriptPromise = new Promise((resolve) => {
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.async = true;
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+    });
+
+    return razorpayScriptPromise;
+}
 
 const Page = () => {
     const dispatch = useDispatch<AppDispatch>();
     const router = useRouter();
-    const currentUser = useSelector((state: any) => state.login.currentUser);
-    const cartCount = useSelector((state: any) => state.cartList.items);
-    const user = useSelector((state: any) => state.login.currentUser);
-    type ErrorState = Record<string, string>;
-    const [errors, setErrors] = useState<ErrorState>({});
+    const currentUser = useSelector(
+        (state: RootState) => state.login.currentUser
+    );
+    const cartItems = useSelector((state: RootState) => state.cartList.items);
 
-    const total = cartCount.reduce(
-        (sum: number, item: any) => sum + item.price * item.quantity,
+    const [errors, setErrors] = useState<ErrorState>({});
+    const [billing, setBilling] = useState<BillingState>(initialBillingState);
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("COD");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const paymentCompletedRef = useRef(false);
+
+    const total = cartItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
         0
     );
 
-    const [billing, setBilling] = useState({
-        name: "",
-        company: "",
-        country: "",
-        address1: "",
-        address2: "",
-        city: "",
-        state: "",
-        zip: "",
-        phone: "",
-        email: "",
-        notes: "",
-    });
-
     useEffect(() => {
-        if (user?.email || user?.name) {
-            setBilling((prev) => ({ ...prev, email: user.email, name: user.name }));
+        if (currentUser?.email || currentUser?.name) {
+            setBilling((prev) => ({
+                ...prev,
+                email: currentUser?.email ?? "",
+                name: currentUser?.name ?? "",
+            }));
         }
-    }, [user]);
+    }, [currentUser]);
 
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
         setBilling((prev) => ({ ...prev, [name]: value }));
@@ -50,54 +167,186 @@ const Page = () => {
     };
 
     const validate = () => {
-        const newErrors: any = {};
-        if (!billing.name) newErrors.name = "Full name is required";
-        if (!billing.company) newErrors.company = "Company is required";
-        if (!billing.country) newErrors.country = "Country is required";
-        if (!billing.address1) newErrors.address1 = "Address is required";
-        if (!billing.city) newErrors.city = "City is required";
-        if (!billing.state) newErrors.state = "State is required";
-        if (!billing.zip) newErrors.zip = "Zip is required";
-        if (!billing.phone) newErrors.phone = "Phone is required";
-        if (!billing.email) {
+        const newErrors: ErrorState = {};
+
+        if (!billing.name.trim()) newErrors.name = "Full name is required";
+        if (!billing.company.trim()) newErrors.company = "Company is required";
+        if (!billing.country.trim()) newErrors.country = "Country is required";
+        if (!billing.address1.trim()) newErrors.address1 = "Address is required";
+        if (!billing.city.trim()) newErrors.city = "City is required";
+        if (!billing.state.trim()) newErrors.state = "State is required";
+        if (!billing.zip.trim()) newErrors.zip = "Zip is required";
+        if (!billing.phone.trim()) newErrors.phone = "Phone is required";
+
+        if (!billing.email.trim()) {
             newErrors.email = "Email is required";
         } else if (!/^\S+@\S+\.\S+$/.test(billing.email)) {
             newErrors.email = "Invalid email";
         }
-        if (cartCount.length === 0) newErrors.cart = "Cart is empty";
+
+        if (cartItems.length === 0) {
+            newErrors.cart = "Cart is empty";
+        }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handlePlaceOrder = async () => {
-        if (!validate()) return;
+    const handleCodOrder = async () => {
+        const response = await dispatch(
+            placeOrder({
+                paymentMethod: "COD",
+                billingDetails: billing,
+            })
+        );
 
-        const payload = {
-            items: cartCount.map((item: any) => ({
-                productId: item._id,
-                title: item.title,
-                image: item.image,
-                price: item.price,
-                quantity: item.quantity,
-                size: item.size,
-                color: item.color,
-                subtotal: item.price * item.quantity,
-            })),
-            totalAmount: total,
-            paymentMethod: "COD",
-        };
-
-        const res = await dispatch(placeOrder(payload));
-
-        if (placeOrder.fulfilled.match(res)) {
-            dispatch(removeFromCart(currentUser._id));
+        if (placeOrder.fulfilled.match(response)) {
+            dispatch(clearCartList());
             router.push("/account/user");
         }
     };
 
+    const handleOnlinePayment = async () => {
+        const isScriptLoaded = await loadRazorpayScript();
+        const RazorpayCheckout = window.Razorpay;
+
+        if (!isScriptLoaded || !RazorpayCheckout) {
+            toast.error("Failed to load Razorpay checkout.");
+            setIsSubmitting(false);
+            return;
+        }
+
+        const createResponse = await fetch("/api/payments/razorpay/create-order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                billingDetails: billing,
+            }),
+        });
+
+        const createData = (await createResponse.json()) as
+            | RazorpayOrderResponse
+            | { message?: string };
+
+        if (!createResponse.ok) {
+            throw new Error(
+                "message" in createData && createData.message
+                    ? createData.message
+                    : "Failed to start Razorpay payment."
+            );
+        }
+
+        const paymentData = createData as RazorpayOrderResponse;
+
+        paymentCompletedRef.current = false;
+
+        const razorpay = new RazorpayCheckout({
+            key: paymentData.razorpayKey,
+            amount: paymentData.amount,
+            currency: paymentData.currency,
+            name: "FASHION-ERA",
+            description: `Order #${paymentData.orderId.slice(-6)}`,
+            order_id: paymentData.razorpayOrderId,
+            prefill: {
+                name: paymentData.customer.name,
+                email: paymentData.customer.email,
+                contact: paymentData.customer.phone,
+            },
+            notes: {
+                appOrderId: paymentData.orderId,
+            },
+            theme: {
+                color: "#7c3aed",
+            },
+            modal: {
+                ondismiss: () => {
+                    if (!paymentCompletedRef.current) {
+                        toast.error("Payment window closed before completion.");
+                        setIsSubmitting(false);
+                    }
+                },
+            },
+            handler: async (response) => {
+                paymentCompletedRef.current = true;
+
+                try {
+                    const verifyResponse = await fetch("/api/payments/razorpay/verify", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include",
+                        body: JSON.stringify({
+                            orderId: paymentData.orderId,
+                            razorpayOrderId: response.razorpay_order_id,
+                            razorpayPaymentId: response.razorpay_payment_id,
+                            razorpaySignature: response.razorpay_signature,
+                        }),
+                    });
+
+                    const verifyData = (await verifyResponse.json()) as {
+                        message?: string;
+                    };
+
+                    if (!verifyResponse.ok) {
+                        throw new Error(
+                            verifyData.message || "Payment verification failed."
+                        );
+                    }
+
+                    toast.success("Payment completed successfully.");
+                    dispatch(clearCartList());
+                    router.push("/account/user");
+                } catch (error) {
+                    const message =
+                        error instanceof Error
+                            ? error.message
+                            : "Payment verification failed.";
+
+                    toast.error(message);
+                } finally {
+                    setIsSubmitting(false);
+                }
+            },
+        });
+
+        razorpay.on("payment.failed", (response) => {
+            paymentCompletedRef.current = true;
+            toast.error(response.error.description || "Payment failed.");
+            setIsSubmitting(false);
+        });
+
+        razorpay.open();
+    };
+
+    const handlePlaceOrder = async () => {
+        if (!validate() || isSubmitting) {
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            if (paymentMethod === "ONLINE") {
+                await handleOnlinePayment();
+                return;
+            }
+
+            await handleCodOrder();
+        } catch (error) {
+            const message =
+                error instanceof Error ? error.message : "Checkout failed.";
+
+            toast.error(message);
+            setIsSubmitting(false);
+            return;
+        }
+
+        setIsSubmitting(false);
+    };
+
     const inputClass = (field: string) =>
-        `border py-2 px-4 w-full capitalize ${errors[field] ? "border-red-500" : "border-gray-300"}`;
+        `border py-2 px-4 w-full ${errors[field] ? "border-red-500" : "border-gray-300"
+        }`;
 
     return (
         <>
@@ -112,13 +361,12 @@ const Page = () => {
                         <label className="flex flex-col gap-2 mb-6">
                             Full Name
                             <input
-                                name="username"
-                                readOnly
+                                name="name"
                                 value={billing.name}
                                 onChange={handleChange}
-                                className={inputClass("username")}
+                                className={inputClass("name")}
                             />
-                            {errors.username && (
+                            {errors.name && (
                                 <span className="text-red-500 text-xs">{errors.name}</span>
                             )}
                         </label>
@@ -200,7 +448,6 @@ const Page = () => {
                                 Postcode / Zip
                                 <input
                                     name="zip"
-                                    type="number"
                                     value={billing.zip}
                                     onChange={handleChange}
                                     className={inputClass("zip")}
@@ -216,7 +463,6 @@ const Page = () => {
                                 Phone
                                 <input
                                     name="phone"
-                                    type="number"
                                     value={billing.phone}
                                     onChange={handleChange}
                                     className={inputClass("phone")}
@@ -230,7 +476,6 @@ const Page = () => {
                                 Email Address
                                 <input
                                     name="email"
-                                    readOnly
                                     value={billing.email}
                                     onChange={handleChange}
                                     className={inputClass("email")}
@@ -263,9 +508,9 @@ const Page = () => {
                                 <p>Total</p>
                             </div>
 
-                            {cartCount.map((item: any) => (
+                            {cartItems.map((item) => (
                                 <div
-                                    key={item._id}
+                                    key={`${item.productId}-${item.size}-${item.color}`}
                                     className="flex justify-between border-b border-gray-300 pb-4 w-full"
                                 >
                                     <p className="w-2/3">
@@ -290,11 +535,54 @@ const Page = () => {
                             <p className="text-red-500 text-xs mt-2">{errors.cart}</p>
                         )}
 
+                        <div className="space-y-3 mt-6">
+                            <p className="font-semibold">Payment Method</p>
+
+                            <label className="flex items-start gap-3 border border-gray-300 rounded-lg p-4 bg-white">
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="COD"
+                                    checked={paymentMethod === "COD"}
+                                    onChange={() => setPaymentMethod("COD")}
+                                    className="mt-1"
+                                />
+                                <span>
+                                    <span className="block font-medium">Cash on Delivery</span>
+                                    <span className="block text-sm text-gray-500">
+                                        Place the order now and collect payment offline.
+                                    </span>
+                                </span>
+                            </label>
+
+                            <label className="flex items-start gap-3 border border-gray-300 rounded-lg p-4 bg-white">
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="ONLINE"
+                                    checked={paymentMethod === "ONLINE"}
+                                    onChange={() => setPaymentMethod("ONLINE")}
+                                    className="mt-1"
+                                />
+                                <span>
+                                    <span className="block font-medium">Pay Online</span>
+                                    <span className="block text-sm text-gray-500">
+                                        Open Razorpay Checkout in test mode and verify the payment.
+                                    </span>
+                                </span>
+                            </label>
+                        </div>
+
                         <button
                             onClick={handlePlaceOrder}
-                            className="bg-purple-600 hover:bg-black duration-500 text-white py-4 w-full my-6 rounded-full text-sm uppercase"
+                            disabled={isSubmitting}
+                            className="bg-purple-600 hover:bg-black disabled:bg-gray-400 disabled:cursor-not-allowed duration-500 text-white py-4 w-full my-6 rounded-full text-sm uppercase"
                         >
-                            Place Order
+                            {isSubmitting
+                                ? "Processing..."
+                                : paymentMethod === "ONLINE"
+                                    ? "Pay With Razorpay"
+                                    : "Place Order"}
                         </button>
                     </div>
                 </div>

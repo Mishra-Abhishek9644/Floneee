@@ -18,15 +18,39 @@ interface IOrderItem {
   subtotal: number;
 }
 
+interface IBillingDetails {
+  name: string;
+  company: string;
+  country: string;
+  address1: string;
+  address2?: string;
+  city: string;
+  state: string;
+  zip: string;
+  phone: string;
+  email: string;
+  notes?: string;
+}
+
+interface IPaymentDetails {
+  provider?: "RAZORPAY";
+  gatewayOrderId?: string;
+  gatewayPaymentId?: string;
+  gatewaySignature?: string;
+  paidAt?: Date;
+}
+
 /**
  * Order Interface
  */
 export interface IOrder extends Document {
   userId: Types.ObjectId;
   items: IOrderItem[];
+  billingDetails?: IBillingDetails;
   totalAmount: number;
   paymentMethod: "COD" | "ONLINE";
   status: "PENDING" | "PAID" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+  paymentDetails?: IPaymentDetails;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -63,6 +87,20 @@ const OrderSchema = new Schema<IOrder>(
       },
     ],
 
+    billingDetails: {
+      name: { type: String, trim: true },
+      company: { type: String, trim: true },
+      country: { type: String, trim: true },
+      address1: { type: String, trim: true },
+      address2: { type: String, trim: true },
+      city: { type: String, trim: true },
+      state: { type: String, trim: true },
+      zip: { type: String, trim: true },
+      phone: { type: String, trim: true },
+      email: { type: String, trim: true },
+      notes: { type: String, trim: true },
+    },
+
     totalAmount: {
       type: Number,
       required: true,
@@ -79,6 +117,17 @@ const OrderSchema = new Schema<IOrder>(
       type: String,
       enum: ["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELLED"],
       default: "PENDING",
+    },
+
+    paymentDetails: {
+      provider: {
+        type: String,
+        enum: ["RAZORPAY"],
+      },
+      gatewayOrderId: { type: String, trim: true },
+      gatewayPaymentId: { type: String, trim: true },
+      gatewaySignature: { type: String, trim: true },
+      paidAt: { type: Date },
     },
   },
   { timestamps: true }
